@@ -37,6 +37,9 @@ RUN composer update
 RUN chown -R www-data:www-data /app \
     && chmod -R 755 /app/storage
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Set permissions
+RUN chown -R www-data:www-data /app \
+    && chmod -R 755 /app/storage
+
+# Expose port 8000 and start server
+CMD php artisan serve --host=0.0.0.0 --port=8000

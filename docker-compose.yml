@@ -6,7 +6,7 @@ services:
       context: stugear_backend
       dockerfile: Dockerfile
     ports:
-      - "8000:9000"
+      - "8000:8000"
     volumes:
       - .:/var/www/html
     environment:
@@ -19,4 +19,3 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    
