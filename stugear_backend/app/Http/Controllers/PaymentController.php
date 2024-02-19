@@ -111,7 +111,7 @@ class PaymentController extends Controller
     public function vnpayPayment(Request $request)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://localhost:3000/payment-success";
+        $vnp_Returnurl = "https://stugear.website/payment-success";
         $vnp_TmnCode = "L8XMT8SL";//Mã website tại VNPAY
         $vnp_HashSecret = "KJJYTBAYDTNHTIKMNMKJLTKPZUXPZVUY"; //Chuỗi bí mật
 
