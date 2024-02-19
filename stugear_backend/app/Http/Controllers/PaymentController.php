@@ -64,8 +64,8 @@ class PaymentController extends Controller
         ], $userId);
 
         $orderId = time() . "";
-        $redirectUrl = "http://localhost:3000/payment-success";
-        $ipnUrl = "http://localhost:3000/payment-success";
+        $redirectUrl = "https://stugear.website/payment-success";
+        $ipnUrl = "https://stugear.website/payment-success";
         $extraData = "";
 
         $requestId = time() . "";
