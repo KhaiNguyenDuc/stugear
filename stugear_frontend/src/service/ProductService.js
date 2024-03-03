@@ -1,7 +1,8 @@
 import axios from "axios";
 import { axiosPrivate } from "../api/axios";
+import {BASE_API_URL} from "../utils/Constant.js"
 
-const PRODUCT_URL = "https://stugear.website/api/products";
+const PRODUCT_URL = BASE_API_URL + '/products';
 class ProductService {
   getProductsByCategoryId(id, page) {
     return axios

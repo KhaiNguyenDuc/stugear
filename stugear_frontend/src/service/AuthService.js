@@ -1,8 +1,7 @@
 import axios from 'axios'
+import {BASE_API_URL} from "../utils/Constant.js"
 
-
-// const AUTH_URL = 'https://stugear.website/api/auth';
-const AUTH_URL = 'https://stugear.website/api/auth';
+const AUTH_URL = BASE_API_URL + '/auth';
 
 class AuthService {
   register (user) {
@@ -45,7 +44,7 @@ class AuthService {
   }
 
   sendVerifyPin(email, pin){
-    return axios.post('https://stugear.website/api/products/verify-email', {
+    return axios.post(BASE_API_URL + '/products/verify-email', {
       email: email,
       verify_code: pin,
     })

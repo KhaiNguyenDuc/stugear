@@ -33,6 +33,7 @@ import AdminReport from '../pages/Admin/AdminReport.js'
 import AdminWithdraw from '../pages/Admin/AdminWithdraw.js'
 import AdminOrder from '../pages/Admin/AdminOrders.js'
 import AdminCategory from '../pages/Admin/AdminCategory.js'
+import ThreadPage from '../pages/Main/Thread/index.js'
 function useRouteElements () {
 
   const AdminRoute = ({ children }) => {
@@ -230,7 +231,18 @@ function useRouteElements () {
           element:  <PaymentSucess/>
         }
       ]
-    }
+    },
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        {
+          path: '/thread',
+          element: <ThreadPage/>
+        },
+        // Other routes...
+      ]
+    },
   ])
   return routeElements
 }

@@ -4,6 +4,7 @@ import UserService from "../../../service/UserService";
 import useAuth from "../../../hooks/useAuth";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-date-picker";
+import {BASE_API_URL} from "../../../utils/Constant.js"
 const General = () => {
   const [userInfo, setUserInfo] = useState({gender: 0});
   const { user, setUser } = useAuth();
@@ -31,7 +32,7 @@ const General = () => {
     setUser({
       ...user,
       user_image:
-        `https://stugear.website/api/users/${user?.user_id}/images/` +
+      BASE_API_URL + `/users/${user?.user_id}/images/` +
         `?timestamp=${new Date().getTime()}`,
     });
   };

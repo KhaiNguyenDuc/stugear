@@ -5,7 +5,7 @@ import Modal from "react-modal";
 import Loading from "../../Loading/index"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AskService from "../../../service/AskService";
-
+import {BASE_API_URL} from "../../../utils/Constant.js"
 const UserModal = ({ userId }) => {
   const [user, setUser] = useState([]);
   const [reportContent, setReportContent] = useState("");
@@ -91,7 +91,7 @@ const UserModal = ({ userId }) => {
     <>
       <span onClick={openModal}>
         <img
-          src={`https://stugear.website/api/users/${userId}/images`}
+          src={BASE_API_URL + `/users/${userId}/images`}
           className="hover-effect pic rounded-circle"
           style={{ width: "40px", height: "40px" }}
           alt=""
@@ -200,7 +200,7 @@ const UserModal = ({ userId }) => {
                     <div className="d-flex text-black">
                       <div className="flex-shrink-0">
                         <img
-                          src={`https://stugear.website/api/users/${user?.id}/images`}
+                          src={BASE_API_URL + `/users/${user?.id}/images`}
                           alt=""
                           className="img-fluid"
                           style={{ width: 148, height: 150, borderRadius: 10 }}

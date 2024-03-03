@@ -1,6 +1,8 @@
 import axios from "axios";
 import { axiosPrivate } from "../api/axios";
-const ASK_URL = "https://stugear.website/api/asks";
+import {BASE_API_URL} from "../utils/Constant.js"
+
+const ASK_URL = BASE_API_URL +'/asks'
 
 class AskService {
   reportUser(denounced_id, description) {

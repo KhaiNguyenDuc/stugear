@@ -1,6 +1,8 @@
 import axios from "axios";
 import { axiosPrivate } from "../api/axios";
-const USER_URL = "https://stugear.website/api/users";
+import {BASE_API_URL} from "../utils/Constant.js"
+
+const USER_URL = BASE_API_URL + '/users';
 
 class UserService {
   getCurrentUserWishlist() {
@@ -13,7 +15,7 @@ class UserService {
   removeCurrentUserWishListByProductId(id) {
     console.log(id);
     return axiosPrivate
-      .post("https://stugear.website/api/wishlists/remove", {
+      .post(BASE_API_URL + "/wishlists/remove", {
         product_id: id,
       })
       .then((response) => response?.data?.data)
@@ -44,7 +46,7 @@ class UserService {
   }
 
   getCurrentUserProducts(currentPage) {
-    let url = `https://stugear.website/api/products/current`;
+    let url = BASE_API_URL + `/api/products/current`;
     if (currentPage !== undefined) {
       url += `?page=${currentPage}&limit=3`;
     }else{
@@ -62,7 +64,7 @@ class UserService {
   sendVerifyEmail(email) {
     return axiosPrivate
       .get(
-        `https://stugear.website/api/products/send-verify-email?email=${email}`
+        BASE_API_URL + `/products/send-verify-email?email=${email}`
       )
       .then((response) => response?.data)
       .catch((error) => error?.response);

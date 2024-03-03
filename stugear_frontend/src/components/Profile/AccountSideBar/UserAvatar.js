@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../Loading";
 import useAuth from "../../../hooks/useAuth";
 import UserService from "../../../service/UserService";
+import {BASE_API_URL} from "../../../utils/Constant.js"
 function UserAvatar({userInfo}) {
   const [isLoading, setLoading] = useState(false);
   let { user, setUser } = useAuth();
@@ -11,7 +12,7 @@ function UserAvatar({userInfo}) {
     setUser({
       ...user,
       user_image:
-        `https://stugear.website/api/users/${user?.user_id}/images/` +
+      BASE_API_URL + `/users/${user?.user_id}/images/` +
         `?timestamp=${new Date().getTime()}`,
     });
 

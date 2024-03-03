@@ -8,6 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import Loading from "../Loading";
 import UserService from "../../service/UserService";
 import useProduct from "../../hooks/useProduct";
+import {BASE_API_URL} from "../../utils/Constant.js"
 const LoginForm = () => {
   const { setUser } = useAuth();
   const { setProductCount } = useProduct();
@@ -62,11 +63,11 @@ const LoginForm = () => {
       await getUserInfo()
       localStorage.setItem(
         "user_image",
-        `https://stugear.website/api/users/${response?.user_id}/images`
+        BASE_API_URL + `/users/${response?.user_id}/images`
       );
       setUser({
         ...response,
-        user_image: `https://stugear.website/api/users/${response?.user_id}/images`,
+        user_image: BASE_API_URL + `/users/${response?.user_id}/images`,
       });
       setLoading(false);
     }

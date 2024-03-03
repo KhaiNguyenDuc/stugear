@@ -1,6 +1,8 @@
 import axios from "axios";
 import { axiosPrivate } from "../api/axios";
-const ORDER_URL = "https://stugear.website/api/orders";
+import {BASE_API_URL} from "../utils/Constant.js"
+
+const ORDER_URL = BASE_API_URL + '/orders';
 
 class OrderService {
 

@@ -8,7 +8,7 @@ import { useState } from "react";
 import Loading from "../Loading/index"
 import UserService from "../../service/UserService";
 import useProduct from "../../hooks/useProduct";
-
+import {BASE_API_URL} from "../../utils/Constant.js"
 const OauthSection = ({ text }) => {
   const {productCount, setProductCount} = useProduct()
   const navigate = useNavigate();
@@ -86,11 +86,11 @@ const OauthSection = ({ text }) => {
     setUser(response);
     localStorage.setItem(
       "user_image",
-      `https://stugear.website/api/users/${response?.user_id}/images`
+      BASE_API_URL + `/users/${response?.user_id}/images`
     );
     setUser({
       ...response,
-      user_image: `https://stugear.website/api/users/${response?.user_id}/images`,
+      user_image: BASE_API_URL + `/users/${response?.user_id}/images`,
     });
 
     await getUserInfo()

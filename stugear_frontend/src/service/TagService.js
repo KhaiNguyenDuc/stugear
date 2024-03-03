@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { axiosPrivate } from '../api/axios'
+import {BASE_API_URL} from "../utils/Constant.js"
+const TAG_URL = BASE_API_URL + '/tags'
 
-const TAG_URL = 'https://stugear.website/api/tags'
 class TagService {
     getAllTags(){
         return axios

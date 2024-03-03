@@ -1,6 +1,7 @@
 import axios from "axios";
+import {BASE_API_URL} from "../utils/Constant.js"
 
-const AUTH_URL = 'https://stugear.website/api/auth';
+const AUTH_URL = BASE_API_URL + 'auth';
 
 const useRefreshToken = () => {
     return (
