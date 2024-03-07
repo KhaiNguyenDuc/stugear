@@ -43,7 +43,7 @@ const ThreadDetail = () => {
     owner: {
       id: 1,
       name: "Khải",
-      image: "http://localhost:8000/api/users/1/images",
+      image: "https://stugear.website/api/users/1/images",
     },
     last_updated: "3 Tháng 7,2024",
     tags: [
@@ -69,7 +69,7 @@ const ThreadDetail = () => {
         owner: {
           id: 1,
           name: "Kiệt",
-          image: "http://localhost:8000/api/users/1/images",
+          image: "https://stugear.website/api/users/1/images",
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -83,7 +83,7 @@ const ThreadDetail = () => {
         owner: {
           id: 1,
           name: "Kiệt",
-          image: "http://localhost:8000/api/users/1/images",
+          image: "https://stugear.website/api/users/1/images",
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -97,7 +97,7 @@ const ThreadDetail = () => {
         owner: {
           id: 1,
           name: "Kiệt",
-          image: "http://localhost:8000/api/users/1/images",
+          image: "https://stugear.website/api/users/1/images",
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -111,7 +111,7 @@ const ThreadDetail = () => {
         owner: {
           id: 1,
           name: "Kiệt",
-          image: "http://localhost:8000/api/users/1/images",
+          image: "https://stugear.website/api/users/1/images",
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -124,7 +124,7 @@ const ThreadDetail = () => {
           owner: {
             id: 2,
             name: "Khải",
-            image: "http://localhost:8000/api/users/1/images",
+            image: "https://stugear.website/api/users/1/images",
           },
           content:
             "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
@@ -138,7 +138,7 @@ const ThreadDetail = () => {
       owner: {
         id: 1,
         name: "khải",
-        image: "http://localhost:8000/api/users/1/images",
+        image: "https://stugear.website/api/users/1/images",
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -163,7 +163,7 @@ const ThreadDetail = () => {
       owner: {
         id: 1,
         name: "khải",
-        image: "http://localhost:8000/api/users/1/images",
+        image: "https://stugear.website/api/users/1/images",
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -188,7 +188,7 @@ const ThreadDetail = () => {
       owner: {
         id: 1,
         name: "khải",
-        image: "http://localhost:8000/api/users/1/images",
+        image: "https://stugear.website/api/users/1/images",
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -213,7 +213,7 @@ const ThreadDetail = () => {
       owner: {
         id: 1,
         name: "khải",
-        image: "http://localhost:8000/api/users/1/images",
+        image: "https://stugear.website/api/users/1/images",
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",

@@ -28,25 +28,25 @@ const ThreadStats = () => {
       id: 1,
       name: "khải",
       point: 200,
-      user_image : "http://localhost:8000/api/users/1/images"
+      user_image: "https://stugear.website/api/users/1/images"
     },
     {
       id: 2,
       name: "Khang",
       point: 167,
-      user_image : "http://localhost:8000/api/users/1/images"
+      user_image: "https://stugear.website/api/users/1/images"
     },
     {
       id: 3,
       name: "Kiệt",
       point: 142,
-      user_image : "http://localhost:8000/api/users/1/images"
+      user_image: "https://stugear.website/api/users/1/images"
     },
     {
       id: 4,
       name: "Thịnh",
       point: 91,
-      user_image : "http://localhost:8000/api/users/1/images"
+      user_image: "https://stugear.website/api/users/1/images"
     }
   ]
   const [selectedTag, setSelectedTag] = useState([]);

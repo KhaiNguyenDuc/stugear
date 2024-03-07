@@ -46,7 +46,7 @@ const ThreadPage = () => {
       id: 1,
       title: "How Did You Hear About This Position?",
       description:
-        "Wouldn’t it be great if you knew exactly what questions a hiring manager would be asking you in",
+        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
       rating: "5",
       last_reply: "4 min ago",
       tags: [
@@ -71,14 +71,14 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "https://stugear.website/api/users/1/images",
       },
     },
     {
       id: 2,
       title: "How Did You Hear About This Position?",
       description:
-        "Wouldn’t it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn’t it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn’t it be great if you knew exactly what questions a hiring manager would be asking you in",
+        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
       rating: "5",
       last_reply: "4 min ago",
       tags: [
@@ -93,14 +93,14 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "https://stugear.website/api/users/1/images",
       },
     },
     {
       id: 3,
       title: "How Did You Hear About This Position?",
       description:
-        "Wouldn’t it be great if you knew exactly what questions a hiring manager would be asking you in",
+        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
       rating: "5",
       last_reply: "4 min ago",
       tags: [
@@ -115,7 +115,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "https://stugear.website/api/users/1/images",
       },
     },
   ];
