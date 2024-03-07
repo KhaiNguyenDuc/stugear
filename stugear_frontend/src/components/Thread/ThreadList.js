@@ -13,9 +13,9 @@ const ThreadList = ({ threads }) => {
                 <div className="col-md-1">
                   <div className="left-user left-user-repeat">
                     <a href="#">
-                      <img src={thread?.user?.image_url} alt="image" />
+                      <img src={thread?.user?.image_url} alt="image" className="d-block mb-3" />
                     </a>
-                    <span className="d-block mt-2 ps-2">
+                    <span className="designetion ms-2">
                      {thread?.user?.name}
                     </span>
                   </div>

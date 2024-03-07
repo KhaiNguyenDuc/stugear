@@ -33,7 +33,9 @@ import AdminReport from '../pages/Admin/AdminReport.js'
 import AdminWithdraw from '../pages/Admin/AdminWithdraw.js'
 import AdminOrder from '../pages/Admin/AdminOrders.js'
 import AdminCategory from '../pages/Admin/AdminCategory.js'
-import ThreadPage from '../pages/Main/Thread/index.js'
+import ThreadPage from '../pages/Main/ThreadPage/index.js'
+import ThreadLayout from '../layouts/ThreadLayout/ThreadLayout.js'
+import ThreadDetailPage from '../pages/Main/ThreadDetailPage/index.js'
 function useRouteElements () {
 
   const AdminRoute = ({ children }) => {
@@ -234,15 +236,24 @@ function useRouteElements () {
     },
     {
       path: '/',
-      element: <MainLayout />,
+      element: <ThreadLayout/>,
       children: [
         {
           path: '/thread',
           element: <ThreadPage/>
-        },
-        // Other routes...
+        }
       ]
     },
+    {
+      path: '/',
+      element: <MainLayout/>,
+      children: [
+        {
+          path: '/thread/:slug',
+          element: <ThreadDetailPage/>
+        }
+      ]
+    }
   ])
   return routeElements
 }
