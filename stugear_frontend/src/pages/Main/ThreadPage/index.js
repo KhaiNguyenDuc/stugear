@@ -71,7 +71,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "http://stugear.website/api/users/1/images",
       },
     },
     {
@@ -93,7 +93,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "http://stugear.website/api/users/1/images",
       },
     },
     {
@@ -115,7 +115,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "http://localhost:8000/api/users/1/images",
+        image_url: "http://stugear.website/api/users/1/images",
       },
     },
   ];
