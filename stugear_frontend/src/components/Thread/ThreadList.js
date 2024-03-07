@@ -1,4 +1,5 @@
 import { faClock } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
@@ -24,7 +25,7 @@ const ThreadList = ({ threads }) => {
                   <div className="right-description mt-3">
                     <div id="que-hedder">
                       <h3>
-                        <a href="#">{thread?.title}</a>
+                        <Link to={"/thread/"+thread.id}>{thread?.title}</Link>
                       </h3>
                     </div>
                     <div className="ques-details">
@@ -48,8 +49,8 @@ const ThreadList = ({ threads }) => {
                     <hr />
 
                     <div className="ques-icon-info">
-                      <span style={{ color: "#DFAA63" }}>
-                        <FontAwesomeIcon icon={"star"} /> {thread?.rating}
+                      <span style={{ color: "#FF7361" }}>
+                        <FontAwesomeIcon icon={faThumbsUp} /> {thread?.rating}
                       </span>
 
                       <span>
