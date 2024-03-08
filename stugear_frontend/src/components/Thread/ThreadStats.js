@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import TagService from "../../service/TagService";
+import UserModal from "../Profile/UserModal/UserModal";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -23,30 +24,31 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   </div>
 );
 const ThreadStats = () => {
+  const threadStats = {
+    category_id: 1,
+    total_thread: 20,
+    total_reply: 1200
+  }
   const highestPoint = [
     {
       id: 1,
       name: "khải",
-      point: 200,
-      user_image: "https://stugear.website/api/users/1/images"
+      reputation: 200,
     },
     {
       id: 2,
       name: "Khang",
-      point: 167,
-      user_image: "https://stugear.website/api/users/1/images"
+      reputation: 167,
     },
     {
       id: 3,
       name: "Kiệt",
-      point: 142,
-      user_image: "https://stugear.website/api/users/1/images"
+      reputation: 142,
     },
     {
       id: 4,
       name: "Thịnh",
-      point: 91,
-      user_image: "https://stugear.website/api/users/1/images"
+      reputation: 91,
     }
   ]
   const [selectedTag, setSelectedTag] = useState([]);
@@ -69,10 +71,10 @@ const ThreadStats = () => {
         <div className="status-part">
           <h4>Tổng quan</h4>
           <span className="i d-block">
-            <FontAwesomeIcon icon={faQuestionCircle} /> Bài đăng(20)
+            <FontAwesomeIcon icon={faQuestionCircle} /> Bài đăng ({threadStats.total_thread})
           </span>
           <span className="i d-block">
-            <FontAwesomeIcon icon={faComment} /> Phản hồi(50)
+            <FontAwesomeIcon icon={faComment} /> Phản hồi ({threadStats.total_reply})
           </span>
         </div>
 
@@ -101,16 +103,20 @@ const ThreadStats = () => {
         </div>
            
                   <div className="highest-part">
-                  <h4>Người dùng sôi nổi</h4>  
+                  <h4>Người dùng uy tín</h4>  
                   {highestPoint.map(user => (
                     <>
                      <div className="pints-wrapper">
                     <div className="user-highest-point">
-                      <a href="#"><img src={user.user_image} className="user-highest-image" alt="Image" /></a>
-                    </div>
+                   
+                    <UserModal userId={user?.id}/>
+               
+                   
+              
+                      </div>
                     <span className="points-details">
                       <a href="#"><span className="designetion">{user.name}</span></a>
-                      <p>{user.point} điểm uy tín</p>
+                      <p>{user.reputation} điểm uy tín</p>
                     </span>
                   </div>
                   

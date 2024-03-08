@@ -8,7 +8,7 @@ import Header from '../../components/Header'
 import { useEffect, useState } from 'react'
 import Loading from '../../components/Loading'
 import TitleBox from '../../components/TitleBox/TitleBox'
-const HomeLayout = ({title, sub_title}) => {
+const HomeLayout = ({title, sub_title, titleUrl}) => {
   
   const [categories, setCategories] = useState([])
   const [isLoading, setLoading] = useState(true)
@@ -31,7 +31,7 @@ const HomeLayout = ({title, sub_title}) => {
     <>
       
       <Header sticky={false}/>  
-      <TitleBox title={title} sub_title={sub_title}/>
+      <TitleBox title={title} sub_title={sub_title} titleUrl={titleUrl}/>
       <Container>
 
 

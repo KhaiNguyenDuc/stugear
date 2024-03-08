@@ -1,0 +1,158 @@
+/*-------  3.18 Create Topic                    --------*/
+.tt-btn-create-topic {
+    display: inline-block;
+    position: fixed;
+    z-index: 23;
+    right: 15px;
+}
+
+@media (max-width: 1282px) {
+    .tt-btn-create-topic.column-open {
+        z-index: 13;
+    }
+}
+
+.tt-btn-create-topic .tt-icon {
+    -webkit-transition: fill 0.2s linear;
+    transition: fill 0.2s linear;
+    fill: #ffffff;
+}
+
+.tt-btn-create-topic .tt-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.tt-btn-create-topic .tt-icon:hover {
+    fill: #182730;
+}
+
+@media (min-width: 1283px) {
+    .tt-btn-create-topic {
+        top: 14px;
+    }
+}
+
+@media (max-width: 1282px) {
+    .tt-btn-create-topic {
+        bottom: 20px;
+    }
+}
+
+.tt-btn-create-topic.column-open {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.5);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.form-default {
+    position: relative;
+}
+
+.form-default .form-group {
+    margin-bottom: 13px;
+}
+
+.form-default .form-group label:not(.error) {
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 600;
+    color: #182730;
+    padding-bottom: 14px;
+    margin-bottom: 0;
+    letter-spacing: 0.01em;
+}
+
+.form-default .form-control {
+    font-family: "Krub", sans-serif;
+    background: #e2e7ea;
+    color: #666f74;
+    font-size: 16px;
+    line-height: 25px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline: none;
+    width: 100%;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    border-radius: 3px;
+    border: 1px solid #e2e7ea;
+    -webkit-transition: border-color 0.2s linear;
+    transition: border-color 0.2s linear;
+}
+
+.form-default .tt-note {
+    color: #666f74;
+    font-size: 14px;
+    margin-top: 5px;
+    letter-spacing: 0.01em;
+}
+
+.form-default .form-control:not(textarea) {
+    padding: 7px 12px 10px 13px;
+    height: 39px;
+}
+
+.form-default input.form-control,
+.form-default textarea.form-control {
+    -webkit-appearance: none;
+}
+
+.form-default textarea.form-control {
+    padding: 20px 30px 23px 28px;
+}
+
+.form-default select.form-control {
+    padding: 7px 12px 10px 10px;
+    cursor: pointer;
+}
+
+.form-default .form-control.error {
+    border-color: red;
+}
+
+.form-default .form-control:focus {
+    border-color: #2172cd;
+}
+
+.form-default .pt-required {
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: 4px;
+    color: #777777;
+    padding-left: 5px;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.form-default .tt-value-wrapper {
+    position: relative;
+}
+
+.form-default .tt-value-wrapper .tt-value-input {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #666f74;
+    font-size: 14px;
+    line-height: 18px;
+    pointer-events: none;
+}
+
+.form-default .form-control.pt-customInputSearch {
+    padding-left: 48px;
+}
+
+.form-default .pt-customInputIcon {
+    position: absolute;
+    top: 5px;
+    left: 15px;
+}
+
+.form-default .pt-customInputIcon svg {
+    width: 18px;
+    height: 18px;
+    fill: #666f74;
+}
