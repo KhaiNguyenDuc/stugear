@@ -1,24 +1,38 @@
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsUp, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faMedal, faThumbsUp, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-
+import UserModal from "../Profile/UserModal/UserModal";
+import CustomPagination from "../Pagination/Pagination";
+import { useState } from "react";
 const ThreadList = ({ threads }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState()
+  const nextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
   return (
     <>
       {threads.map((thread) => (
         <>
-          <section id="content">
+          <section id="thread-content">
             <div className="question-type">
               <div className="row">
                 <div className="col-md-1">
                   <div className="left-user left-user-repeat">
-                    <a href="#">
-                      <img src={thread?.user?.image_url} alt="image" className="d-block mb-3" />
-                    </a>
-                    <span className="designetion ms-2">
+                    <div className="text-center">
+                    <UserModal userId={thread?.user?.id}/>
+                    </div>
+                    <span className="d-block text-center mt-2">
+                       <FontAwesomeIcon icon={faMedal} style={{color: '#DD9933'}}/>{thread?.user?.reputation}</span>
+                    <span className="designetion text-center d-block mt-1">
                      {thread?.user?.name}
                     </span>
+                    
                   </div>
                 </div>
                 <div className="col-md-9">
@@ -87,35 +101,15 @@ const ThreadList = ({ threads }) => {
           </section>
         </>
       ))}
-      <nav aria-label="Page navigation">
-        <ul className="pagination">
-          <li>
-            <a href="#" aria-label="Previous">
-              <span aria-hidden="true">«</span>
-            </a>
-          </li>
-          <li>
-            <a href="#">1</a>
-          </li>
-          <li>
-            <a href="#">2</a>
-          </li>
-          <li>
-            <a href="#">3</a>
-          </li>
-          <li>
-            <a href="#">4</a>
-          </li>
-          <li>
-            <a href="#">5</a>
-          </li>
-          <li>
-            <a href="#" aria-label="Next">
-              <span aria-hidden="true">»</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+       <div  className="mt-4 ">
+        <CustomPagination 
+            currentPage={currentPage}
+            totalPage={totalPage}
+            prevPage={prevPage}
+            nextPage={nextPage}
+            setCurrentPage={setCurrentPage}
+          />
+      </div>
     </>
   );
 };

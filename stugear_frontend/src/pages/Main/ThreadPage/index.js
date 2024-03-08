@@ -6,6 +6,7 @@ import { faInbox } from "@fortawesome/free-solid-svg-icons";
 import { MultiSelect } from "react-multi-select-component";
 import { useState } from "react";
 import ThreadStats from "../../../components/Thread/ThreadStats";
+import { Link } from "react-router-dom";
 const ThreadPage = () => {
   const [cateSelected, setCateSelected] = useState([]);
   const categories = [
@@ -71,7 +72,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
     },
     {
@@ -93,7 +94,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
     },
     {
@@ -115,7 +116,7 @@ const ThreadPage = () => {
       user: {
         id: "1",
         name: "khải",
-        image_url: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
     },
   ];
@@ -123,7 +124,9 @@ const ThreadPage = () => {
     <>
       <div id="main">
         <div className="d-flex ">
-          <button className="btn create-thread-btn">+ Đăng bài</button>
+          <Link to="/thread/create" className="btn create-thread-btn">
+            + Đăng bài
+          </Link>
 
           <div className="w-25 ms-1">
             <MultiSelect

@@ -5,6 +5,7 @@ import {
   faClock,
   faEye,
   faIcons,
+  faMedal,
   faReply,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -19,9 +20,10 @@ import "react-quill/dist/quill.snow.css";
 import SuggestThread from "./SuggestThread";
 import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
+import UserModal from "../Profile/UserModal/UserModal";
 const ThreadDetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState()
+  const [totalPage, setTotalPage] = useState();
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
@@ -40,10 +42,10 @@ const ThreadDetail = () => {
     total_favorite: 312,
     total_view: 2000,
     reply: 231,
-    owner: {
+    user: {
       id: 1,
       name: "Khải",
-      image: "https://stugear.website/api/users/1/images",
+      reputation: 10,
     },
     last_updated: "3 Tháng 7,2024",
     tags: [
@@ -66,10 +68,10 @@ const ThreadDetail = () => {
     replies: [
       {
         id: 1,
-        owner: {
+        user: {
           id: 1,
           name: "Kiệt",
-          image: "https://stugear.website/api/users/1/images",
+          reputation: 10,
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -80,10 +82,10 @@ const ThreadDetail = () => {
       },
       {
         id: 2,
-        owner: {
+        user: {
           id: 1,
           name: "Kiệt",
-          image: "https://stugear.website/api/users/1/images",
+          reputation: 10,
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -94,10 +96,10 @@ const ThreadDetail = () => {
       },
       {
         id: 3,
-        owner: {
+        user: {
           id: 1,
           name: "Kiệt",
-          image: "https://stugear.website/api/users/1/images",
+          reputation: 10,
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -108,10 +110,10 @@ const ThreadDetail = () => {
       },
       {
         id: 4,
-        owner: {
+        user: {
           id: 1,
           name: "Kiệt",
-          image: "https://stugear.website/api/users/1/images",
+          reputation: 10,
         },
         create_date: "7 tháng 3, 2024",
         like: 120,
@@ -121,10 +123,10 @@ const ThreadDetail = () => {
           "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
         reply_on: {
           id: 2, // comment that this reply,
-          owner: {
+          user: {
             id: 2,
             name: "Khải",
-            image: "https://stugear.website/api/users/1/images",
+            reputation: 10,
           },
           content:
             "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
@@ -135,10 +137,10 @@ const ThreadDetail = () => {
   const suggestThread = [
     {
       id: 1,
-      owner: {
+      user: {
         id: 1,
         name: "khải",
-        image: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -155,15 +157,15 @@ const ThreadDetail = () => {
           id: 2,
           name: "demo",
           color: "bg-primary",
-        }
+        },
       ],
     },
     {
       id: 2,
-      owner: {
+      user: {
         id: 1,
         name: "khải",
-        image: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -180,15 +182,15 @@ const ThreadDetail = () => {
           id: 2,
           name: "demo",
           color: "bg-primary",
-        }
+        },
       ],
     },
     {
       id: 3,
-      owner: {
+      user: {
         id: 1,
         name: "khải",
-        image: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -205,15 +207,15 @@ const ThreadDetail = () => {
           id: 2,
           name: "demo",
           color: "bg-primary",
-        }
+        },
       ],
     },
     {
       id: 4,
-      owner: {
+      user: {
         id: 1,
         name: "khải",
-        image: "https://stugear.website/api/users/1/images",
+        reputation: 10,
       },
       name: "Does Envato act against the authors of Envato markets?",
       create_date: "06/03/2024",
@@ -230,7 +232,7 @@ const ThreadDetail = () => {
           id: 2,
           name: "demo",
           color: "bg-primary",
-        }
+        },
       ],
     },
   ];
@@ -245,14 +247,18 @@ const ThreadDetail = () => {
             <div className="tt-item-header">
               <div className="tt-item-info info-top">
                 <div className="tt-avatar-icon mt-2">
-                  <img
-                    alt=""
-                    src={thread.owner.image}
-                    className="tt-icon img-sm"
-                  />
+                  <UserModal userId={thread?.user?.id} />
                 </div>
+
                 <div className="tt-avatar-title">
-                  <span>{thread.owner.name}</span>
+                  <span>{thread.user.name}</span>
+                  <span className="text-center ms-2">
+                    <FontAwesomeIcon
+                      icon={faMedal}
+                      style={{ color: "#DD9933" }}
+                    />{" "}
+                    {thread?.user?.reputation}
+                  </span>
                 </div>
 
                 <span className="tt-info-time">
@@ -381,14 +387,17 @@ const ThreadDetail = () => {
                 <div className="tt-item-header pt-noborder">
                   <div className="tt-item-info info-top">
                     <div className="tt-avatar-icon">
-                      <img
-                        alt=""
-                        src={reply.owner.image}
-                        className="tt-icon img-sm"
-                      />
+                      <UserModal userId={reply?.user?.id} />
                     </div>
                     <div className="tt-avatar-title">
-                      <a href="#">{reply.owner.name}</a>
+                      <a href="#">{reply.user.name}</a>
+                      <span className="text-center">
+                        <FontAwesomeIcon
+                          icon={faMedal}
+                          style={{ color: "#DD9933" }}
+                        />{" "}
+                        {thread?.user?.reputation}
+                      </span>
                     </div>
                     <a href="#" className="tt-info-time">
                       <FontAwesomeIcon icon={faClock} /> {reply.create_date}
@@ -403,14 +412,17 @@ const ThreadDetail = () => {
                         <div className="topic-inner">
                           <div className="topic-inner-title">
                             <div className="topic-inner-avatar">
-                              <img
-                                alt=""
-                                src={reply.reply_on.owner.image}
-                                className="tt-icon img-sm"
-                              />
+                              <UserModal userId={reply?.reply_on?.user?.id} />
                             </div>
                             <div className="topic-inner-title">
-                              <a href="#">{reply.reply_on.owner.name}</a>
+                              <a href="#">{reply.reply_on.user.name}</a>
+                              <span className="text-center ms-2">
+                                <FontAwesomeIcon
+                                  icon={faMedal}
+                                  style={{ color: "#DD9933" }}
+                                />{" "}
+                                {reply?.reply_on?.user?.reputation}
+                              </span>
                             </div>
                           </div>
                           <div className="topic-inner-description">
@@ -455,71 +467,72 @@ const ThreadDetail = () => {
           </>
         ))}
 
-
-<div  className="mt-4" >
-        <CustomPagination 
+        <div className="mt-4">
+          <CustomPagination
             currentPage={currentPage}
             totalPage={totalPage}
             prevPage={prevPage}
             nextPage={nextPage}
             setCurrentPage={setCurrentPage}
           />
-      </div>
-
-          {localStorage.getItem("user_id") ? (
-            <>
-                                <div className="tt-wrapper-inner my-5">
-          <h4 className="text-center">Phản hồi tại đây</h4>
         </div>
 
-        <div className="tt-wrapper-inner">
-          <div className="pt-editor form-default">
-            <ReactQuill
-              theme="snow"
-              style={{ backgroundColor: "white" }}
-              placeholder="Nhập nội dung tại đây"
-              row
-              // value={htmlContent}
-              // onChange={(html) => {handleContent(); setHtmlContent(html);}}
-              // ref={(el) => { reactQuillRef = el }}
-            />
+        {localStorage.getItem("user_id") ? (
+          <>
+            <div className="tt-wrapper-inner my-5">
+              <h4 className="text-center">Phản hồi tại đây</h4>
+            </div>
 
-            <div className="pt-row">
-              <div className="col-auto">
-                <a href="#" className="btn btn-secondary btn-width-lg mt-3">
-                  Phản hồi
-                </a>
+            <div className="tt-wrapper-inner">
+              <div className="pt-editor form-default">
+                <ReactQuill
+                  theme="snow"
+                  style={{ backgroundColor: "white" }}
+                  placeholder="Nhập nội dung tại đây"
+                  row
+                  // value={htmlContent}
+                  // onChange={(html) => {handleContent(); setHtmlContent(html);}}
+                  // ref={(el) => { reactQuillRef = el }}
+                />
+
+                <div className="pt-row">
+                  <div className="col-auto">
+                    <a href="#" className="btn btn-secondary btn-width-lg mt-3">
+                      Phản hồi
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-
-
-            </>
-          ): (
-            <>
-<div className="tt-topic-list">
-  <div className="tt-item tt-item-popup">
-    <div className="tt-col-avatar">
-     <FontAwesomeIcon icon={faUser}/>
-    </div>
-    <div className="tt-col-message">
-      Có vẻ bạn chưa có tài khoảng, hãy đăng ký miễn phí và tham gia vào cuộc thảo luận.
-    </div>
-    <div className="tt-col-btn">
-      <button type="button" className="btn">Đăng ký</button>
-      <button type="button" className="btn">Đăng nhập</button>
-      <button type="button" className="btn-icon">
-        <svg className="tt-icon">
-          <use xlinkHref="#icon-cancel" />
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-            </>
-          )}
-
+          </>
+        ) : (
+          <>
+            <div className="tt-topic-list">
+              <div className="tt-item tt-item-popup">
+                <div className="tt-col-avatar">
+                  <FontAwesomeIcon icon={faUser} />
+                </div>
+                <div className="tt-col-message">
+                  Có vẻ bạn chưa có tài khoảng, hãy đăng ký miễn phí và tham gia
+                  vào cuộc thảo luận.
+                </div>
+                <div className="tt-col-btn">
+                  <button type="button" className="btn">
+                    Đăng ký
+                  </button>
+                  <button type="button" className="btn">
+                    Đăng nhập
+                  </button>
+                  <button type="button" className="btn-icon">
+                    <svg className="tt-icon">
+                      <use xlinkHref="#icon-cancel" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         <SuggestThread threads={suggestThread} />
       </div>

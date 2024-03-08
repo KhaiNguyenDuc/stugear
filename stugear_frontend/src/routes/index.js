@@ -36,6 +36,8 @@ import AdminCategory from '../pages/Admin/AdminCategory.js'
 import ThreadPage from '../pages/Main/ThreadPage/index.js'
 import ThreadLayout from '../layouts/ThreadLayout/ThreadLayout.js'
 import ThreadDetailPage from '../pages/Main/ThreadDetailPage/index.js'
+import CreateThread from '../components/Thread/CreateThread.js'
+import ThreadCreatePage from '../pages/Main/ThreadCreatePage/index.js'
 function useRouteElements () {
 
   const AdminRoute = ({ children }) => {
@@ -73,7 +75,7 @@ function useRouteElements () {
     },
     {
       path: '',
-      element: <HomeLayout title={"Trang chủ"} sub_title={"Sản phẩm"}/>,
+      element: <HomeLayout title={'Trang chủ'} sub_title={"Sản phẩm"} titleUrl={"/home-page/category/1"}/>,
       children: [
         {
           path: '/home-page/product-detail/:slug',
@@ -246,11 +248,25 @@ function useRouteElements () {
     },
     {
       path: '/',
-      element: <MainLayout/>,
+      element: <MainLayout
+       hasNavigation={true} 
+       title={'Diễn đàn'} sub_title={"Bài đăng"} titleUrl={"/thread"}/>,
       children: [
         {
           path: '/thread/:slug',
           element: <ThreadDetailPage/>
+        }
+      ]
+    },
+    {
+      path: '/',
+      element: <MainLayout
+       hasNavigation={true} 
+       title={'Diễn đàn'} sub_title={"Tạo bài đăng"} titleUrl={"/thread"}/>,
+      children: [
+        {
+          path: '/thread/create',
+          element: <ThreadCreatePage/>
         }
       ]
     }
