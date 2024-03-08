@@ -79,7 +79,7 @@ const Comment = ({
       <div className="panel-body media-block d-flex">
         
         {isSubComment !== true && (
-          <Vote voteNum={comment.vote} commentId={comment?.id}/>
+          <Vote voteNum={comment.vote} commentId={comment?.id} isUpvote={comment?.is_upvote} isDownvote={comment?.is_downvote}/>
         )}
         
         <div className="mt-4">

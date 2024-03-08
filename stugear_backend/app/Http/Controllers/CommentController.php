@@ -5,29 +5,44 @@ namespace App\Http\Controllers;
 use App\Repositories\Comment\CommentRepositoryInterface;
 use App\Repositories\Rating\RatingRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Vote\VoteRepositoryInterface;
+use App\Models\Vote;
 use Carbon\Carbon;
 use App\Util\AppConstant;
 use App\Util\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
     protected $commentRepository;
     protected $userRepository;
     protected $ratingRepository;
+    protected $voteRepository;
 
-    public function __construct(CommentRepositoryInterface $commentRepository,
+    public function __construct(
+        CommentRepositoryInterface $commentRepository,
         UserRepositoryInterface $userRepository,
-        RatingRepositoryInterface $ratingRepository)
+        RatingRepositoryInterface $ratingRepository,
+        VoteRepositoryInterface $voteRepository)
     {
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
         $this->ratingRepository = $ratingRepository;
+        $this->voteRepository = $voteRepository;
     }
 
     public function getCommentByProductId(Request $request, $productId)
     {
+        $token = $request->header();
+        if($token['authorization'][0] != "Bearer null"){
+            $bareToken = substr($token['authorization'][0], 7);
+            $userId = AuthService::getUserId($bareToken);
+        } else {
+            $userId = null;
+        }
+        
         $limit = $request->limit ?? 5;
         Carbon::setLocale('vi');
         $comments = $this->commentRepository->getCommentWithParentIdZeroByProductId($productId, $limit);
@@ -51,6 +66,24 @@ class CommentController extends Controller
                 $memberData['reply_on'] = $user->name;
             } else {
                 $memberData['reply_on'] = '';
+            }
+            if ($userId) {
+                $vote = $this->voteRepository->getByUserAndComment($userId, $comment->id);
+                if ($vote != null) {
+                    if ($vote->is_upvote === 1) {
+                        $memberData['is_upvote'] = true;
+                        $memberData['is_downvote'] = false;
+                    } else {
+                        $memberData['is_upvote'] = false;
+                        $memberData['is_downvote'] = true;
+                    }
+                } else {
+                    $memberData['is_upvote'] = false;
+                    $memberData['is_downvote'] = false;
+                }
+            }else{
+                    $memberData['is_upvote'] = false;
+                    $memberData['is_downvote'] = false;
             }
             $memberData['reply_on_id'] = $comment->reply_on;
             $memberData['last_updated'] = Carbon::parse($comment->updated_at)->diffForHumans(Carbon::now());
@@ -230,19 +263,42 @@ class CommentController extends Controller
 
         $comment = $this->commentRepository->getById($id);
         $oldVote = $comment->vote;
+        $vote = $this->voteRepository->getByUserAndComment($request->user_id, $id);
+        if($vote != null){
+            if($vote->is_upvote == true && $request->vote == "+"){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'Vote không được',
+                ], 400);
+            }else if($vote->is_upvote == false && $request->vote == "-"){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'Vote không được',
+                ], 400);
+            }
+        }else{
+            $vote = new Vote();
+            $vote->id = null;
+            $vote->user_id = $request->user_id;
+            $vote->comment_id = intval($id);
+        }
 
         if ($request->vote == '+') {
             $comment->increment('vote');
+            $vote->is_upvote = true;
         }
 
         if ($request->vote == '-') {
             $comment->decrement('vote');
+            $vote->is_upvote = false;
         }
-
-        $comment = $this->commentRepository->getById($id);
-        $newVote = $comment->vote;
-
-        if ($oldVote != $newVote)
+        $result = $this->voteRepository->save([
+            'comment_id' => $vote->comment_id,
+            'user_id' => $vote->user_id,
+            'is_upvote' => $vote->is_upvote
+        ], $vote->id);
+        logger()->info('Vote retrieved:', [$vote]);
+        if ($result)
         {
             return response()->json([
                 'status'=> 'Thành công',

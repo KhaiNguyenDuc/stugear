@@ -61,11 +61,19 @@
     border-radius: 50%;
   }
 
-  .vote-icon  a:hover{
-    background-color: #F9DEC8;
-    border: black 1px solid;
-    border-radius: 70%;
-  }
   .vote-icon-up {
     font-size: 19px; 
   }
+  
+  .vote-icon  a:hover{
+    background-color: grey;
+    color: white;
+    border: black 1px solid;
+    border-radius: 70%;
+  }
+ 
+  .vote-icon-up.disabled {
+    opacity: 0.5; 
+    cursor: not-allowed; 
+  }
+  
