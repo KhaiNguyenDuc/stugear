@@ -19,7 +19,7 @@ class ProductService {
   }
 
   getCommentsByProductId(id, currentPage) {
-    return axios
+    return axiosPrivate
       .get(PRODUCT_URL + `/${id}/comments?page=${currentPage}&limit=3`)
       .then((response) => response?.data)
       .catch((error) => error?.response);
@@ -159,9 +159,10 @@ class ProductService {
     .then((response) => response?.data)
     .catch((error) => error?.response);
   }
-  voteCommentByCommentId(id, value){
+  voteCommentByCommentId(id, value, user_Id){
     axiosPrivate
     .patch(PRODUCT_URL + `/comments/${id}/vote`, {
+        user_id: user_Id,
         vote: value
     })
   }
