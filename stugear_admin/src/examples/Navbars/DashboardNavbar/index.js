@@ -171,7 +171,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 
                 </Link>
                    ) : (
-              <Link to="/authentication/sign-in">
+              <Link to="/admin/authentication/sign-in">
                   <IconButton sx={navbarIconButton} size="small">
                     <Icon
                       sx={({ palette: { dark, white } }) => ({
