@@ -19,3 +19,11 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+  admin:
+    build:
+      context: stugear_admin
+      dockerfile: Dockerfile
+    ports:
+      - "3006:3006"
+    depends_on:
+      - backend
