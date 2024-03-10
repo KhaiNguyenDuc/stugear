@@ -9,7 +9,7 @@ WORKDIR /app/stugear_frontend
 # the dependencies. This is a separate step so the dependencies 
 # will be cached unless changes to one of those two files 
 # are made.
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 
 # Copy the main application
