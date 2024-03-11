@@ -44,7 +44,7 @@ class ReplyController extends Controller
             $memberData['dislike'] = $reply->dislike;
             $memberData['content'] = $reply->content;
             if ($reply->parent_id != 0) {
-                $parentComment = $this->replyRepository->getById($reply->id);
+                $parentComment = $this->replyRepository->getById($reply->parent_id);
                 $memberData['reply_on'] = $parentComment;
             }
             

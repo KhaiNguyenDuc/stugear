@@ -36,7 +36,7 @@ const SuggestThread = ({ threads }) => {
           </div>
           <div className="tt-col-description">
             <h6 className="tt-title">
-              <a href="#">{thread.name}</a>
+              <a href="#">{thread?.name}</a>
             </h6>
           </div>
           <div className="tt-col-category">
@@ -57,12 +57,12 @@ const SuggestThread = ({ threads }) => {
               </ul>
             </div>
           </div>
-          <div className="tt-col-value hide-mobile">{thread.like}</div>
+          <div className="tt-col-value hide-mobile">{thread?.like}</div>
           <div className="tt-col-value tt-color-select hide-mobile">
-            {thread.reply}
+            {thread?.reply}
           </div>
-          <div className="tt-col-value hide-mobile">{thread.total_view}</div>
-          <div className="tt-col-value hide-mobile">{thread.create_date}</div>
+          <div className="tt-col-value hide-mobile">{thread?.total_view}</div>
+          <div className="tt-col-value hide-mobile">{thread?.create_date}</div>
         </div>
       ))}
     </div>

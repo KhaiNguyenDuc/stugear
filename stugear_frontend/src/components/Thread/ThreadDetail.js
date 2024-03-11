@@ -25,8 +25,6 @@ import { useState } from "react";
 const ThreadDetail = ({ thread, replies }) => {
  
   
-  
-  
 
   return (
     <>
@@ -43,7 +41,7 @@ const ThreadDetail = ({ thread, replies }) => {
                 </div>
 
                 <div className="tt-avatar-title">
-                  <span>{thread.user.name}</span>
+                  <span>{thread?.user?.name}</span>
                   <span className="text-center ms-2">
                     <FontAwesomeIcon
                       icon={faMedal}
@@ -54,11 +52,11 @@ const ThreadDetail = ({ thread, replies }) => {
                 </div>
 
                 <span className="tt-info-time">
-                  <FontAwesomeIcon icon={faClock} /> {thread.last_updated}
+                  <FontAwesomeIcon icon={faClock} /> {thread?.last_updated}
                 </span>
               </div>
               <h3 className="tt-item-title">
-                <span>{thread.title}</span>
+                <span>{thread?.title}</span>
               </h3>
               <div className="tt-item-tag">
                 <ul className="tt-list-badge">
@@ -81,20 +79,20 @@ const ThreadDetail = ({ thread, replies }) => {
               </div>
             </div>
             <div className="tt-item-description">
-              <p dangerouslySetInnerHTML={{ __html: thread.content }} />
+              <p dangerouslySetInnerHTML={{ __html: thread?.content }} />
             </div>
             <div className="tt-item-info info-bottom">
               <a href="#" className="tt-icon-btn">
                 <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                <span className="tt-text">{thread.like}</span>
+                <span className="tt-text">{thread?.like}</span>
               </a>
               <a href="#" className="tt-icon-btn">
                 <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                <span className="tt-text">{thread.dislike}</span>
+                <span className="tt-text">{thread?.dislike}</span>
               </a>
               <a href="#" className="tt-icon-btn">
                 <FontAwesomeIcon icon={faHeart} />{" "}
-                <span className="tt-text">{thread.favorite}</span>
+                <span className="tt-text">{thread?.favorite}</span>
               </a>
 
               <div className="col-separator" />
@@ -115,26 +113,26 @@ const ThreadDetail = ({ thread, replies }) => {
               <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faReply} />
-                  <span className="tt-text">{thread.reply}</span>
+                  <span className="tt-text">{thread?.reply}</span>
                 </a>
               </div>
               <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faEye} />
-                  <span className="tt-text">{thread.view}</span>
+                  <span className="tt-text">{thread?.view}</span>
                 </a>
               </div>
 
               <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faThumbsUp} />
-                  <span className="tt-text">{thread.total_like}</span>
+                  <span className="tt-text">{thread?.total_like}</span>
                 </a>
               </div>
               {/* <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faHeart} />
-                  <span className="tt-text">{thread.total_favorite}</span>
+                  <span className="tt-text">{thread?.total_favorite}</span>
                 </a>
               </div> */}
             </div>

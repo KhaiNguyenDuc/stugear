@@ -29,7 +29,7 @@ const ThreadList = ({ threads }) => {
                   <div className="right-description mt-3">
                     <div id="que-hedder">
                       <h3>
-                        <Link to={"/thread/"+thread.id}>{thread?.title}</Link>
+                        <Link to={"/thread/"+thread?.id}>{thread?.title}</Link>
                       </h3>
                     </div>
                     <div className="ques-details">
