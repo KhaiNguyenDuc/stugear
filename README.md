@@ -11,7 +11,7 @@ Welcome to Stugear. This application utilize the power of technology to help stu
    
 ## Information
 
-Deploy website: http://localhost:8000
+Deploy website: https://stugear.website
 The site using:
 
 - PHP: 8.1
