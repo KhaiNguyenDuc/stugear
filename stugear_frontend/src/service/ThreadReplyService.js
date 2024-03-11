@@ -10,7 +10,7 @@ class ThreadReplyService {
     console.log(currentPage)
     let url = THREAD_REPLY_URL + `/${id}/replies`;
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=1`;
+      url += `?page=${currentPage}&limit=4`;
     }else{
       url += `?page=1&limit=100`;
     }
