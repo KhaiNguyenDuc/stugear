@@ -1,5 +1,4 @@
 import MainLayout from '../layouts/MainLayout/index.js'
-import AdminLayout from '../layouts/AdminLayout/Admin.js'
 import Login from '../pages/Main/Login/index.js'
 import Register from '../pages/Main/Register/index.js'
 import ResetPassword from '../pages/Main/ResetPassword/index.js'
@@ -20,8 +19,6 @@ import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.js'
 import UploadProduct from '../pages/Main/UploadProduct/UploadProduct.js'
 import MyProduct from '../components/Profile/MyProduct/MyProduct.js'
 import Verify from '../pages/Main/Verify/Verify.js'
-import AdminUser from "../pages/AdminUser.js"
-import AdminProduct from "../pages/AdminProduct.js"
 import useAuth from '../hooks/useAuth.js'
 import MyWallet from '../components/Profile/MyWallet/MyWallet.js'
 import CheckoutPage from '../pages/Main/Checkout/index.js'
@@ -29,10 +26,6 @@ import MyOrder from '../components/Profile/MyOrder/MyOrder.js'
 import OrderPage from '../pages/Main/OrderPage/index.js'
 import PaymentSucess from '../pages/Main/PaymentSucess/PaymentSucess.js'
 import MySell from '../components/Profile/MySell/MySell.js'
-import AdminReport from '../pages/AdminReport.js'
-import AdminWithdraw from '../pages/AdminWithdraw.js'
-import AdminOrder from '../pages/AdminOrders.js'
-import AdminCategory from '../pages/AdminCategory.js'
 import ThreadPage from '../pages/Main/ThreadPage/index.js'
 import ThreadLayout from '../layouts/ThreadLayout/ThreadLayout.js'
 import ThreadDetailPage from '../pages/Main/ThreadDetailPage/index.js'
@@ -40,15 +33,15 @@ import CreateThread from '../components/Thread/CreateThread.js'
 import ThreadCreatePage from '../pages/Main/ThreadCreatePage/index.js'
 function useRouteElements () {
 
-  const AdminRoute = ({ children }) => {
-    const { user } = useAuth();
-    return user?.roles?.includes("ADMIN") ? children : <Navigate to="/landing-page" />;
-  };
+  // const AdminRoute = ({ children }) => {
+  //   const { user } = useAuth();
+  //   return user?.roles?.includes("ADMIN") ? children : <Navigate to="/landing-page" />;
+  // };
   
   const RejectRoute = ({ children }) => {
     const { user } = useAuth();
-     return user?.roles?.includes("ADMIN") ? <Navigate to="/admin" /> :
-     user?.roles?.includes("USER") ? <Navigate to="/landing-page" /> : children;
+    //  return user?.roles?.includes("ADMIN") ? <Navigate to="/admin" /> :
+    return user?.roles?.includes("USER") ? <Navigate to="/landing-page" /> : children;
   };
   
   const routeElements = useRoutes([
@@ -192,40 +185,40 @@ function useRouteElements () {
       ]
     },
   
-    {
-      path: '',
-      element: <AdminRoute><AdminLayout/></AdminRoute>,
-      children: [
-        {
-          path: '/',
-          element:  <AdminCategory/>
-        },
-        {
-          path: '/users',
-          element: <AdminUser/>
-        },
-        {
-          path: '/products',
-          element: <AdminProduct/>
-        },
-        {
-          path: '/reports',
-          element: <AdminReport/>
-        },
-        {
-          path: '/withdraws',
-          element: <AdminWithdraw/>
-        },
-        {
-          path: '/orders',
-          element: <AdminOrder/>
-        },
-        {
-          path: "/categories",
-          element:<AdminCategory/>
-        }
-      ]
-    },
+    // {
+    //   path: '',
+    //   element: <AdminRoute><AdminLayout/></AdminRoute>,
+    //   children: [
+    //     {
+    //       path: '/',
+    //       element:  <AdminCategory/>
+    //     },
+    //     {
+    //       path: '/users',
+    //       element: <AdminUser/>
+    //     },
+    //     {
+    //       path: '/products',
+    //       element: <AdminProduct/>
+    //     },
+    //     {
+    //       path: '/reports',
+    //       element: <AdminReport/>
+    //     },
+    //     {
+    //       path: '/withdraws',
+    //       element: <AdminWithdraw/>
+    //     },
+    //     {
+    //       path: '/orders',
+    //       element: <AdminOrder/>
+    //     },
+    //     {
+    //       path: "/categories",
+    //       element:<AdminCategory/>
+    //     }
+    //   ]
+    // },
     {
       path: '',
       element: <ProtectedRoute><MainLayout/></ProtectedRoute>,
