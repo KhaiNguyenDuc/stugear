@@ -66,6 +66,7 @@ class TagSeeder extends Seeder
                 DB::table('product_tags')->insert([
                     'product_id' => $productId,
                     'tag_id' => $tagId,
+                    'thread_id' => rand(1, 14),
                     'created_by' => $user,
                     'updated_by' => $user,
                     'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),

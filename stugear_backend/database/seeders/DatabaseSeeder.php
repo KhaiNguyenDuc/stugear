@@ -19,11 +19,13 @@ class DatabaseSeeder extends Seeder
             TransactionSeeder::class,
             ProductSeeder::class,
             ContactDetailSeeder::class,
-            TagSeeder::class,
             ImageSeeder::class,
             RatingSeeder::class,
             CommentSeeder::class,
-            OrderSeeder::class
+            OrderSeeder::class,
+            ThreadSeeder::class,
+            TagSeeder::class,
+            ReplySeeder::class,
         ]);
     }
 }

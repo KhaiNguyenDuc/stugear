@@ -14,7 +14,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
-
+use App\Http\Controllers\ThreadController;
+use App\Http\Controllers\ReplyController;
 // Route::controller(AuthController::class)->group(function () {
 //     Route::post('login', 'login')->middleware('auth_jwt');
 //     Route::post('register', 'register');
@@ -135,6 +136,14 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
     Route::get('/reports', 'getListReport');
 });
 
+Route::controller(ThreadController::class)->prefix('threads')->group(function (){
+    Route::get('/','index');
+    Route::get('/{id}', 'view');
+});
+
+Route::controller(ReplyController::class)->group(function (){
+    Route::get('/thread/{id}/replies', 'getReplyByThreadId');
+});
 
 
 

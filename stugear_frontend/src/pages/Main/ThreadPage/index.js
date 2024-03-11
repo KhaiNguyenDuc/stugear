@@ -4,10 +4,21 @@ import ThreadList from "../../../components/Thread/ThreadList";
 import { faInbox } from "@fortawesome/free-solid-svg-icons";
 
 import { MultiSelect } from "react-multi-select-component";
-import { useState } from "react";
-import ThreadStats from "../../../components/Thread/ThreadStats";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ThreadService from "../../../service/ThreadService";
+import CustomPagination from "../../../components/Pagination/Pagination";
+import ThreadReplyService from "../../../service/ThreadReplyService";
 const ThreadPage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState()
+  const nextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
   const [cateSelected, setCateSelected] = useState([]);
   const categories = [
     {
@@ -41,85 +52,17 @@ const ThreadPage = () => {
       name: "Nhiều lượt trả lời nhất",
     },
   ];
-
-  const threads = [
-    {
-      id: 1,
-      title: "How Did You Hear About This Position?",
-      description:
-        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
-      rating: "5",
-      last_reply: "4 min ago",
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-        {
-          id: 3,
-          name: "demo",
-          color: "bg-danger",
-        },
-      ],
-      total_reply: "10",
-      total_view: "1000",
-      user: {
-        id: "1",
-        name: "khải",
-        reputation: 10,
-      },
-    },
-    {
-      id: 2,
-      title: "How Did You Hear About This Position?",
-      description:
-        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in. Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
-      rating: "5",
-      last_reply: "4 min ago",
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "danger",
-        },
-      ],
-      total_reply: "10",
-      total_view: "1000",
-      user: {
-        id: "1",
-        name: "khải",
-        reputation: 10,
-      },
-    },
-    {
-      id: 3,
-      title: "How Did You Hear About This Position?",
-      description:
-        "Wouldn't it be great if you knew exactly what questions a hiring manager would be asking you in",
-      rating: "5",
-      last_reply: "4 min ago",
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "danger",
-        },
-      ],
-      total_reply: "10",
-      total_view: "1000",
-      user: {
-        id: "1",
-        name: "khải",
-        reputation: 10,
-      },
-    },
-  ];
+  const [threads, setThreads] = useState([]);
+  useEffect(() => {
+    const getThreads = async () => {
+      const response = await ThreadService.getAllThreads(currentPage);
+      if(response?.status !== 400){
+        setTotalPage(response?.total_page);
+        setThreads(response?.data);
+      }
+    }
+    getThreads()
+  }, [currentPage])
   return (
     <>
       <div id="main">
@@ -160,6 +103,15 @@ const ThreadPage = () => {
         </div>
 
         <ThreadList threads={threads} />
+      </div>
+      <div  className="mt-4 ">
+        <CustomPagination 
+            currentPage={currentPage}
+            totalPage={totalPage}
+            prevPage={prevPage}
+            nextPage={nextPage}
+            setCurrentPage={setCurrentPage}
+          />
       </div>
     </>
   );

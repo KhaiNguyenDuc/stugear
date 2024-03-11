@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('replies', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
-            $table->unsignedBigInteger('owner_id')->nullable();
-            $table->foreign('owner_id')->references('id')->on('users');
-            $table->unsignedBigInteger('parent_id');
-            $table->unsignedBigInteger('reply_on');
+            $table->binary('content')->nullable();
+            $table->longText('raw_content')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('parent_id')->default(0)->nullable();
+            $table->unsignedBigInteger('reply_on')->default(0)->nullable();
             $table->integer('like')->nullable();
             $table->integer('dislike')->nullable();
             $table->unsignedBigInteger('thread_id')->nullable();
@@ -28,7 +29,6 @@ return new class extends Migration
             $table->dateTime('updated_at')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
-            $table->timestamps();
         });
     }
 
