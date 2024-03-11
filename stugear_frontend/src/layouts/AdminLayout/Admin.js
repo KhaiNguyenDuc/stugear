@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 
 import Footer from '../../components/Footer/Footer'
 import "./Admin.css"
-import AdminSideBar from '../../pages/Admin/AdminSideBar'
+import AdminSideBar from '../../pages/AdminSideBar'
 const AdminLayout = () => {
   return (
         <>

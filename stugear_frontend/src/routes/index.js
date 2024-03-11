@@ -20,8 +20,8 @@ import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.js'
 import UploadProduct from '../pages/Main/UploadProduct/UploadProduct.js'
 import MyProduct from '../components/Profile/MyProduct/MyProduct.js'
 import Verify from '../pages/Main/Verify/Verify.js'
-import AdminUser from "../pages/Admin/AdminUser.js"
-import AdminProduct from "../pages/Admin/AdminProduct.js"
+import AdminUser from "../pages/AdminUser.js"
+import AdminProduct from "../pages/AdminProduct.js"
 import useAuth from '../hooks/useAuth.js'
 import MyWallet from '../components/Profile/MyWallet/MyWallet.js'
 import CheckoutPage from '../pages/Main/Checkout/index.js'
@@ -29,10 +29,10 @@ import MyOrder from '../components/Profile/MyOrder/MyOrder.js'
 import OrderPage from '../pages/Main/OrderPage/index.js'
 import PaymentSucess from '../pages/Main/PaymentSucess/PaymentSucess.js'
 import MySell from '../components/Profile/MySell/MySell.js'
-import AdminReport from '../pages/Admin/AdminReport.js'
-import AdminWithdraw from '../pages/Admin/AdminWithdraw.js'
-import AdminOrder from '../pages/Admin/AdminOrders.js'
-import AdminCategory from '../pages/Admin/AdminCategory.js'
+import AdminReport from '../pages/AdminReport.js'
+import AdminWithdraw from '../pages/AdminWithdraw.js'
+import AdminOrder from '../pages/AdminOrders.js'
+import AdminCategory from '../pages/AdminCategory.js'
 import ThreadPage from '../pages/Main/ThreadPage/index.js'
 import ThreadLayout from '../layouts/ThreadLayout/ThreadLayout.js'
 import ThreadDetailPage from '../pages/Main/ThreadDetailPage/index.js'
@@ -197,31 +197,31 @@ function useRouteElements () {
       element: <AdminRoute><AdminLayout/></AdminRoute>,
       children: [
         {
-          path: '/admin/',
+          path: '/',
           element:  <AdminCategory/>
         },
         {
-          path: '/admin/users',
+          path: '/users',
           element: <AdminUser/>
         },
         {
-          path: '/admin/products',
+          path: '/products',
           element: <AdminProduct/>
         },
         {
-          path: '/admin/reports',
+          path: '/reports',
           element: <AdminReport/>
         },
         {
-          path: '/admin/withdraws',
+          path: '/withdraws',
           element: <AdminWithdraw/>
         },
         {
-          path: '/admin/orders',
+          path: '/orders',
           element: <AdminOrder/>
         },
         {
-          path: "/admin/categories",
+          path: "/categories",
           element:<AdminCategory/>
         }
       ]
