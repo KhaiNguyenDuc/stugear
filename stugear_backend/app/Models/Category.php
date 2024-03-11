@@ -36,4 +36,8 @@ class Category extends Model
     public function products() {
         return $this->hasMany(Product::class);
     }
+
+    public function threads() {
+        return $this->hasMany(Thread::class);
+    }
 }

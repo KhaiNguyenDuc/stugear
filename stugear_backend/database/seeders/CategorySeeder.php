@@ -38,8 +38,33 @@ class CategorySeeder extends Seeder
                 'updated_by' => 1,
                 'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
-            ]
+            ],
+            [
+                'name' => 'Thảo luận',
+                'description' => 'Đây là danh mục để thảo luận về các chủ đề đa dạng.',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+                'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
+            ],
+            [
+                'name' => 'Hỏi đáp',
+                'description' => 'Đây là danh mục để hỏi đáp về các vấn đề liên quan.',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+                'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
+            ],
+            [
+                'name' => 'Chia sẻ',
+                'description' => 'Đây là danh mục để chia sẻ thông tin và kinh nghiệm với cộng đồng.',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+                'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
+            ],
         ];
+        
 
         foreach ($categories as $category) {
             DB::table('categories')->insert([

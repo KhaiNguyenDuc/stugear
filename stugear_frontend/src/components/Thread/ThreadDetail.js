@@ -18,224 +18,16 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import SuggestThread from "./SuggestThread";
-import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
 import UserModal from "../Profile/UserModal/UserModal";
-const ThreadDetail = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState();
-  const nextPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+const ThreadDetail = ({ thread, replies }) => {
+ 
+  
+  
+  
 
-  const prevPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-  const thread = {
-    title: "Web Hosting Packages for ThemeForest WordPress",
-    content:
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
-    like: 12,
-    dislike: 142,
-    favorite: 12,
-    total_like: 1200,
-    total_favorite: 312,
-    total_view: 2000,
-    reply: 231,
-    user: {
-      id: 1,
-      name: "Khải",
-      reputation: 10,
-    },
-    last_updated: "3 Tháng 7,2024",
-    tags: [
-      {
-        id: 1,
-        name: "demo",
-        color: "bg-danger",
-      },
-      {
-        id: 2,
-        name: "demo",
-        color: "bg-primary",
-      },
-      {
-        id: 3,
-        name: "demo",
-        color: "bg-danger",
-      },
-    ],
-    replies: [
-      {
-        id: 1,
-        user: {
-          id: 1,
-          name: "Kiệt",
-          reputation: 10,
-        },
-        create_date: "7 tháng 3, 2024",
-        like: 120,
-        dislike: 123,
-        favorite: 12,
-        content:
-          "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
-      },
-      {
-        id: 2,
-        user: {
-          id: 1,
-          name: "Kiệt",
-          reputation: 10,
-        },
-        create_date: "7 tháng 3, 2024",
-        like: 120,
-        dislike: 123,
-        favorite: 12,
-        content:
-          "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
-      },
-      {
-        id: 3,
-        user: {
-          id: 1,
-          name: "Kiệt",
-          reputation: 10,
-        },
-        create_date: "7 tháng 3, 2024",
-        like: 120,
-        dislike: 123,
-        favorite: 12,
-        content:
-          "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
-      },
-      {
-        id: 4,
-        user: {
-          id: 1,
-          name: "Kiệt",
-          reputation: 10,
-        },
-        create_date: "7 tháng 3, 2024",
-        like: 120,
-        dislike: 123,
-        favorite: 12,
-        content:
-          "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
-        reply_on: {
-          id: 2, // comment that this reply,
-          user: {
-            id: 2,
-            name: "Khải",
-            reputation: 10,
-          },
-          content:
-            "Finally! Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?",
-        },
-      },
-    ],
-  };
-  const suggestThread = [
-    {
-      id: 1,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 2,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 3,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 4,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-  ];
   return (
     <>
       <div classname="tt-single-topic-list">
@@ -289,7 +81,7 @@ const ThreadDetail = () => {
               </div>
             </div>
             <div className="tt-item-description">
-              <p>{thread.content}</p>
+              <p dangerouslySetInnerHTML={{ __html: thread.content }} />
             </div>
             <div className="tt-item-info info-bottom">
               <a href="#" className="tt-icon-btn">
@@ -329,7 +121,7 @@ const ThreadDetail = () => {
               <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faEye} />
-                  <span className="tt-text">{thread.total_view}</span>
+                  <span className="tt-text">{thread.view}</span>
                 </a>
               </div>
 
@@ -339,12 +131,12 @@ const ThreadDetail = () => {
                   <span className="tt-text">{thread.total_like}</span>
                 </a>
               </div>
-              <div className="tt-item">
+              {/* <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faHeart} />
                   <span className="tt-text">{thread.total_favorite}</span>
                 </a>
-              </div>
+              </div> */}
             </div>
             <hr />
 
@@ -380,7 +172,7 @@ const ThreadDetail = () => {
             </div>
           </div>
         </div>
-        {thread.replies.map((reply) => (
+        {replies?.map((reply) => (
           <>
             <div className="tt-item mb-3" style={{ backgroundColor: "white" }}>
               <div className="tt-single-topic">
@@ -407,7 +199,7 @@ const ThreadDetail = () => {
                 <div className="tt-item-description">
                   {reply?.reply_on ? (
                     <>
-                      {reply.content}
+                      <p dangerouslySetInnerHTML={{ __html: reply.content }}></p>
                       <div className="topic-inner-list">
                         <div className="topic-inner">
                           <div className="topic-inner-title">
@@ -426,13 +218,15 @@ const ThreadDetail = () => {
                             </div>
                           </div>
                           <div className="topic-inner-description">
-                            {reply.reply_on.content}
+                            <p dangerouslySetInnerHTML={{ __html: reply.reply_on.content }}></p>
+                            
                           </div>
                         </div>
                       </div>
                     </>
                   ) : (
-                    <>{reply.content}</>
+                    
+                    <><p dangerouslySetInnerHTML={{ __html: reply.content }}></p></>
                   )}
                 </div>
                 <div className="tt-item-info info-bottom">
@@ -444,10 +238,10 @@ const ThreadDetail = () => {
                     <FontAwesomeIcon icon={faThumbsDown} />{" "}
                     <span className="tt-text">{reply.dislike}</span>
                   </a>
-                  <a href="#" className="tt-icon-btn">
+                  {/* <a href="#" className="tt-icon-btn">
                     <FontAwesomeIcon icon={faHeart} />{" "}
                     <span className="tt-text">{reply.favorite}</span>
-                  </a>
+                  </a> */}
                   <div className="col-separator" />
                   <a
                     href="#"
@@ -467,16 +261,8 @@ const ThreadDetail = () => {
           </>
         ))}
 
-        <div className="mt-4">
-          <CustomPagination
-            currentPage={currentPage}
-            totalPage={totalPage}
-            prevPage={prevPage}
-            nextPage={nextPage}
-            setCurrentPage={setCurrentPage}
-          />
-        </div>
-
+      
+{/* 
         {localStorage.getItem("user_id") ? (
           <>
             <div className="tt-wrapper-inner my-5">
@@ -532,9 +318,9 @@ const ThreadDetail = () => {
               </div>
             </div>
           </>
-        )}
+        )} */}
 
-        <SuggestThread threads={suggestThread} />
+        
       </div>
     </>
   );

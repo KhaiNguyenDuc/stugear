@@ -64,8 +64,8 @@ class PaymentController extends Controller
         ], $userId);
 
         $orderId = time() . "";
-        $redirectUrl = "https://stugear.website/payment-success";
-        $ipnUrl = "https://stugear.website/payment-success";
+        $redirectUrl = "http://localhost:8000/payment-success";
+        $ipnUrl = "http://localhost:8000/payment-success";
         $extraData = "";
 
         $requestId = time() . "";
@@ -111,7 +111,7 @@ class PaymentController extends Controller
     public function vnpayPayment(Request $request)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "https://stugear.website/payment-success";
+        $vnp_Returnurl = "http://localhost:8000/payment-success";
         $vnp_TmnCode = "L8XMT8SL";//Mã website tại VNPAY
         $vnp_HashSecret = "KJJYTBAYDTNHTIKMNMKJLTKPZUXPZVUY"; //Chuỗi bí mật
 

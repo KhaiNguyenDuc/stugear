@@ -3,18 +3,8 @@ import { faMedal, faThumbsUp, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import UserModal from "../Profile/UserModal/UserModal";
-import CustomPagination from "../Pagination/Pagination";
-import { useState } from "react";
 const ThreadList = ({ threads }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState()
-  const nextPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
 
-  const prevPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
   return (
     <>
       {threads.map((thread) => (
@@ -29,7 +19,7 @@ const ThreadList = ({ threads }) => {
                     </div>
                     <span className="d-block text-center mt-2">
                        <FontAwesomeIcon icon={faMedal} style={{color: '#DD9933'}}/>{thread?.user?.reputation}</span>
-                    <span className="designetion text-center d-block mt-1">
+                    <span className="designetion text-center d-block mt-1" style={{fontSize: '10px'}}>
                      {thread?.user?.name}
                     </span>
                     
@@ -64,7 +54,7 @@ const ThreadList = ({ threads }) => {
 
                     <div className="ques-icon-info">
                       <span style={{ color: "#FF7361" }}>
-                        <FontAwesomeIcon icon={faThumbsUp} /> {thread?.rating}
+                        <FontAwesomeIcon icon={faThumbsUp} /> {thread?.like}
                       </span>
 
                       <span>
@@ -85,13 +75,13 @@ const ThreadList = ({ threads }) => {
                     <a href="#" className="d-block">
                       <button type="button" className="q-type button-ques">
                         <FontAwesomeIcon icon={"comment"} />{" "}
-                        {thread?.total_reply} phản hồi
+                        {thread?.reply} phản hồi
                       </button>
                     </a>
                     <a href="#" className="d-block">
                       <button type="button" className="q-type button-ques">
                         <FontAwesomeIcon icon={"user"} className="i" />{" "}
-                        {thread?.total_view} lượt xem
+                        {thread?.view} lượt xem
                       </button>
                     </a>
                   </div>
@@ -101,15 +91,7 @@ const ThreadList = ({ threads }) => {
           </section>
         </>
       ))}
-       <div  className="mt-4 ">
-        <CustomPagination 
-            currentPage={currentPage}
-            totalPage={totalPage}
-            prevPage={prevPage}
-            nextPage={nextPage}
-            setCurrentPage={setCurrentPage}
-          />
-      </div>
+   
     </>
   );
 };
