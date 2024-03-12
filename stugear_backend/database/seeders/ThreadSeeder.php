@@ -117,7 +117,7 @@ class ThreadSeeder extends Seeder
                 'reply' => rand(0, 15),
                 'total_like' => rand(100, 3000),
                 'total_dislike' => rand(100, 2000),
-                'category_id' => rand(1, 5), 
+                'category_id' => rand(1, 6), 
                 'user_id' => rand(1, 10),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),

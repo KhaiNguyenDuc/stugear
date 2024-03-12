@@ -56,13 +56,13 @@ class CategorySeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
             ],
             [
-                'name' => 'Chia sẻ',
-                'description' => 'Đây là danh mục để chia sẻ thông tin và kinh nghiệm với cộng đồng.',
+                'name' => 'Khác',
+                'description' => 'Đây là danh mục để hỏi đáp về khác.',
                 'created_by' => 1,
                 'updated_by' => 1,
                 'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
-            ],
+            ]
         ];
         
 

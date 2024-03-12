@@ -49,10 +49,15 @@ const ThreadDetail = ({ thread, replies }) => {
                     />{" "}
                     {thread?.user?.reputation}
                   </span>
+
                 </div>
 
                 <span className="tt-info-time">
-                  <FontAwesomeIcon icon={faClock} /> {thread?.last_updated}
+                <span className={`me-3 tag tt-badge bg-secondary text-white`}>
+                    
+                    {thread?.category?.name}
+                    </span>
+                  <FontAwesomeIcon icon={faClock} className="me-2"/>{thread?.last_updated} 4 gio trucoc
                 </span>
               </div>
               <h3 className="tt-item-title">
@@ -90,10 +95,10 @@ const ThreadDetail = ({ thread, replies }) => {
                 <FontAwesomeIcon icon={faThumbsDown} />{" "}
                 <span className="tt-text">{thread?.dislike}</span>
               </a>
-              <a href="#" className="tt-icon-btn">
+              {/* <a href="#" className="tt-icon-btn">
                 <FontAwesomeIcon icon={faHeart} />{" "}
                 <span className="tt-text">{thread?.favorite}</span>
-              </a>
+              </a> */}
 
               <div className="col-separator" />
 
@@ -258,67 +263,6 @@ const ThreadDetail = ({ thread, replies }) => {
             </div>
           </>
         ))}
-
-      
-{/* 
-        {localStorage.getItem("user_id") ? (
-          <>
-            <div className="tt-wrapper-inner my-5">
-              <h4 className="text-center">Phản hồi tại đây</h4>
-            </div>
-
-            <div className="tt-wrapper-inner">
-              <div className="pt-editor form-default">
-                <ReactQuill
-                  theme="snow"
-                  style={{ backgroundColor: "white" }}
-                  placeholder="Nhập nội dung tại đây"
-                  row
-                  // value={htmlContent}
-                  // onChange={(html) => {handleContent(); setHtmlContent(html);}}
-                  // ref={(el) => { reactQuillRef = el }}
-                />
-
-                <div className="pt-row">
-                  <div className="col-auto">
-                    <a href="#" className="btn btn-secondary btn-width-lg mt-3">
-                      Phản hồi
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="tt-topic-list">
-              <div className="tt-item tt-item-popup">
-                <div className="tt-col-avatar">
-                  <FontAwesomeIcon icon={faUser} />
-                </div>
-                <div className="tt-col-message">
-                  Có vẻ bạn chưa có tài khoảng, hãy đăng ký miễn phí và tham gia
-                  vào cuộc thảo luận.
-                </div>
-                <div className="tt-col-btn">
-                  <button type="button" className="btn">
-                    Đăng ký
-                  </button>
-                  <button type="button" className="btn">
-                    Đăng nhập
-                  </button>
-                  <button type="button" className="btn-icon">
-                    <svg className="tt-icon">
-                      <use xlinkHref="#icon-cancel" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-        )} */}
-
-        
       </div>
     </>
   );
