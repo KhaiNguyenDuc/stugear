@@ -1835,4 +1835,13 @@ html.touch-device {
     color: white !important;
 }
 
-.ql-editor { height: 150px !important }
+@media (max-width: 991px) {
+
+    .ql-editor { height: 150px !important }
+}
+
+@media (min-width: 992px) {
+
+    .ql-editor { height: 350px !important }
+}
+
