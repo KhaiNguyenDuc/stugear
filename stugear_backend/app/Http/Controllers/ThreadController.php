@@ -107,6 +107,10 @@ class ThreadController extends Controller
                 array_push($tags, $tagMember);
             }
             $data['tags'] = $tags;
+            $view = [
+                "view" => $thread->view + 1
+            ];
+            $this->threadRepository->save($view, $id);
         }
 
 
