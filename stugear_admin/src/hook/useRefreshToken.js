@@ -1,7 +1,7 @@
 import axios from "axios";
 import {BASE_URL} from "../utils/Constant.js"
 
-const AUTH_URL = BASE_URL + 'auth';
+const AUTH_URL = BASE_URL + '/auth';
 
 const useRefreshToken = () => {
     return (

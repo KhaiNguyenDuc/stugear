@@ -24,15 +24,11 @@ class TagController extends Controller
         $userId = AuthService::getUserId($bareToken);
 
         $colors = [
-            'bg-primary',
-            'bg-secondary',
             'bg-success',
             'bg-danger',
             'bg-warning',
             'bg-info',
-            'bg-light',
             'bg-dark',
-            'bg-white'
         ];
 
         $tagNames = $request->names;

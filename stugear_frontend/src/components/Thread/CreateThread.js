@@ -157,12 +157,24 @@ const CreateThread = () => {
   }
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+
     const response = await ThreadService.createThread(
-      {...thread, tags: selectedTag.map((tag) => tag.value), content: htmlContent, category_id: selectedCategory}
+      {...thread, content: htmlContent, category_id: selectedCategory}
     );
     if(response?.status !== 400){
-
+      const newItems = selectedTag.filter((item) => item.__isNew__);
+      const tag_ids = await TagService.createTags(
+        newItems.map((item) => item.value)
+      );
+      const otherItems = selectedTag.filter((item) => !item.__isNew__);
+      const res = await ThreadService.attachTag(
+        response?.id, 
+        otherItems.map((item) => item.value).concat(tag_ids)
+      );
     }
+
+
 
   }
   useEffect(() => {
@@ -265,6 +277,7 @@ const CreateThread = () => {
                   className="filter-tag"
                   options={tags}
                   value={selectedTag}
+                  isCreatable="true"
                   onChange={(selected) => {
                     setSelectedTag(selected);
                   }}
@@ -277,8 +290,10 @@ const CreateThread = () => {
                     selectAll: "Chọn tất cả",
                     selectSomeItems: "Chọn...",
                     create: "Tạo mới",
+                    
                   }}
                 />
+                
               </div>
               <div className="col-md-8">
                 <div className="form-group">
