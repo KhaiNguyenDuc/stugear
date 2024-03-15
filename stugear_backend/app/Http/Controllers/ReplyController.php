@@ -40,8 +40,8 @@ class ReplyController extends Controller
             $memberData['id'] = $reply->id;
             $memberData['user'] =  $this->userRepository->getById($reply->user_id);
             $memberData['create_at'] = $reply->created_at;
-            $memberData['like'] = $reply->like;
-            $memberData['dislike'] = $reply->dislike;
+            $memberData['total_like'] = $reply->total_like;
+            $memberData['total_dislike'] = $reply->total_dislike;
             $memberData['content'] = $reply->content;
             if ($reply->parent_id != 0) {
                 $parentComment = $this->replyRepository->getById($reply->parent_id);

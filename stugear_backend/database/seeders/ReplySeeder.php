@@ -12,7 +12,7 @@ class ReplySeeder extends Seeder
      *
      * @return void
      */
-    
+
     public function run()
     {
         $contents = [
@@ -337,14 +337,16 @@ class ReplySeeder extends Seeder
                 'raw_content' => "Chính xác như vậy, mình cũng nghĩ như vậy. Rất chính xác."
             ]
         ];
-        
-        for ($i = 0; $i < 18; $i++){
-            DB::table('replies')->insert([
+
+        // First loop for replies without parent
+        for ($i = 0; $i < 18; $i++) {
+            // Insert reply data
+            $replyId = DB::table('replies')->insertGetId([
                 'content' => $contents[$i]['content'],
                 'raw_content' => $contents[$i]['raw_content'],
                 'user_id' => rand(1, 10),
-                'like' => rand(0, 100),
-                'dislike' => rand(0, 20),
+                'total_like' => 0, // Initialize likes to 0
+                'total_dislike' => 0, // Initialize dislikes to 0
                 'thread_id' => rand(1, 14),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),
@@ -353,18 +355,62 @@ class ReplySeeder extends Seeder
                 'deleted_by' => null,
                 'deleted_at' => null,
             ]);
+
+            // Determine the number of likes and dislikes for this reply
+            $numLikes = rand(0, 100);
+            $numDislikes = rand(0, 20);
+
+            // Insert reactions for this reply
+            for ($j = 0; $j < $numLikes; $j++) {
+                DB::table('reacts')->insert([
+                    'like' => 1, // Indicate like
+                    'reply_id' => $replyId,
+                    'user_id' => rand(1, 10),
+                    'thread_id' => null, // No thread_id for replies
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            for ($j = 0; $j < $numDislikes; $j++) {
+                DB::table('reacts')->insert([
+                    'like' => 0, // Indicate dislike
+                    'reply_id' => $replyId,
+                    'user_id' => rand(1, 10),
+                    'thread_id' => null, // No thread_id for replies
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            // Update the reply with the actual like and dislike counts
+            DB::table('replies')
+                ->where('id', $replyId)
+                ->update([
+                    'total_like' => $numLikes,
+                    'total_dislike' => $numDislikes,
+                ]);
         }
 
-        for ($i = 19; $i < count($contents); $i++){
-
-            DB::table('replies')->insert([
+        // Second loop for replies with parent
+        for ($i = 19; $i < count($contents); $i++) {
+            // Insert reply data
+            $replyId = DB::table('replies')->insertGetId([
                 'content' => $contents[$i]['content'],
                 'raw_content' => $contents[$i]['raw_content'],
                 'user_id' => rand(1, 10),
                 'parent_id' => rand(1, 18), // assuming this is required
                 'reply_on' => rand(1, 10), // assuming this is required
-                'like' => rand(0, 100),
-                'dislike' => rand(0, 20),
+                'total_like' => 0, // Initialize likes to 0
+                'total_dislike' => 0,  // Initialize dislikes to 0
                 'thread_id' => rand(1, 14),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),
@@ -372,6 +418,63 @@ class ReplySeeder extends Seeder
                 'updated_at' => now()->subDays(rand(1, 30)),
                 'deleted_by' => null,
                 'deleted_at' => null,
+            ]);
+
+            // Determine the number of likes and dislikes for this reply
+            $numLikes = rand(0, 100);
+            $numDislikes = rand(0, 20);
+
+            // Insert reactions for this reply
+            for ($j = 0; $j < $numLikes; $j++) {
+                DB::table('reacts')->insert([
+                    'like' => 1, // Indicate like
+                    'reply_id' => $replyId,
+                    'user_id' => rand(1, 10),
+                    'thread_id' => null, // No thread_id for replies
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            for ($j = 0; $j < $numDislikes; $j++) {
+                DB::table('reacts')->insert([
+                    'like' => 0, // Indicate dislike
+                    'reply_id' => $replyId,
+                    'user_id' => rand(1, 10),
+                    'thread_id' => null, // No thread_id for replies
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            // Update the reply with the actual like and dislike counts
+            DB::table('replies')
+                ->where('id', $replyId)
+                ->update([
+                    'total_like' => $numLikes,
+                    'total_dislike' => $numDislikes,
+                ]);
+        }
+
+        $threads = DB::table('threads')->select('id')->get();
+
+        foreach ($threads as $thread) {
+            // Calculate the total number of replies for this thread
+            $replyCount = DB::table('replies')->where('thread_id', $thread->id)->count();
+
+            // Update the corresponding thread with the total reply count
+            DB::table('threads')
+            ->where('id', $thread->id)
+            ->update([
+                'reply' => $replyCount,
             ]);
         }
     }

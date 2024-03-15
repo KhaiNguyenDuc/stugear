@@ -105,19 +105,17 @@ class ThreadSeeder extends Seeder
         ];
 
         foreach ($contents as $content) {
-
-            DB::table('threads')->insert([
+            // Insert thread data
+            $threadId = DB::table('threads')->insertGetId([
                 'title' => $content['title'],
                 'description' => $content['description'],
                 'content' => $content['content'],
                 'raw_content' => $content['raw_content'],
                 'view' => rand(0, 100),
-                'like' => rand(0, 20),
-                'dislike' => rand(0, 10),
-                'reply' => rand(0, 15),
-                'total_like' => rand(100, 3000),
-                'total_dislike' => rand(100, 2000),
-                'category_id' => rand(1, 6), 
+                'like' => 0, // Initialize likes to 0
+                'dislike' => 0, // Initialize dislikes to 0
+                'reply' => 0,
+                'category_id' => rand(1, 6),
                 'user_id' => rand(1, 10),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),
@@ -126,6 +124,49 @@ class ThreadSeeder extends Seeder
                 'deleted_by' => null,
                 'deleted_at' => null,
             ]);
+
+            // Determine the number of likes and dislikes for this thread
+            $numLikes = rand(0, 20);
+            $numDislikes = rand(0, 10);
+
+            // Insert reactions for this thread
+            for ($i = 0; $i < $numLikes; $i++) {
+                DB::table('reacts')->insert([
+                    'like' => 1, // Indicate like
+                    'reply_id' => null, // Thread reaction, so no reply_id
+                    'user_id' => rand(1, 10),
+                    'thread_id' => $threadId,
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            for ($i = 0; $i < $numDislikes; $i++) {
+                DB::table('reacts')->insert([
+                    'like' => 0, // Indicate dislike
+                    'reply_id' => null, // Thread reaction, so no reply_id
+                    'user_id' => rand(1, 10),
+                    'thread_id' => $threadId,
+                    'created_by' => 1,
+                    'created_at' => now()->subDays(rand(1, 30)),
+                    'updated_by' => 1,
+                    'updated_at' => now()->subDays(rand(1, 30)),
+                    'deleted_by' => null,
+                    'deleted_at' => null,
+                ]);
+            }
+
+            // Update the thread with the actual like and dislike counts and reply count
+            DB::table('threads')
+                ->where('id', $threadId)
+                ->update([
+                    'like' => $numLikes,
+                    'dislike' => $numDislikes,
+                ]);
         }
     }
 }

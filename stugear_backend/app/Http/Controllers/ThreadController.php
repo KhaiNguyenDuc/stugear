@@ -7,8 +7,11 @@ use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\Reply\ReplyRepositoryInterface;
 use App\Repositories\Category\CategoryRepositoryInterface;
+use App\Util\AuthService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 class ThreadController extends Controller
 {
 
@@ -48,11 +51,8 @@ class ThreadController extends Controller
             $memberData['view'] = $thread->view;
             $memberData['like'] = $thread->like;
             $memberData['reply'] = $thread->reply;
-            $memberData['total_like'] = $thread->total_like;
-            $memberData['total_dislike'] = $thread->total_dislike;
             $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $memberData['user_id'] = $thread->user_id;
-            $memberData['total_like'] = $thread->total_like;
             $memberData['user'] = $this->userRepository->getById($thread->user_id);
             $threadTags = $thread->threadTags;
             $tags = [];
@@ -93,8 +93,7 @@ class ThreadController extends Controller
             $data['view'] = $thread->view;
             $data['like'] = $thread->like;
             $data['reply'] = $thread->reply;
-            $data['total_like'] = $thread->total_like;
-            $data['total_dislike'] = $thread->total_dislike;
+            $data['dislike'] = $thread->dislike;
             $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $data['user_id'] = $thread->user_id;
             $data['total_like'] = $thread->total_like;
@@ -117,4 +116,82 @@ class ThreadController extends Controller
             'data' => $data
         ]);
     }
+
+    // public function create(Request $request)
+    // {
+  
+    //     $validator = Validator::make($request->all(), [
+    //         'title' => 'required|string',
+    //         'description' => 'required|string',
+    //         'raw_content' => 'required|string',
+    //         'product_link' => 'required|string',
+    //         'tags' => 'array',
+    //         'category_id' => 'required|integer|min:1',
+    //         'content' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //          return response()->json(['error' => $validator->errors()], 400);
+    //     }
+
+    //     $token = $request->header();
+    //     $bareToken = substr($token['authorization'][0], 7);
+    //     $userId = AuthService::getUserId($bareToken);
+
+    //     $user = $this->userRepository->getById($userId);
+    //     if ($user->reputation < 0) {
+    //         return response()->json([
+    //             'status' => 'Lỗi',
+    //             'message' => 'Không cho phép tạo bài đăng vì uy tín thấp!'
+    //         ],400);
+    //     }
+
+    //     // 'title' => 'required|string',
+    //     // 'description' => 'required|string',
+    //     // 'raw_content' => 'required|string',
+    //     // 'product_link' => 'required|string',
+    //     // 'tags' => 'array',
+    //     // 'category_id' => 'required|integer|min:1',
+    //     // 'content' => 'required|string',
+
+    //     $data = [
+    //         'title' => $request->title,
+    //         'description' => $request->description,
+    //         'condition' => strval($request->condition),
+    //         'raw_content' => $request->raw_content,
+    //         'category_id' => $request->category_id,
+    //         // 'tags' =>
+    //         'created_at' => Carbon::now(),
+    //         'created_by' => $userId,
+    //         'updated_at' => Carbon::now(),
+    //         'updated_by' => $userId,
+    //     ];
+    //     $product = $this->threadRepository->save($data);
+
+    //     // for ($i = 1; $i<=5; $i++) {
+    //     //     DB::table('rating_products')->insert([
+    //     //         'product_id'=> $product->id,
+    //     //         'rating_id' => $i,
+    //     //         'quantity' => 0,
+    //     //         'created_at' => Carbon::now(),
+    //     //         'created_by' => $userId,
+    //     //         'updated_at' => Carbon::now(),
+    //     //         'updated_by' => $userId
+    //     //     ]);
+    //     // }
+
+    //     if (!$product) {
+    //         return response()->json([
+    //             'status' => 'fail',
+    //             'message' => 'Tạo sản phẩm thất bại',
+    //         ], 400);
+    //     } else {
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Tạo sản phẩm thành công',
+    //             'data' => $product
+    //         ]);
+    //     }
+    // }
+
 }
