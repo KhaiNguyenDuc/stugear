@@ -12,6 +12,7 @@ Welcome to Stugear. This application utilize the power of technology to help stu
 ## Information
 
 Deploy website: https://stugear.website
+Deploy admin website: https://admin.stugear.website ( in development, just a demo )
 The site using:
 
 - PHP: 8.1
