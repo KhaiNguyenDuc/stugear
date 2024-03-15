@@ -136,7 +136,7 @@ abstract class BaseRepository implements RepositoryInterface
     public function getAll($limit)
     {
         try {
-            $result = $this->model->whereNull('deleted_by')->whereNull('deleted_at')->paginate($limit);
+            $result = $this->model->whereNull('deleted_by')->whereNull('deleted_at')->orderBy('updated_at','desc')->paginate($limit);
             return $result;
         } catch (\Throwable $th) {
             Log::error($th);
