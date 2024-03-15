@@ -24,6 +24,8 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
 );
 const CreateThread = () => {
   let reactQuillRef = null;
+  const maxTitleLength = 99;
+  const maxDescriptionLength = 200;
   const suggestThread = [
     {
       id: 1,
@@ -130,6 +132,7 @@ const CreateThread = () => {
   const [selectedCategory, setCategory] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [isValid, setValid] = useState(true);
   const getAllTags = async () => {
     const tagResponse = await TagService.getAllTags();
     const options = tagResponse.map((tag) => ({
@@ -153,16 +156,33 @@ const CreateThread = () => {
 
   }
   const hanldeChange = (e) => {
+    setValid(true)
     setThread({...thread, [e.target.name]: e.target.value});
   }
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if(thread?.title == undefined
+      || thread?.description == undefined
+      || thread?.content == undefined
+      || thread?.category_id == undefined){
+        setValid(false)
+    }
     const response = await ThreadService.createThread(
-      {...thread, tags: selectedTag.map((tag) => tag.value), content: htmlContent, category_id: selectedCategory}
+      {...thread, content: htmlContent, category_id: selectedCategory}
     );
     if(response?.status !== 400){
-
+      const newItems = selectedTag.filter((item) => item.__isNew__);
+      const tag_ids = await TagService.createTags(
+        newItems.map((item) => item.value)
+      );
+      const otherItems = selectedTag.filter((item) => !item.__isNew__);
+      const res = await ThreadService.attachTag(
+        response?.id, 
+        otherItems.map((item) => item.value).concat(tag_ids)
+      );
     }
+
+
 
   }
   useEffect(() => {
@@ -183,25 +203,32 @@ const CreateThread = () => {
         <div className="tt-wrapper-inner">
           <form className="form-default form-create-topic" onSubmit={(e) => handleSubmit(e)}>
             <div className="form-group my-5">
-              <label htmlFor="inputTopicTitle">Tiêu đề</label>
+              <label htmlFor="inputTopicTitle">Tiêu đề <span className="require">*</span></label>
               <div className="tt-value-wrapper">
                 <input
                   type="text"
                   name="title"
                   value={thread.title}
                   onChange={(e) => hanldeChange(e)}
+              
                   className="form-control"
                   id="inputTopicTitle"
                   placeholder="Tiêu đề bài đăng của bạn"
                 />
-                <span className="tt-value-input">99</span>
+                <span className="tt-value-input">{thread?.title?.length ? 
+                maxTitleLength -  thread?.title?.length: maxTitleLength}</span>
+
+               
               </div>
+              {maxTitleLength -  thread?.title?.length < 0 && (
+ <span className="text-danger d-block pt-2">* Tối đa {maxTitleLength} ký tự</span>
+                )}
               <div className="tt-note mt-3">
                 Hãy cố gắng mô tả thật ngắn gọn tiêu đề của bài đăng.
               </div>
             </div>
             <div className="form-group my-5">
-              <label>Danh mục</label>
+              <label>Danh mục <span className="require">*</span></label>
               <div className="tt-js-active-btn tt-wrapper-btnicon">
                 <div className="row tt-w410-col-02">
                   {categories.map(category => (
@@ -230,8 +257,8 @@ const CreateThread = () => {
               </div>
             </div>
             <div className="pt-editor form-group my-5">
-              <label htmlFor="message">Mô tả</label>
-              <div className="form-group">
+              <label htmlFor="message">Mô tả <span className="require">*</span></label>
+              <div className="form-group tt-value-wrapper">
                 <textarea
                   id="message"
                   name="description"
@@ -242,29 +269,34 @@ const CreateThread = () => {
                   placeholder="Mô tả ngắn gọn nội dung của bạn"
                   defaultValue={""}
                 />
+                              <span className="tt-value-input">{thread?.description?.length ? 
+                maxDescriptionLength -  thread?.description?.length: maxDescriptionLength}</span>
               </div>
+              {maxDescriptionLength -  thread?.description?.length < 0 && (
+ <span className="text-danger d-block pt-2">* Tối đa {maxDescriptionLength} ký tự</span>
+                )}
             </div>
 
             <div className="pt-editor form-group my-5">
-              <label className="pt-title">Nội dung</label>
+              <label className="pt-title">Nội dung <span className="require">*</span></label>
 
               <ReactQuill
                 theme="snow"
                 style={{ backgroundColor: "white" }}
                 placeholder="Nhập nội dung tại đây"
-                row
-                onChange={(html) => {handleContent(); setHtmlContent(html);}}
+                onChange={(html) => {handleContent(); setHtmlContent(html); setValid(true)}}
                 ref={(el) => { reactQuillRef = el }}
               />
             </div>
 
             <div className="row">
               <div className="col-md-4 form-group">
-                <label htmlFor="inputTopicTags">Thẻ</label>
+                <label htmlFor="inputTopicTags">Thẻ </label>
                 <MultiSelect
                   className="filter-tag"
                   options={tags}
                   value={selectedTag}
+                  isCreatable="true"
                   onChange={(selected) => {
                     setSelectedTag(selected);
                   }}
@@ -277,8 +309,10 @@ const CreateThread = () => {
                     selectAll: "Chọn tất cả",
                     selectSomeItems: "Chọn...",
                     create: "Tạo mới",
+                    
                   }}
                 />
+                
               </div>
               <div className="col-md-8">
                 <div className="form-group">
@@ -300,14 +334,30 @@ const CreateThread = () => {
                 <button
                   href="#"
                   className="btn mt-3"
-                  style={{
-                    width: "215px",
+                  disabled={
+                    maxTitleLength < thread?.title?.length 
+                    || maxDescriptionLength < thread?.description?.length}
+                  style={
+                    (maxTitleLength < thread?.title?.length 
+                    || maxDescriptionLength < thread?.description?.length) ?
+                    {
+                      disabled: 'true',
+                      width: "215px",
                     marginLeft: "80%",
                     backgroundColor: "#2172CD",
-                  }}
+                    color: 'white'
+                    }
+                    :
+                    {
+                    width: "215px",
+                    marginLeft: "80%",
+                    backgroundColor: "#2172CD",}}
                 >
                   Đăng
                 </button>
+                {isValid == false && (
+                  <div style={{marginLeft: '70%'}} className="bg-danger text-white p-2 text-center mt-3">Vui lòng điền đầy đủ thông tin cần thiết</div>
+                )}
               </div>
             </div>
           </form>

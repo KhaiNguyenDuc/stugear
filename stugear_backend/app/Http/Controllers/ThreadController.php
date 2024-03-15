@@ -117,81 +117,100 @@ class ThreadController extends Controller
         ]);
     }
 
-    // public function create(Request $request)
-    // {
+    public function create(Request $request)
+    {
   
-    //     $validator = Validator::make($request->all(), [
-    //         'title' => 'required|string',
-    //         'description' => 'required|string',
-    //         'raw_content' => 'required|string',
-    //         'product_link' => 'required|string',
-    //         'tags' => 'array',
-    //         'category_id' => 'required|integer|min:1',
-    //         'content' => 'required|string',
-    //     ]);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'category_id' => 'required|integer|min:1',
+            'content' => 'required|string',
+        ]);
 
-    //     if ($validator->fails()) {
-    //          return response()->json(['error' => $validator->errors()], 400);
-    //     }
+        if ($validator->fails()) {
+             return response()->json(['error' => $validator->errors()], 400);
+        }
 
-    //     $token = $request->header();
-    //     $bareToken = substr($token['authorization'][0], 7);
-    //     $userId = AuthService::getUserId($bareToken);
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
 
-    //     $user = $this->userRepository->getById($userId);
-    //     if ($user->reputation < 0) {
-    //         return response()->json([
-    //             'status' => 'Lỗi',
-    //             'message' => 'Không cho phép tạo bài đăng vì uy tín thấp!'
-    //         ],400);
-    //     }
+        $user = $this->userRepository->getById($userId);
+        if ($user->reputation < 0) {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Không cho phép tạo bài đăng vì uy tín thấp!'
+            ],400);
+        }
 
-    //     // 'title' => 'required|string',
-    //     // 'description' => 'required|string',
-    //     // 'raw_content' => 'required|string',
-    //     // 'product_link' => 'required|string',
-    //     // 'tags' => 'array',
-    //     // 'category_id' => 'required|integer|min:1',
-    //     // 'content' => 'required|string',
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'condition' => strval($request->condition),
+            'raw_content' => $request->raw_content,
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+            'user_id' => $userId,
+            'status' => 0, // Chờ duyệt
+            'created_at' => Carbon::now(),
+            'created_by' => $userId,
+            'updated_at' => Carbon::now(),
+            'updated_by' => $userId,
+        ];
+        $thread = $this->threadRepository->save($data);
 
-    //     $data = [
-    //         'title' => $request->title,
-    //         'description' => $request->description,
-    //         'condition' => strval($request->condition),
-    //         'raw_content' => $request->raw_content,
-    //         'category_id' => $request->category_id,
-    //         // 'tags' =>
-    //         'created_at' => Carbon::now(),
-    //         'created_by' => $userId,
-    //         'updated_at' => Carbon::now(),
-    //         'updated_by' => $userId,
-    //     ];
-    //     $product = $this->threadRepository->save($data);
 
-    //     // for ($i = 1; $i<=5; $i++) {
-    //     //     DB::table('rating_products')->insert([
-    //     //         'product_id'=> $product->id,
-    //     //         'rating_id' => $i,
-    //     //         'quantity' => 0,
-    //     //         'created_at' => Carbon::now(),
-    //     //         'created_by' => $userId,
-    //     //         'updated_at' => Carbon::now(),
-    //     //         'updated_by' => $userId
-    //     //     ]);
-    //     // }
+        if (!$thread) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Tạo sản phẩm thất bại',
+            ], 400);
+        } else {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Tạo sản phẩm thành công',
+                'data' => $thread
+            ]);
+        }
+    }
 
-    //     if (!$product) {
-    //         return response()->json([
-    //             'status' => 'fail',
-    //             'message' => 'Tạo sản phẩm thất bại',
-    //         ], 400);
-    //     } else {
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'Tạo sản phẩm thành công',
-    //             'data' => $product
-    //         ]);
-    //     }
-    // }
+    public function attachTag(Request $request, $id)
+    {
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
 
+        $thread = $this->threadRepository->getById($id);
+
+        $role = DB::table('user_roles')
+        ->where('user_id', $userId)
+        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+        ->pluck('roles.role_name')
+        ->toArray();
+
+        $tags = $request->tags;
+
+        foreach ($tags as $tag) {
+            if (!is_int($tag) || $tag < 1) {
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message'=> 'Mã tag không đúng'
+                ], 400);
+            }
+        }
+
+        if (in_array('USER', $role) && $userId != $thread->user_id) {
+            return response()->json([
+                'status'=> 'error',
+                'message'=> 'Không được phép đính tag cho sản phẩm của user khác, hãy là chủ sở hữu hoặc admin!',
+            ], 400);
+        }
+
+        $this->threadRepository->attachTag($id, $request->tags, $userId);
+
+        return response()->json([
+            'status'=> 'success',
+            'message'=> 'Gắn tag thành công',
+        ]);
+    }
 }

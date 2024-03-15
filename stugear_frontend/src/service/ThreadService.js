@@ -34,6 +34,13 @@ class ThreadService {
       .catch(error => error?.response)
   }
 
+  attachTag(threadId, tags) {
+    return axiosPrivate.patch(THREAD_URL + `/${threadId}/attach-tag`, {
+      tags: tags,
+    });
+  }
+
+
 }
 
 export default new ThreadService()

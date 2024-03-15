@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_tags', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
             
             $table->unsignedBigInteger('tag_id')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('thread_id')->nullable();
             $table->foreign('thread_id')->references('id')->on('threads');
 
-            $table->integer('created_by')->nullable();
+            $table->integer('created_by') ;
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();
             $table->dateTime('updated_at')->nullable();
