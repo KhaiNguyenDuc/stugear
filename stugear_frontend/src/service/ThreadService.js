@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {BASE_API_URL} from "../utils/Constant.js"
+import { axiosPrivate } from '../api/axios.js';
 
 const THREAD_URL = BASE_API_URL + '/threads'
 class ThreadService {
@@ -22,6 +23,13 @@ class ThreadService {
    
     
     return axios.get(THREAD_URL+`/${id}`)
+      .then(response => response?.data?.data)
+      .catch(error => error?.response)
+  }
+
+  createThread(thread){
+    console.log(thread)
+    return axiosPrivate.post(THREAD_URL,thread)
       .then(response => response?.data?.data)
       .catch(error => error?.response)
   }

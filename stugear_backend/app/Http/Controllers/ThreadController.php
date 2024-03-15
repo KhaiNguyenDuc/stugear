@@ -6,6 +6,7 @@ use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\Reply\ReplyRepositoryInterface;
+use App\Repositories\Category\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
 
 class ThreadController extends Controller
@@ -14,6 +15,7 @@ class ThreadController extends Controller
     protected $threadRepository;
     protected $userRepository;
     protected $tagRepository;
+    protected $categoryRepository;
 
     protected $replyRepository;
     public function __construct(
@@ -21,12 +23,14 @@ class ThreadController extends Controller
         UserRepositoryInterface $userRepository,
         TagRepositoryInterface $tagRepository,
         ReplyRepositoryInterface $replyRepository,
+        CategoryRepositoryInterface $categoryRepository
 
     ) {
         $this->threadRepository = $threadRepository;
         $this->userRepository = $userRepository;
         $this->tagRepository = $tagRepository;
         $this->replyRepository = $replyRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function index(Request $request)
@@ -46,7 +50,7 @@ class ThreadController extends Controller
             $memberData['reply'] = $thread->reply;
             $memberData['total_like'] = $thread->total_like;
             $memberData['total_dislike'] = $thread->total_dislike;
-            $memberData['category_id'] = $thread->category_id;
+            $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $memberData['user_id'] = $thread->user_id;
             $memberData['total_like'] = $thread->total_like;
             $memberData['user'] = $this->userRepository->getById($thread->user_id);
@@ -91,7 +95,7 @@ class ThreadController extends Controller
             $data['reply'] = $thread->reply;
             $data['total_like'] = $thread->total_like;
             $data['total_dislike'] = $thread->total_dislike;
-            $data['category_id'] = $thread->category_id;
+            $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $data['user_id'] = $thread->user_id;
             $data['total_like'] = $thread->total_like;
             $data['user'] = $this->userRepository->getById($thread->user_id);

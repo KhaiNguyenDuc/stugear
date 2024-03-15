@@ -413,6 +413,9 @@ html.touch-device {
     border-color: #2172cd;
 }
 
+.tt-button-icon:hover {
+    cursor: pointer;
+}
 @media (max-width: 767px) {
     .tt-button-icon {
         padding-top: 17px;

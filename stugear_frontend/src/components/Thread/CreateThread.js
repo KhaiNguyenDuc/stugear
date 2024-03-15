@@ -4,6 +4,8 @@ import "react-quill/dist/quill.snow.css";
 import TagService from "../../service/TagService";
 import { MultiSelect } from "react-multi-select-component";
 import SuggestThread from "./SuggestThread";
+import ThreadService from "../../service/ThreadService"
+import CategoryService from "../../service/CategoryService";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -21,6 +23,7 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   </div>
 );
 const CreateThread = () => {
+  let reactQuillRef = null;
   const suggestThread = [
     {
       id: 1,
@@ -124,6 +127,8 @@ const CreateThread = () => {
     },
   ];
   const [selectedTag, setSelectedTag] = useState([]);
+  const [selectedCategory, setCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const getAllTags = async () => {
     const tagResponse = await TagService.getAllTags();
@@ -134,20 +139,57 @@ const CreateThread = () => {
     }));
     setTags(options);
   };
+  const getAllCategories = async () => {
+    const cateResponse = await CategoryService.getAllCategories();
+    setCategories(cateResponse);
+  };
+  const [thread, setThread] = useState({});
+  const [htmlContent,setHtmlContent] = useState();
+  const handleContent = () => {
+    const editor = reactQuillRef.getEditor();
+    const unprivilegedEditor = reactQuillRef.makeUnprivilegedEditor(editor);
+    const inpText = unprivilegedEditor.getText();
+    setThread({...thread, raw_content: inpText})
+
+  }
+  const hanldeChange = (e) => {
+    setThread({...thread, [e.target.name]: e.target.value});
+  }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const response = await ThreadService.createThread(
+      {...thread, tags: selectedTag.map((tag) => tag.value), content: htmlContent, category_id: selectedCategory}
+    );
+    if(response?.status !== 400){
+
+    }
+
+  }
   useEffect(() => {
+    getAllCategories();
     getAllTags();
   }, []);
+  const categoryImages = {
+    "Sách": require("../../assets/book.png"),
+    "Linh kiện": require("../../assets/gear.png"),
+    "Thảo luận": require("../../assets/discussion.png"),
+    "Tài liệu": require("../../assets/notebook.png"),
+    "Hỏi đáp": require("../../assets/question.png"),
+    "Khác": require("../../assets/other.png")
+  };
   return (
     <>
       <div className="container">
         <div className="tt-wrapper-inner">
-          <form className="form-default form-create-topic">
+          <form className="form-default form-create-topic" onSubmit={(e) => handleSubmit(e)}>
             <div className="form-group my-5">
               <label htmlFor="inputTopicTitle">Tiêu đề</label>
               <div className="tt-value-wrapper">
                 <input
                   type="text"
-                  name="name"
+                  name="title"
+                  value={thread.title}
+                  onChange={(e) => hanldeChange(e)}
                   className="form-control"
                   id="inputTopicTitle"
                   placeholder="Tiêu đề bài đăng của bạn"
@@ -162,78 +204,28 @@ const CreateThread = () => {
               <label>Danh mục</label>
               <div className="tt-js-active-btn tt-wrapper-btnicon">
                 <div className="row tt-w410-col-02">
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/book.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Sách</span>
-                    </a>
-                  </div>
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/gear.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Linh kiện</span>
-                    </a>
-                  </div>
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/discussion.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Thảo luận</span>
-                    </a>
-                  </div>
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/question.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Câu hỏi</span>
-                    </a>
-                  </div>
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/share.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Chia sẽ</span>
-                    </a>
-                  </div>
-                  <div className="col-4 col-lg-3 col-xl-2">
-                    <a href="#" className="tt-button-icon">
-                      <span className="tt-icon">
-                        <img
-                          src={require("../../assets/other.png")}
-                          className="img-sm"
-                          alt="mySvgImage"
-                        />
-                      </span>
-                      <span className="tt-text">Khác</span>
-                    </a>
-                  </div>
+                  {categories.map(category => (
+                <div className="col-4 col-lg-3 col-xl-2">
+
+                <span
+                className={`tt-button-icon ${selectedCategory == category.id ? 'active': ''}`} 
+                name={category.name}
+              
+                id={category.id} onClick={() => setCategory(category.id)}>
+                  <span className="tt-icon">
+                    <img
+                      src={categoryImages[category.name]} // Use category name to get relevant image source
+          
+                      className="img-sm"
+                      alt="mySvgImage"
+                    />
+                  </span>
+                  <span className="tt-text">{category.name}</span>
+                </span>
+              </div>
+                  ))}
+  
+  
                 </div>
               </div>
             </div>
@@ -242,7 +234,9 @@ const CreateThread = () => {
               <div className="form-group">
                 <textarea
                   id="message"
-                  name="message"
+                  name="description"
+                  value={thread.description}
+                  onChange={(e) => hanldeChange(e)}
                   className="form-control"
                   rows={3}
                   placeholder="Mô tả ngắn gọn nội dung của bạn"
@@ -259,9 +253,8 @@ const CreateThread = () => {
                 style={{ backgroundColor: "white" }}
                 placeholder="Nhập nội dung tại đây"
                 row
-                // value={htmlContent}
-                // onChange={(html) => {handleContent(); setHtmlContent(html);}}
-                // ref={(el) => { reactQuillRef = el }}
+                onChange={(html) => {handleContent(); setHtmlContent(html);}}
+                ref={(el) => { reactQuillRef = el }}
               />
             </div>
 
@@ -292,7 +285,9 @@ const CreateThread = () => {
                   <label htmlFor="inputTopicTags">Link sản phẩm</label>
                   <input
                     type="text"
-                    name="name"
+                    name="product_link"
+                    value={thread.product_link}
+                    onChange={(e) => hanldeChange(e)}
                     className="form-control"
                     id="inputTopicTags"
                     placeholder="Nhập đường link sản phẩm bài viết nói tới tại đây"
@@ -302,7 +297,7 @@ const CreateThread = () => {
             </div>
             <div className="row">
               <div className="">
-                <a
+                <button
                   href="#"
                   className="btn mt-3"
                   style={{
@@ -312,7 +307,7 @@ const CreateThread = () => {
                   }}
                 >
                   Đăng
-                </a>
+                </button>
               </div>
             </div>
           </form>
