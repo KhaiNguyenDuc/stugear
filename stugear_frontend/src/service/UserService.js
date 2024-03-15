@@ -46,7 +46,7 @@ class UserService {
   }
 
   getCurrentUserProducts(currentPage) {
-    let url = BASE_API_URL + `/api/products/current`;
+    let url = BASE_API_URL + `/products/current`;
     if (currentPage !== undefined) {
       url += `?page=${currentPage}&limit=3`;
     }else{
