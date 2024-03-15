@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('parent_id')->default(0)->nullable();
             $table->unsignedBigInteger('reply_on')->default(0)->nullable();
-            $table->integer('like')->nullable();
-            $table->integer('dislike')->nullable();
+            $table->integer('total_like')->nullable();
+            $table->integer('total_dislike')->nullable();
             $table->unsignedBigInteger('thread_id')->nullable();
             $table->foreign('thread_id')->references('id')->on('threads');
             $table->integer('created_by')->nullable();

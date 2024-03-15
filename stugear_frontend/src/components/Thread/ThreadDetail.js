@@ -131,7 +131,13 @@ const ThreadDetail = ({ thread, replies }) => {
               <div className="tt-item">
                 <a href="#" className="tt-icon-btn tt-position-bottom">
                   <FontAwesomeIcon icon={faThumbsUp} />
-                  <span className="tt-text">{thread?.total_like}</span>
+                  <span className="tt-text">{thread?.like}</span>
+                </a>
+              </div>
+              <div className="tt-item">
+                <a href="#" className="tt-icon-btn tt-position-bottom">
+                  <FontAwesomeIcon icon={faThumbsDown} />
+                  <span className="tt-text">{thread?.dislike}</span>
                 </a>
               </div>
               {/* <div className="tt-item">
@@ -235,11 +241,11 @@ const ThreadDetail = ({ thread, replies }) => {
                 <div className="tt-item-info info-bottom">
                   <a href="#" className="tt-icon-btn">
                     <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                    <span className="tt-text">{reply.like}</span>
+                    <span className="tt-text">{reply.total_like}</span>
                   </a>
                   <a href="#" className="tt-icon-btn">
                     <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                    <span className="tt-text">{reply.dislike}</span>
+                    <span className="tt-text">{reply.total_dislike}</span>
                   </a>
                   {/* <a href="#" className="tt-icon-btn">
                     <FontAwesomeIcon icon={faHeart} />{" "}
