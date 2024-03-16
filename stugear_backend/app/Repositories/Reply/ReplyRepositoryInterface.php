@@ -8,4 +8,5 @@ interface ReplyRepositoryInterface extends RepositoryInterface
 {
     public function getReplyByThreadId($id, $limit);
 
+    public function getReplyByThreadIdWithFilter($id, $limit, $filter);
 }

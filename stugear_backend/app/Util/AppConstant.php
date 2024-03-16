@@ -40,4 +40,12 @@ class AppConstant {
         'Tự do' => '1',
         'Trên web' => '2',
     ];
+
+    public static $FILTER_REPLY = [
+        'new' => '1',
+        'like' => '2',
+        'long' => '3',
+        'short' => '4',
+        'accept' => '5'
+    ];
 }

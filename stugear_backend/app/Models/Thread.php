@@ -29,7 +29,7 @@ class Thread extends Model
         'category_id',
         'user_id',
     ];
-    
+
 
     protected $hidden = [
         'created_at',
@@ -52,5 +52,10 @@ class Thread extends Model
     public function threadTags()
     {
         return $this->hasMany(ProductTag::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
     }
 }
