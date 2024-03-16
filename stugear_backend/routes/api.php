@@ -145,6 +145,7 @@ Route::controller(ThreadController::class)->prefix('threads')->group(function ()
 
 Route::controller(ReplyController::class)->group(function (){
     Route::get('/thread/{id}/replies', 'getReplyByThreadId');
+    Route::delete('/replies/{id}', 'delete')->middleware('auth_jwt');
 });
 
 

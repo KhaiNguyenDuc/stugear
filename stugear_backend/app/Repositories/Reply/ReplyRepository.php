@@ -21,4 +21,34 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
         return $result;
     }
 
+    public function getReplyByThreadIdWithFilter($id, $limit, $filter)
+    {
+        $query = DB::table('replies')->where('thread_id', $id);
+
+        switch ($filter) {
+            case '1':
+                $query->orderByDesc('updated_at');
+                break;
+            case '2':
+                $query->orderByDesc(DB::raw('total_like'));
+                break;
+            case '3':
+                $query->orderByDesc(DB::raw('LENGTH(raw_content)'));
+                break;
+            case '4':
+                $query->orderBy(DB::raw('LENGTH(raw_content)'));
+                break;
+            case '5':
+                // $query->orderBy(DB::raw('LENGTH(raw_content)'));
+                // được đồng ý
+                break;
+            default:
+                $query->orderByDesc('updated_at');
+                break;
+        }
+
+        return $query->paginate($limit);
+    }
+
+
 }

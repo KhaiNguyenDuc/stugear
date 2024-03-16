@@ -17,8 +17,14 @@ class Reply extends Model
         'like',
         'dislike',
         'thread_id',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
     ];
-    
+
 
     protected $hidden = [
         'created_at',

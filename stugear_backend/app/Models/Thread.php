@@ -28,8 +28,14 @@ class Thread extends Model
         'total_dislike',
         'category_id',
         'user_id',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
     ];
-    
+
 
     protected $hidden = [
         'created_at',
@@ -52,5 +58,10 @@ class Thread extends Model
     public function threadTags()
     {
         return $this->hasMany(ProductTag::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
     }
 }
