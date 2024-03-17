@@ -141,6 +141,7 @@ Route::controller(ThreadController::class)->prefix('threads')->group(function ()
     Route::get('/{id}', 'view');
     Route::post('/', 'create');
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
+    Route::delete('/{id}', 'delete')->middleware('auth_jwt');
 });
 
 Route::controller(ReplyController::class)->group(function (){
