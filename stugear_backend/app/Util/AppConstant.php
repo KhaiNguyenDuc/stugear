@@ -17,8 +17,8 @@ class AppConstant {
     public static $ERROR_WITH_IMAGE = "There're some errors with image!";
 
     // public static $DOMAIN = 'http://34.205.156.176/';
-    // public static $DOMAIN = 'http://https://stugear.website/';
-    public static $DOMAIN = 'http://https://stugear.website/';
+    // public static $DOMAIN = 'https://stugear.website/';
+    public static $DOMAIN = 'https://stugear.website/';
     public static $AVATAR_MALE = 'https://hoaminhngoc.vn/wp-content/uploads/2023/01/cute-1-300x300.png';
     public static $AVATAR_FEMALE = 'https://www.studytienganh.vn/upload/2022/05/112273.jpg';
     public static $PRODUCT_THUMBNAIL = 'https://nordicdesign.ca/wp-content/uploads/2020/02/book-thumbnail.jpg';
