@@ -38,10 +38,13 @@ class ThreadController extends Controller
 
     public function index(Request $request)
     {
-        
-        $limit = $request->limit ?? 10;
-        $threads = $this->threadRepository->getAll($limit);
 
+        $limit = $request->limit ?? 10;
+        $tag = $request->tag ?? '';
+        $status = $request->status ?? '';
+        $key = $request->key ?? '';
+        $categories = $request->categories ?? [];
+        $threads = $this->threadRepository->getWithCriteria($tag, $key, $status, $categories, $limit);
         $data = [];
         $memberData = [];
         foreach ($threads as $thread) {
@@ -56,12 +59,13 @@ class ThreadController extends Controller
             $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $memberData['user_id'] = $thread->user_id;
             $memberData['user'] = $this->userRepository->getById($thread->user_id);
-            $threadTags = $thread->threadTags;
+            // $threadTags = $thread->threadTags;
+            $threadTags = $this->threadRepository->getThreadTagsByThreadId($thread->id);
             $tags = [];
             foreach ($threadTags as $threadTag) {
                 $tagMember['id'] = $threadTag->tag_id;
-                $tagMember['name'] = $threadTag->tag->name;
-                $tagMember['color'] = $threadTag->tag->color;
+                $tagMember['name'] = $threadTag->name;
+                $tagMember['color'] = $threadTag->color;
                 array_push($tags, $tagMember);
             }
             $memberData['tags'] = $tags;
@@ -71,8 +75,8 @@ class ThreadController extends Controller
             'status' => 'success',
             'message' => 'Lấy dữ liệu thành công',
             'data' => $data,
-            'page' => $request->page,
-            'total_page' => $threads->lastPage(),
+            'page' => $request->page ?? 1,
+            'total_page' => count($threads) <= $limit? 1 : $threads->lastPage(),
             'total_items' => count($threads)
         ]);
     }
@@ -126,7 +130,7 @@ class ThreadController extends Controller
 
     public function create(Request $request)
     {
-  
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'description' => 'required|string',

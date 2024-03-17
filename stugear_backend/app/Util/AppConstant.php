@@ -48,4 +48,10 @@ class AppConstant {
         'short' => '4',
         'accept' => '5'
     ];
+
+    public static $FILTER_STATUS_THREAD = [
+        'new' => '1',
+        'old' => '2',
+        'reply' => '3'
+    ];
 }
