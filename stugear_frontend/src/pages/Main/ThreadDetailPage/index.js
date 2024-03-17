@@ -15,6 +15,7 @@ const ThreadDetailPage = () => {
   let { slug } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState();
+  const [filter, setFilter] = useState("new");
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
@@ -25,17 +26,22 @@ const ThreadDetailPage = () => {
   const [thread, setThread] = useState();
   const [replies, setReplies] = useState();
   const [isLoading, setLoading] = useState(true);
+  const [isReplyLoading, setReplyLoading] = useState(true);
   useEffect(() => {
    
     const getReplies = async () => {
-      setLoading(true);
-      const response = await ThreadReplyService.getByThreadId(slug,currentPage);
+      setReplyLoading(true);
+      const response = await ThreadReplyService.getByThreadId(slug,currentPage, filter);
       if(response?.status !== 400){
         setTotalPage(response?.total_page);
         setReplies(response?.data);
       }
-      setLoading(false);
+      setReplyLoading(false);
     }
+   
+    getReplies();
+  }, [currentPage, filter]);
+  useEffect(() => {
     const getThreadDetail = async () => {
       setLoading(true);
       const response = await ThreadService.getById(slug);
@@ -44,12 +50,8 @@ const ThreadDetailPage = () => {
       }
       setLoading(false);
     };
+    
     getThreadDetail();
-    getReplies();
-  }, [currentPage]);
-
-  useEffect(() => {
-   
   }, [])
   const suggestThread = [
     {
@@ -156,7 +158,7 @@ const ThreadDetailPage = () => {
   return <>{isLoading ? <Loading /> :
   ( 
   <>
-  <ThreadDetail thread={thread} replies={replies}/>
+  <ThreadDetail thread={thread} replies={replies} setFilter={setFilter} filter={filter} isReplyLoading={isReplyLoading}/>
   <div  className="mt-4 ">
         <CustomPagination 
             currentPage={currentPage}

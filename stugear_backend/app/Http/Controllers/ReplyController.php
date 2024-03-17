@@ -34,6 +34,7 @@ class ReplyController extends Controller
 
     public function getReplyByThreadId(Request $request, $threadId)
     {
+        Carbon::setLocale('vi');
         $limit = $request->limit ?? 10;
         $filter = $request->filter ?? '' ;
         $replies = $this->replyRepository->getReplyByThreadIdWithFilter(
@@ -47,7 +48,7 @@ class ReplyController extends Controller
         foreach ($replies as $reply) {
             $memberData['id'] = $reply->id;
             $memberData['user'] =  $this->userRepository->getById($reply->user_id);
-            $memberData['create_at'] = $reply->created_at;
+            $memberData['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
             $memberData['total_like'] = $reply->total_like;
             $memberData['total_dislike'] = $reply->total_dislike;
             $memberData['content'] = $reply->content;

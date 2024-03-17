@@ -38,6 +38,7 @@ class ThreadController extends Controller
 
     public function index(Request $request)
     {
+        
         $limit = $request->limit ?? 10;
         $threads = $this->threadRepository->getAll($limit);
 
@@ -49,6 +50,7 @@ class ThreadController extends Controller
             $memberData['description'] = $thread->description;
             $memberData['content'] = $thread->content;
             $memberData['view'] = $thread->view;
+            $memberData['create_at'] =  Carbon::parse($thread->created_at)->format('d/m/Y');
             $memberData['like'] = $thread->like;
             $memberData['reply'] = $thread->reply;
             $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
@@ -77,7 +79,7 @@ class ThreadController extends Controller
 
     public function view($id)
     {
-            
+        Carbon::setLocale('vi');
         $thread = $this->threadRepository->getById($id);
         if (!$thread) {
             return response()->json([
@@ -92,6 +94,7 @@ class ThreadController extends Controller
             $data['content'] = $thread->content;
             $data['view'] = $thread->view;
             $data['like'] = $thread->like;
+            $data['created_at'] =  Carbon::parse($thread->created_at)->diffForHumans(Carbon::now());
             $data['reply'] = $thread->reply;
             $data['dislike'] = $thread->dislike;
             $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
