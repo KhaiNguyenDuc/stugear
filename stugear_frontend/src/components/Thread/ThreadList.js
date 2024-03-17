@@ -53,16 +53,16 @@ const ThreadList = ({ threads }) => {
                     <hr />
 
                     <div className="ques-icon-info">
-                      <span style={{ color: "#FF7361" }}>
+                      <span style={{ color: "#FF7361" }} title="Số lượt yêu thích">
                         <FontAwesomeIcon icon={faThumbsUp} /> {thread?.like}
                       </span>
 
-                      <span>
-                        <FontAwesomeIcon icon={faClock} /> {thread?.last_reply}
+                      <span title="Ngày đăng">
+                        <FontAwesomeIcon icon={faClock} /> {thread?.create_at}
                       </span>
 
                       <a
-                        href="#"
+                        title="Báo cáo"
                         style={{ textDecoration: "none", color: "black" }}
                       >
                         <FontAwesomeIcon icon={"bug"} /> Báo cáo

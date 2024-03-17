@@ -22,10 +22,14 @@ import CustomPagination from "../Pagination/Pagination";
 import UserModal from "../Profile/UserModal/UserModal";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-const ThreadDetail = ({ thread, replies }) => {
- 
-  
-
+import Loading from "../Loading";
+const ThreadDetail = ({
+  thread,
+  replies,
+  filter,
+  setFilter,
+  isReplyLoading,
+}) => {
   return (
     <>
       <div classname="tt-single-topic-list">
@@ -49,15 +53,14 @@ const ThreadDetail = ({ thread, replies }) => {
                     />{" "}
                     {thread?.user?.reputation}
                   </span>
-
                 </div>
 
                 <span className="tt-info-time">
-                <span className={`me-3 tag tt-badge bg-secondary text-white`}>
-                    
+                  <span className={`me-3 tag tt-badge bg-secondary text-white`}>
                     {thread?.category?.name}
-                    </span>
-                  <FontAwesomeIcon icon={faClock} className="me-2"/>{thread?.last_updated} 4 gio trucoc
+                  </span>
+                  <FontAwesomeIcon icon={faClock} className="me-2" />
+                  {thread?.created_at}
                 </span>
               </div>
               <h3 className="tt-item-title">
@@ -95,10 +98,6 @@ const ThreadDetail = ({ thread, replies }) => {
                 <FontAwesomeIcon icon={faThumbsDown} />{" "}
                 <span className="tt-text">{thread?.dislike}</span>
               </a>
-              {/* <a href="#" className="tt-icon-btn">
-                <FontAwesomeIcon icon={faHeart} />{" "}
-                <span className="tt-text">{thread?.favorite}</span>
-              </a> */}
 
               <div className="col-separator" />
 
@@ -111,164 +110,197 @@ const ThreadDetail = ({ thread, replies }) => {
             </div>
           </div>
         </div>
+
         <div className="tt-item mb-3">
           <div className="tt-info-box">
             <h4>Trạng thái bài đăng</h4>
             <div className="tt-row-icon mt-2">
               <div className="tt-item">
-                <a href="#" className="tt-icon-btn tt-position-bottom">
+                <a href="#" className="tt-icon-btn tt-position-bottom" title="Số lượt phản hồi">
                   <FontAwesomeIcon icon={faReply} />
                   <span className="tt-text">{thread?.reply}</span>
                 </a>
               </div>
               <div className="tt-item">
-                <a href="#" className="tt-icon-btn tt-position-bottom">
+                <a href="#" className="tt-icon-btn tt-position-bottom"  title="Số lượt xem">
                   <FontAwesomeIcon icon={faEye} />
                   <span className="tt-text">{thread?.view}</span>
                 </a>
               </div>
 
               <div className="tt-item">
-                <a href="#" className="tt-icon-btn tt-position-bottom">
+                <a href="#" className="tt-icon-btn tt-position-bottom"  title="Số lượt yêu thích">
                   <FontAwesomeIcon icon={faThumbsUp} />
                   <span className="tt-text">{thread?.like}</span>
                 </a>
               </div>
               <div className="tt-item">
-                <a href="#" className="tt-icon-btn tt-position-bottom">
+                <a href="#" className="tt-icon-btn tt-position-bottom"  title="Số lượt phản đối">
                   <FontAwesomeIcon icon={faThumbsDown} />
                   <span className="tt-text">{thread?.dislike}</span>
                 </a>
               </div>
-              {/* <div className="tt-item">
-                <a href="#" className="tt-icon-btn tt-position-bottom">
-                  <FontAwesomeIcon icon={faHeart} />
-                  <span className="tt-text">{thread?.total_favorite}</span>
-                </a>
-              </div> */}
             </div>
             <hr />
-
+            {/* 'new' => '1',
+        'like' => '2',
+        'long' => '3',
+        'short' => '4',
+        'accept' => '5' */}
             <div className="row-object-inline form-default">
               <h6 className="tt-title">Lọc phản hồi theo:</h6>
               <ul className="tt-list-badge tt-size-lg">
-                <li>
-                  <a href="#">
-                    <span className="tt-badge">Mới nhất</span>
-                  </a>
+                <li onClick={() => setFilter("new")}>
+                  <Link>
+                    <span
+                      className={
+                        filter === "new" ? "tt-color02 tt-badge" : "tt-badge"
+                      }
+                    >
+                      Mới nhất
+                    </span>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#">
-                    <span className="tt-color02 tt-badge">Like nhiều nhất</span>
-                  </a>
+                  <Link onClick={() => setFilter("like")}>
+                    <span
+                      className={
+                        filter === "like" ? "tt-color02 tt-badge" : "tt-badge"
+                      }
+                    >
+                      Like nhiều nhất
+                    </span>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#">
-                    <span className="tt-badge">Dài nhất</span>
-                  </a>
+                  <Link onClick={() => setFilter("long")}>
+                    <span
+                      className={
+                        filter === "long" ? "tt-color02 tt-badge" : "tt-badge"
+                      }
+                    >
+                      Dài nhất
+                    </span>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#">
-                    <span className="tt-badge">Ngắn nhất</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span className="tt-badge">Được đồng ý</span>
-                  </a>
+                  <Link onClick={() => setFilter("short")}>
+                    <span
+                      className={
+                        filter === "short" ? "tt-color02 tt-badge" : "tt-badge"
+                      }
+                    >
+                      Ngắn nhất
+                    </span>
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        {replies?.map((reply) => (
+        {isReplyLoading ? (
+          <Loading />
+        ) : (
           <>
-            <div className="tt-item mb-3" style={{ backgroundColor: "white" }}>
-              <div className="tt-single-topic">
-                <div className="tt-item-header pt-noborder">
-                  <div className="tt-item-info info-top">
-                    <div className="tt-avatar-icon">
-                      <UserModal userId={reply?.user?.id} />
+            {replies?.map((reply) => (
+              <>
+                <div
+                  className="tt-item mb-3"
+                  style={{ backgroundColor: "white" }}
+                >
+                  <div className="tt-single-topic">
+                    <div className="tt-item-header pt-noborder">
+                      <div className="tt-item-info info-top">
+                        <div className="tt-avatar-icon">
+                          <UserModal userId={reply?.user?.id} />
+                        </div>
+                        <div className="tt-avatar-title">
+                          <a href="#">{reply.user.name}</a>
+                          <span className="text-center">
+                            <FontAwesomeIcon
+                              icon={faMedal}
+                              style={{ color: "#DD9933" }}
+                            />{" "}
+                            {thread?.user?.reputation}
+                          </span>
+                        </div>
+                        <a href="#" className="tt-info-time">
+                          <FontAwesomeIcon icon={faClock}  className="pe-2"/>{reply.create_at}
+                        </a>
+                      </div>
                     </div>
-                    <div className="tt-avatar-title">
-                      <a href="#">{reply.user.name}</a>
-                      <span className="text-center">
-                        <FontAwesomeIcon
-                          icon={faMedal}
-                          style={{ color: "#DD9933" }}
-                        />{" "}
-                        {thread?.user?.reputation}
-                      </span>
+                    <div className="tt-item-description">
+                      {reply?.reply_on ? (
+                        <>
+                          <p
+                            dangerouslySetInnerHTML={{ __html: reply.content }}
+                          ></p>
+                          <div className="topic-inner-list">
+                            <div className="topic-inner">
+                              <div className="topic-inner-title">
+                                <div className="topic-inner-avatar">
+                                  <UserModal
+                                    userId={reply?.reply_on?.user?.id}
+                                  />
+                                </div>
+                                <div className="topic-inner-title">
+                                  <a href="#">{reply.reply_on.user.name}</a>
+                                  <span className="text-center ms-2">
+                                    <FontAwesomeIcon
+                                      icon={faMedal}
+                                      style={{ color: "#DD9933" }}
+                                    />{" "}
+                                    {reply?.reply_on?.user?.reputation}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="topic-inner-description">
+                                <p
+                                  dangerouslySetInnerHTML={{
+                                    __html: reply.reply_on.content,
+                                  }}
+                                ></p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p
+                            dangerouslySetInnerHTML={{ __html: reply.content }}
+                          ></p>
+                        </>
+                      )}
                     </div>
-                    <a href="#" className="tt-info-time">
-                      <FontAwesomeIcon icon={faClock} /> {reply.create_date}
-                    </a>
+                    <div className="tt-item-info info-bottom">
+                      <a href="#" className="tt-icon-btn" title="Đồng ý">
+                        <FontAwesomeIcon icon={faThumbsUp}  />{" "}
+                        <span className="tt-text">{reply.total_like}</span>
+                      </a>
+                      <a href="#" className="tt-icon-btn" title="Phản đối">
+                        <FontAwesomeIcon icon={faThumbsDown} />{" "}
+                        <span className="tt-text">{reply.total_dislike}</span>
+                      </a>
+                      <div className="col-separator" />
+                      <a
+                        title="Báo cáo"
+                        className="tt-icon-btn tt-hover-02 tt-small-indent"
+                      >
+                        <FontAwesomeIcon icon={faBug} />
+                      </a>
+                      <a
+                        title="Phản hồi"
+                        className="tt-icon-btn tt-hover-02 tt-small-indent"
+                      >
+                        <FontAwesomeIcon icon={faReply} />
+                      </a>
+                    </div>
                   </div>
                 </div>
-                <div className="tt-item-description">
-                  {reply?.reply_on ? (
-                    <>
-                      <p dangerouslySetInnerHTML={{ __html: reply.content }}></p>
-                      <div className="topic-inner-list">
-                        <div className="topic-inner">
-                          <div className="topic-inner-title">
-                            <div className="topic-inner-avatar">
-                              <UserModal userId={reply?.reply_on?.user?.id} />
-                            </div>
-                            <div className="topic-inner-title">
-                              <a href="#">{reply.reply_on.user.name}</a>
-                              <span className="text-center ms-2">
-                                <FontAwesomeIcon
-                                  icon={faMedal}
-                                  style={{ color: "#DD9933" }}
-                                />{" "}
-                                {reply?.reply_on?.user?.reputation}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="topic-inner-description">
-                            <p dangerouslySetInnerHTML={{ __html: reply.reply_on.content }}></p>
-                            
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    
-                    <><p dangerouslySetInnerHTML={{ __html: reply.content }}></p></>
-                  )}
-                </div>
-                <div className="tt-item-info info-bottom">
-                  <a href="#" className="tt-icon-btn">
-                    <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                    <span className="tt-text">{reply.total_like}</span>
-                  </a>
-                  <a href="#" className="tt-icon-btn">
-                    <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                    <span className="tt-text">{reply.total_dislike}</span>
-                  </a>
-                  {/* <a href="#" className="tt-icon-btn">
-                    <FontAwesomeIcon icon={faHeart} />{" "}
-                    <span className="tt-text">{reply.favorite}</span>
-                  </a> */}
-                  <div className="col-separator" />
-                  <a
-                    href="#"
-                    className="tt-icon-btn tt-hover-02 tt-small-indent"
-                  >
-                    <FontAwesomeIcon icon={faBug} />
-                  </a>
-                  <a
-                    href="#"
-                    className="tt-icon-btn tt-hover-02 tt-small-indent"
-                  >
-                    <FontAwesomeIcon icon={faReply} />
-                  </a>
-                </div>
-              </div>
-            </div>
+              </>
+            ))}
           </>
-        ))}
+        )}
       </div>
     </>
   );

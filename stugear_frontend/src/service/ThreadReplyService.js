@@ -5,14 +5,16 @@ const THREAD_REPLY_URL = BASE_API_URL + '/thread'
 class ThreadReplyService {
 
 
-  getByThreadId(id, currentPage) {
-    console.log(id)
-    console.log(currentPage)
+  getByThreadId(id, currentPage, filter) {
     let url = THREAD_REPLY_URL + `/${id}/replies`;
     if (currentPage !== undefined) {
       url += `?page=${currentPage}&limit=4`;
     }else{
       url += `?page=1&limit=100`;
+    }
+
+    if(filter != undefined && filter != ""){
+      url += `&filter=${filter}`;
     }
     return axios.get(url)
       .then(response => response?.data)
