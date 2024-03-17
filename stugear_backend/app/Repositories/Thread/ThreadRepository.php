@@ -112,6 +112,9 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             )->distinct();
         }
 
+        $query->whereNull('threads.deleted_by');
+        $query->whereNull('threads.deleted_at');
+
         return $query->paginate($limit);
     }
 

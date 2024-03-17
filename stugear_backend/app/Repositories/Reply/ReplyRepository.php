@@ -47,6 +47,9 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
                 break;
         }
 
+        $query->whereNull('replies.deleted_by');
+        $query->whereNull('replies.deleted_at');
+
         return $query->paginate($limit);
     }
 

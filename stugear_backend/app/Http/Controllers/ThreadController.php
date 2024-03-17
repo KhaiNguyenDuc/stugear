@@ -224,4 +224,48 @@ class ThreadController extends Controller
             'message'=> 'Gắn tag thành công',
         ]);
     }
+
+    public function delete(Request $request, $id)
+    {
+        $thread = $this->threadRepository->getById($id);
+        if (!$thread) {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Thread này đã bị xóa!'
+            ], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+        $role = DB::table('user_roles')
+        ->where('user_id', $userId)
+        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+        ->pluck('roles.role_name')
+        ->toArray();
+        if (in_array('ADMIN', $role) || $thread->user_id == $userId) {
+            // update deleted in DB
+            $result = $this->threadRepository->save([
+                'deleted_by' => $userId,
+                'deleted_at' => Carbon::now()
+            ], $id);
+            // return result
+            if ($result) {
+                return response()->json([
+                    'status'=> 'Thành công',
+                    'message' => 'Xóa reply thành công',
+                ]);
+            } else {
+                return response()->json([
+                    'status'=> 'Thất bại',
+                    'message' => 'Xóa reply thất bại',
+                ],400);
+            }
+        } else {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Chỉ có Admin hoặc chủ thread được phép xóa!'
+            ], 400);
+        }
+    }
 }
