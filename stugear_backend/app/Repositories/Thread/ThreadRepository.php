@@ -72,32 +72,15 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                 $query->orderBy('threads.reply', 'desc');
             }
         }
-        //[all, book, accessory, question, discuss]
-        if (!empty($categories)) {
-            $query->where(function ($subQuery) use ($categories) {
-                        if (in_array('all', $categories)) {
-                            return;
-                        }
-                        if (in_array('book', $categories)) {
-                            $subQuery->where('category_id', '=', 1);
-                        }
-                        if (in_array('accessory', $categories)) {
-                            $subQuery->orWhere('category_id', '=', 3);
-                        }
-                        if (in_array('question', $categories)) {
-                            $subQuery->orWhere('category_id', '=', 4);
-                        }
-                        if (in_array('discuss', $categories)) {
-                            $subQuery->orWhere('category_id', '=', 5);
-                        }
-                    }
-                );
 
+        if (!empty($categories)) {
+            $query->whereIn('category_id', $categories);
         }
         if (!empty($tag)) {
+            // dd($tag);
             $query->join('product_tags', 'threads.id', '=', 'product_tags.thread_id')
                 ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
-                ->where('tags.name', '=', $tag);
+                ->whereIn('tags.id', $tag);
             $query->select(
                 'threads.id',
                 'threads.title',

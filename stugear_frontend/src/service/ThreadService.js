@@ -5,14 +5,23 @@ import { axiosPrivate } from '../api/axios.js';
 const THREAD_URL = BASE_API_URL + '/threads'
 class ThreadService {
 
-  getAllThreads (currentPage) {
+  getAllThreads (currentPage, criteria) {
    
     let url = THREAD_URL;
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=3`;
+      url += `?page=${currentPage}&limit=100`;
     }else{
       url += `?page=1&limit=100`;
     }
+    url += `&key=${criteria.key}&status=${criteria?.status}`
+
+    criteria.tags.forEach(element => {
+      url+= `&tags[]=${element}`
+    });
+
+    criteria.categories.forEach(element => {
+      url+= `&categories[]=${element}`
+    });
     
     return axios.get(url)
       .then(response => response?.data)
