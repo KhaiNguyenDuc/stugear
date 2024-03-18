@@ -23,7 +23,7 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
     </span>
   </div>
 );
-const ThreadStats = () => {
+const ThreadStats = ({ setSelectedTag, selectedTag }) => {
   const threadStats = {
     category_id: 1,
     total_thread: 20,
@@ -51,7 +51,6 @@ const ThreadStats = () => {
       reputation: 91,
     }
   ]
-  const [selectedTag, setSelectedTag] = useState([]);
   const [tags, setTags] = useState([]);
   const getAllTags = async () => {
     const tagResponse = await TagService.getAllTags();

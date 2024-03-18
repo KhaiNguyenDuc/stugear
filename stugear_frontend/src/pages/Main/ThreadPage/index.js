@@ -9,9 +9,21 @@ import { Link } from "react-router-dom";
 import ThreadService from "../../../service/ThreadService";
 import CustomPagination from "../../../components/Pagination/Pagination";
 import ThreadReplyService from "../../../service/ThreadReplyService";
+import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { Button, InputGroup } from "react-bootstrap";
+import ThreadStats from "../../../components/Thread/ThreadStats";
+import CategoryService from "../../../service/CategoryService";
 const ThreadPage = () => {
+  const [criteria, setCriteria] = useState({
+    status: "",
+    tags: [],
+    key: "",
+    categories: [] //[all, book, accessory, question, discuss]
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState()
+  const [categories, setCategories] = useState([]);
+  const [selectedTag, setSelectedTag] = useState([]);
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
@@ -19,99 +31,164 @@ const ThreadPage = () => {
   const prevPage = () => {
     setCurrentPage(currentPage - 1);
   };
+  console.log(criteria);
+  const handleChange = (e) => {
+    setCriteria({
+      ...criteria,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleInputChange = (e) => {
+    let debounceTimer;
+    let query = e.target.value;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      // setCurrentPage(1)
+      setCriteria({
+        ...criteria,
+        [e.target.name]: query
+      })
+    }, 4000);
+
+  }
+
   const [cateSelected, setCateSelected] = useState([]);
-  const categories = [
-    {
-      value: 1,
-      label: "Sách",
-    },
-    {
-      value: 2,
-      label: "Linh kiện",
-    },
-    {
-      value: 3,
-      label: "Câu hỏi",
-    },
-    {
-      value: 4,
-      label: "Thảo luận",
-    },
-  ];
+  const getAllCategories = async () => {
+    const cateResponse = await CategoryService.getAllCategories();
+    const options = cateResponse.map((category) => ({
+      label: category.name,
+      value: category.id, // Convert id to string if necessary
+    }));
+    setCategories(options);
+  };
+
   const filter = [
     {
       id: 1,
       name: "Bài đăng mới nhất",
+      value: "new"
     },
     {
       id: 2,
       name: "Bài đăng cũ nhất",
+      value: "old"
     },
     {
       id: 3,
       name: "Nhiều lượt trả lời nhất",
+      value: "reply"
     },
   ];
   const [threads, setThreads] = useState([]);
+  
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
   useEffect(() => {
     const getThreads = async () => {
-      const response = await ThreadService.getAllThreads(currentPage);
-      if(response?.status !== 400){
+      const response = await ThreadService.getAllThreads(currentPage, {
+        ...criteria,
+        categories: cateSelected.map((item) => item.value),
+        tags: selectedTag.map((item) => item.value)
+      });
+      if (response?.status !== 400) {
         setTotalPage(response?.total_page);
         setThreads(response?.data);
       }
     }
     getThreads()
-  }, [currentPage])
+  }, [currentPage, criteria, cateSelected, selectedTag])
   return (
     <>
-      <div id="main">
-        <div className="d-flex ">
-          <Link to="/thread/create" className="btn create-thread-btn">
-            + Đăng bài
-          </Link>
+      <div className="row">
+        <div id="main" className="col-md-9">
+          <div className="tt-topic-list">
+            <div className="tt-item tt-item-popup">
+              <div className="tt-col-avatar">
+                <FontAwesomeIcon icon={faQuestionCircle} />
+              </div>
+              <div className="tt-col-message">
+              
+              <div  style={{ marginRight: "300px" }}>
+              
+                <InputGroup
+                  className="form-outline"
+                  id="search-group"
+                  style={{ marginRight: '100%', width: '200%' }}
+                >
+                  <input
+                    id="search-input"
+                    placeholder="Nhập tên, nội dung bài đăng"
+                    type="search"
+                    className="form-control"
+                    name="key"
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                  <Button id="search-button">
+                    <FontAwesomeIcon icon="search" id="search-icon" />
+                  </Button>
+                </InputGroup>
+              </div>
+              </div>
+            </div>
+          </div>      
+          <div className="d-flex ">
+            <Link to="/thread/create" className="btn create-thread-btn">
+              + Đăng bài
+            </Link>
 
-          <div className="w-25 ms-1">
-            <MultiSelect
-              className="filter-category"
-              options={categories}
-              value={cateSelected}
-              onChange={(cateSelected) => {
-                setCateSelected(cateSelected);
-              }}
-              labelledBy="Select"
-              overrideStrings={{
-                allItemsAreSelected: "Đã chọn tất cả.",
-                noOptions: "Không có",
-                search: "Tìm kiếm",
-                selectAll: "Chọn tất cả",
-                selectSomeItems: "Danh mục...",
-                create: "Tạo mới",
-              }}
-            />
+            <div className="w-25 ms-1">
+              <MultiSelect
+                className="filter-category"
+                options={categories}
+                value={cateSelected}
+                onChange={(cateSelected) => {
+                  setCateSelected(cateSelected);
+                }}
+                labelledBy="Select"
+                overrideStrings={{
+                  allItemsAreSelected: "Đã chọn tất cả.",
+                  noOptions: "Không có",
+                  search: "Tìm kiếm",
+                  selectAll: "Chọn tất cả",
+                  selectSomeItems: "Danh mục...",
+                  create: "Tạo mới",
+                }}
+              />
+            </div>
+            <div className="thread-tab ms-1">
+              {filter.map((fil) => (
+                <>
+                  <input id={fil.id}
+                    className="tab"
+                    type="radio"
+                    name="status"
+                    value={fil.value}
+                    onChange={ (e) => handleChange(e) } />
+                  <label htmlFor={fil.id}>
+                    <FontAwesomeIcon icon={faInbox} /> {fil.name}
+                  </label>
+                </>
+              ))}
+            </div>
           </div>
-          <div className="thread-tab ms-1">
-            {filter.map((fil) => (
-              <>
-                <input id={fil.id} className="tab" type="radio" name="tabs" />
-                <label htmlFor={fil.id}>
-                  <FontAwesomeIcon icon={faInbox} /> {fil.name}
-                </label>
-              </>
-            ))}
-          </div>
+
+          <ThreadList threads={threads} />
         </div>
-
-        <ThreadList threads={threads} />
+        <div className="col-md-3">
+          <ThreadStats setSelectedTag={setSelectedTag} selectedTag={selectedTag} />
+        </div>
       </div>
-      <div  className="mt-4 ">
-        <CustomPagination 
-            currentPage={currentPage}
-            totalPage={totalPage}
-            prevPage={prevPage}
-            nextPage={nextPage}
-            setCurrentPage={setCurrentPage}
-          />
+      <div className="mt-4 ">
+        <CustomPagination
+          currentPage={currentPage}
+          totalPage={totalPage}
+          prevPage={prevPage}
+          nextPage={nextPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </>
   );
