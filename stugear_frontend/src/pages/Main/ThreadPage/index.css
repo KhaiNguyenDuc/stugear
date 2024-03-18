@@ -182,7 +182,7 @@
 }
 
 .sidebar-thread{
-    margin-top: 86px;
+    margin-top: 25px;
 }
 
 .status-part {
@@ -285,3 +285,10 @@
     font-family: fontawesome;
     border-radius: 2px;
 }
+
+.thread-list {
+    max-height: 100vh;
+    /* Set a maximum height for each comment */
+    overflow-y: auto;
+    /* Enable vertical scrolling if content exceeds the height */
+  }
