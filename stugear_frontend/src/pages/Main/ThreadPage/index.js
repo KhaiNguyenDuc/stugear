@@ -13,9 +13,10 @@ import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import { Button, InputGroup } from "react-bootstrap";
 import ThreadStats from "../../../components/Thread/ThreadStats";
 import CategoryService from "../../../service/CategoryService";
+import Loading from "../../../components/Loading";
 const ThreadPage = () => {
   const [criteria, setCriteria] = useState({
-    status: "",
+    status: "new",
     tags: [],
     key: "",
     categories: [] //[all, book, accessory, question, discuss]
@@ -24,6 +25,7 @@ const ThreadPage = () => {
   const [totalPage, setTotalPage] = useState()
   const [categories, setCategories] = useState([]);
   const [selectedTag, setSelectedTag] = useState([]);
+  const [isLoading, setLoaing] = useState(true);
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
   };
@@ -88,6 +90,7 @@ const ThreadPage = () => {
 
   useEffect(() => {
     const getThreads = async () => {
+      setLoaing(true)
       const response = await ThreadService.getAllThreads(currentPage, {
         ...criteria,
         categories: cateSelected.map((item) => item.value),
@@ -97,6 +100,7 @@ const ThreadPage = () => {
         setTotalPage(response?.total_page);
         setThreads(response?.data);
       }
+      setLoaing(false)
     }
     getThreads()
   }, [currentPage, criteria, cateSelected, selectedTag])
@@ -104,7 +108,7 @@ const ThreadPage = () => {
     <>
       <div className="row">
         <div id="main" className="col-md-9">
-          <div className="tt-topic-list">
+          <div className="tt-topic-list mb-3">
             <div className="tt-item tt-item-popup">
               <div className="tt-col-avatar">
                 <FontAwesomeIcon icon={faQuestionCircle} />
@@ -165,6 +169,7 @@ const ThreadPage = () => {
                     className="tab"
                     type="radio"
                     name="status"
+                    checked={criteria?.status === fil.value}
                     value={fil.value}
                     onChange={ (e) => handleChange(e) } />
                   <label htmlFor={fil.id}>
@@ -174,14 +179,21 @@ const ThreadPage = () => {
               ))}
             </div>
           </div>
-
-          <ThreadList threads={threads} />
+          {isLoading ? (
+            <Loading/>
+          ): (
+            <ThreadList threads={threads} />
+          )}
+      
         </div>
         <div className="col-md-3">
-          <ThreadStats setSelectedTag={setSelectedTag} selectedTag={selectedTag} />
+      
+            <ThreadStats setSelectedTag={setSelectedTag} selectedTag={selectedTag} />
+         
+         
         </div>
       </div>
-      <div className="mt-4 ">
+      <div className="row mt-4 ">
         <CustomPagination
           currentPage={currentPage}
           totalPage={totalPage}

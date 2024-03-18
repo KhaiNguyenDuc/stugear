@@ -6,6 +6,7 @@ import { MultiSelect } from "react-multi-select-component";
 import SuggestThread from "./SuggestThread";
 import ThreadService from "../../service/ThreadService"
 import CategoryService from "../../service/CategoryService";
+import { Navigate } from "react-router-dom";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -26,108 +27,27 @@ const CreateThread = () => {
   let reactQuillRef = null;
   const maxTitleLength = 99;
   const maxDescriptionLength = 200;
-  const suggestThread = [
-    {
-      id: 1,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 2,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 3,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 4,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-  ];
+  const [suggestThread, setSuggestThread] = useState([])
+  useEffect(() => {
+    const getThread= async () => {
+
+
+        const suggesThreadResponse = await ThreadService.getAllThreads(1 ,{
+          status: "new",
+          tags: [],
+          key: "",
+          categories: []
+        });
+        if (suggesThreadResponse?.status !== 400) {
+        
+          setSuggestThread(suggesThreadResponse?.data);
+        }
+   
+
+    };
+    getThread()
+  }, [])
+
   const [selectedTag, setSelectedTag] = useState([]);
   const [selectedCategory, setCategory] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -181,6 +101,7 @@ const CreateThread = () => {
         otherItems.map((item) => item.value).concat(tag_ids)
       );
     }
+    Navigate("/thread");
 
 
 

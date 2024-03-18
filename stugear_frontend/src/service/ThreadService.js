@@ -7,23 +7,14 @@ class ThreadService {
 
   getAllThreads (currentPage, criteria) {
    
-    let url = THREAD_URL;
+    let url = THREAD_URL + "/filter";
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=100`;
+      url += `?page=${currentPage}&limit=6`;
     }else{
       url += `?page=1&limit=100`;
     }
-    url += `&key=${criteria.key}&status=${criteria?.status}`
-
-    criteria.tags.forEach(element => {
-      url+= `&tags[]=${element}`
-    });
-
-    criteria.categories.forEach(element => {
-      url+= `&categories[]=${element}`
-    });
     
-    return axios.get(url)
+    return axios.post(url, criteria)
       .then(response => response?.data)
       .catch(error => error?.response)
   }

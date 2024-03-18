@@ -7,7 +7,9 @@ const ThreadList = ({ threads }) => {
 
   return (
     <>
-      {threads.map((thread) => (
+    <div className="thread-list">
+
+    {threads.map((thread) => (
         <>
           <section id="thread-content">
             <div className="question-type">
@@ -91,6 +93,8 @@ const ThreadList = ({ threads }) => {
           </section>
         </>
       ))}
+    </div>
+ 
    
     </>
   );

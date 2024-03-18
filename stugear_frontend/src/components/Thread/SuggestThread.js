@@ -36,13 +36,13 @@ const SuggestThread = ({ threads }) => {
           </div>
           <div className="tt-col-description">
             <h6 className="tt-title">
-              <a href="#">{thread?.name}</a>
+              <a href="#">{thread?.title}</a>
             </h6>
           </div>
           <div className="tt-col-category">
             <div className="tt-item-tag">
               <ul className="tt-list-badge">
-                {thread?.tags?.map((tag, index) => (
+                {thread?.tags?.slice(0, 2)?.map((tag, index) => (
                   <li>
                     <button key={index} className={`tag tt-badge ${tag.color}`}>
                       <Link
@@ -61,8 +61,8 @@ const SuggestThread = ({ threads }) => {
           <div className="tt-col-value tt-color-select hide-mobile">
             {thread?.reply}
           </div>
-          <div className="tt-col-value hide-mobile">{thread?.total_view}</div>
-          <div className="tt-col-value hide-mobile">{thread?.create_date}</div>
+          <div className="tt-col-value hide-mobile">{thread?.view}</div>
+          <div className="tt-col-value hide-mobile">{thread?.create_at}</div>
         </div>
       ))}
     </div>

@@ -137,7 +137,7 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
 });
 
 Route::controller(ThreadController::class)->prefix('threads')->group(function (){
-    Route::get('/','index');
+    Route::post('/filter','index');
     Route::get('/{id}', 'view');
     Route::post('/', 'create');
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');

@@ -42,119 +42,37 @@ const ThreadDetailPage = () => {
     getReplies();
   }, [currentPage, filter]);
   useEffect(() => {
-    const getThreadDetail = async () => {
+    const getThread= async () => {
       setLoading(true);
-      const response = await ThreadService.getById(slug);
-      if (response?.status !== 400) {
-        setThread(response);
+      const threadResponse = await ThreadService.getById(slug);
+      if (threadResponse?.status !== 400) {
+        setThread(threadResponse);
+        const currentPage = 1;
+        const suggesThreadResponse = await ThreadService.getAllThreads(currentPage ,{
+          status: "new",
+          tags: threadResponse?.tags.map(tag => tag.id),
+          key: "",
+          categories: []
+        });
+        if (suggesThreadResponse?.status !== 400) {
+        
+          setSuggestThread(suggesThreadResponse?.data);
+        }
       }
       setLoading(false);
     };
+   
     
-    getThreadDetail();
+    getThread();
   }, [])
-  const suggestThread = [
-    {
-      id: 1,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 2,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 3,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-    {
-      id: 4,
-      user: {
-        id: 1,
-        name: "khải",
-        reputation: 10,
-      },
-      name: "Does Envato act against the authors of Envato markets?",
-      create_date: "06/03/2024",
-      like: 12,
-      total_view: 2000,
-      reply: 231,
-      tags: [
-        {
-          id: 1,
-          name: "demo",
-          color: "bg-danger",
-        },
-        {
-          id: 2,
-          name: "demo",
-          color: "bg-primary",
-        },
-      ],
-    },
-  ];
+
+  useEffect(() => {
+   
+  }, [])
+
+  const [suggestThread, setSuggestThread] = useState([]);
+
+  
   return <>{isLoading ? <Loading /> :
   ( 
   <>

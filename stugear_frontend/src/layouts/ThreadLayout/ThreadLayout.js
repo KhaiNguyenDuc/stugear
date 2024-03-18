@@ -12,12 +12,10 @@ const ThreadLayout = () => {
       <Header sticky={true} />
 
       <div className="container my-5">
-        <div >
-          <div>
+
+    
             <Outlet />
-          </div>
-          
-        </div>
+     
       </div>
 
       <Footer />

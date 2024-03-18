@@ -76,7 +76,7 @@ class ThreadController extends Controller
             'message' => 'Lấy dữ liệu thành công',
             'data' => $data,
             'page' => $request->page ?? 1,
-            'total_page' => count($threads) <= $limit? 1 : $threads->lastPage(),
+            'total_page' => $threads->lastPage(),
             'total_items' => count($threads)
         ]);
     }
