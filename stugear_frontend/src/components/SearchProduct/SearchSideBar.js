@@ -55,10 +55,10 @@ const SearchSideBar = ({
     }));
     setCategories(options);
   };
-
+  let debounceTimer;
 
   const handleChange = (e) => {
-    let debounceTimer;
+    
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       setQuery(e.target.value);

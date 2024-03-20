@@ -9,7 +9,7 @@ import {
   faReply,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   faThumbsDown,
   faThumbsUp,
@@ -23,15 +23,57 @@ import UserModal from "../Profile/UserModal/UserModal";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Loading from "../Loading";
+import ThreadService from "../../service/ThreadService";
+import CustomModal from "../Modal/Modal";
 const ThreadDetail = ({
-  thread,
+  threadDetail,
   replies,
   filter,
   setFilter,
   isReplyLoading,
 }) => {
+  const [thread, setThread] = useState(threadDetail);
+  const navigate = useNavigate();
+  const [isLike, setIsLike] = useState(thread?.is_like);
+  const handleThreadReact = async (react) => {
+    let likeBoolean = react === "+" ? true : false;
+    setIsLike(likeBoolean);
+   
+    const response = await ThreadService.reactThread(thread?.id, {
+      like: likeBoolean
+    });
+    if(response?.status == 400){
+      setShow(true);
+      return;
+    }
+    if(likeBoolean === true && isLike != undefined){
+      setThread({...thread, like: thread?.like + 1, dislike: thread?.dislike - 1})
+    }else if(likeBoolean === false && isLike != undefined){
+      setThread({...thread, like: thread?.like - 1, dislike: thread?.dislike + 1})
+    }else if (likeBoolean === true && isLike == undefined){
+      setThread({...thread, like: thread?.like + 1})
+    }else if (likeBoolean === false && isLike == undefined){
+      setThread({...thread, dislike: thread?.dislike + 1})
+    }
+  }
+  const [show, setShow] = useState(false);
+  const handleClose = () => {
+    setShow(false);
+  };
+  const handleSave = () => {
+    navigate("/login");
+    setShow(false);
+  };
   return (
     <>
+     <CustomModal
+        handleSave={handleSave}
+        handleClose={handleClose}
+        show={show}
+        heading={"Vui lòng tạo tài khoản để tương tác"}
+        body={'Bấm vào nút "Đồng ý" để đến trang đăng nhập'}
+      ></CustomModal>
+
       <div classname="tt-single-topic-list">
         <div className="tt-item">
           <div
@@ -90,15 +132,30 @@ const ThreadDetail = ({
               <p dangerouslySetInnerHTML={{ __html: thread?.content }} />
             </div>
             <div className="tt-item-info info-bottom">
-              <a href="#" className="tt-icon-btn">
+              {localStorage.getItem("user_id") ? (
+                <>
+                 <Link onClick={(isLike===false || isLike === undefined)  ? () => handleThreadReact("+"): () => {}} className="tt-icon-btn" title={isLike ? "Đã thích": "Thích"}>
+                <FontAwesomeIcon icon={faThumbsUp} style={isLike===true ? {color: 'blue'}: {}}/>{" "}
+                <span className="tt-text">{thread?.like}</span>
+              </Link>
+              <Link onClick={(isLike===true || isLike === undefined) ? () => handleThreadReact("-"): () => {}} className="tt-icon-btn" title={isLike===false ? "Đã không thích": "Không thích"}>
+                <FontAwesomeIcon icon={faThumbsDown} style={isLike===false ? {color: 'blue'}: {}}/>{" "}
+                <span className="tt-text">{thread?.dislike}</span>
+              </Link>
+                </>
+              ): (
+                <>
+                 <Link onClick={() => setShow(true)} className="tt-icon-btn" title="Thích">
                 <FontAwesomeIcon icon={faThumbsUp} />{" "}
                 <span className="tt-text">{thread?.like}</span>
-              </a>
-              <a href="#" className="tt-icon-btn">
+              </Link>
+              <Link onClick={() => setShow(true)} className="tt-icon-btn" title="Không thích">
                 <FontAwesomeIcon icon={faThumbsDown} />{" "}
                 <span className="tt-text">{thread?.dislike}</span>
-              </a>
-
+              </Link>
+                </>
+              )}
+  
               <div className="col-separator" />
 
               <a href="#" className="tt-icon-btn tt-hover-02 tt-small-indent">

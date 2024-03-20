@@ -115,6 +115,10 @@ class User extends Authenticatable implements JWTSubject
     public function threads() {
         return $this->hasMany(Thread::class);
     }
+    public function reacts()
+    {
+        return $this->hasMany(React::class);
+    }
 
 
 }

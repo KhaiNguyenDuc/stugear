@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Vote extends Model
+class React extends Model
 {
     use HasFactory;
 
@@ -16,9 +16,10 @@ class Vote extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'like',
+        'reply_id',
         'user_id',
-        'comment_id',
-        'is_upvote'
+        'thread_id'
     ];
 
     protected $hidden = [
@@ -36,8 +37,13 @@ class Vote extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function comment()
+    public function thread()
     {
-        return $this->belongsTo(Comment::class);
+        return $this->belongsTo(Thread::class);
+    }
+
+    public function reply()
+    {
+        return $this->belongsTo(Reply::class);
     }
 }

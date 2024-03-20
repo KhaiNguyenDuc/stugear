@@ -15,6 +15,7 @@ import ThreadStats from "../../../components/Thread/ThreadStats";
 import CategoryService from "../../../service/CategoryService";
 import Loading from "../../../components/Loading";
 const ThreadPage = () => {
+  let debounceTimer;
   const [criteria, setCriteria] = useState({
     status: "new",
     tags: [],
@@ -42,16 +43,19 @@ const ThreadPage = () => {
   }
 
   const handleInputChange = (e) => {
-    let debounceTimer;
+    
     let query = e.target.value;
-    clearTimeout(debounceTimer);
+    if(debounceTimer){
+      clearTimeout(debounceTimer);
+    }
+   
     debounceTimer = setTimeout(() => {
       // setCurrentPage(1)
       setCriteria({
         ...criteria,
         [e.target.name]: query
       })
-    }, 4000);
+    }, 400);
 
   }
 

@@ -22,7 +22,7 @@ class ThreadService {
   getById (id) {
    
     
-    return axios.get(THREAD_URL+`/${id}`)
+    return axiosPrivate.get(THREAD_URL+`/${id}`)
       .then(response => response?.data?.data)
       .catch(error => error?.response)
   }
@@ -38,6 +38,12 @@ class ThreadService {
     return axiosPrivate.patch(THREAD_URL + `/${threadId}/attach-tag`, {
       tags: tags,
     });
+  }
+
+  reactThread(threadId, react){
+    axiosPrivate
+    .patch(THREAD_URL + `/${threadId}/react`, react)
+    .catch(error => error?.response)
   }
 
 
