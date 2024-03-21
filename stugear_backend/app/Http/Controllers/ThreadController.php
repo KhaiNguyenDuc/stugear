@@ -104,7 +104,10 @@ class ThreadController extends Controller
                 $bareToken = substr($token['authorization'][0], 7);
                 $userId = AuthService::getUserId($bareToken);
                 $react = $this->reactRepository->getByUserAndThread($userId, $thread->id);
-                $data['is_like'] = $react->like == 1 ? true: false;
+                if($react){
+                    $data['is_like'] = $react->like == 1 ? true: false;
+                }
+                
             }
 
             $data['id'] = $thread->id;
@@ -335,9 +338,9 @@ class ThreadController extends Controller
             }
         }else{
             $react = new React();
-            $react->id = null;
+            // $react->id = null;
             $react->user_id = $userId;
-            $react->thread = intval($id);
+            $react->thread_id = intval($id);
             // if new, then just increase or decrease
             if ($request->like == true) {
                 $thread->increment('like');

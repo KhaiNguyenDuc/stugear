@@ -25,7 +25,6 @@ const ProductPage = () => {
   const getProductById = async (id) => {
     setLoading(true);
     const response = await ProductService.getProductById(id);
-    console.log(response);
     if (response?.status === 404) {
       navigate("/not-found");
     }
@@ -58,7 +57,7 @@ const ProductPage = () => {
   const [isError, setError] = useState()
   const handleDelete = async () => {
     const response = await ProductService.deleteProduct(product?.id);
-    console.log(response)
+
     if(response?.status === 400){
       setError(response?.data?.message)
       

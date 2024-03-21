@@ -20,7 +20,6 @@ const AdminUser = () => {
       }
       return user;
     });
-    console.log(updatedUsers)
     setUsers(updatedUsers);
     await UserService.updateUserStatus(selectedUserId, selectedStatus);
     

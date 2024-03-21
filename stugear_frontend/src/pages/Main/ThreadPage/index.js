@@ -34,7 +34,6 @@ const ThreadPage = () => {
   const prevPage = () => {
     setCurrentPage(currentPage - 1);
   };
-  console.log(criteria);
   const handleChange = (e) => {
     setCriteria({
       ...criteria,

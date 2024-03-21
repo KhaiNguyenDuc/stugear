@@ -21,6 +21,13 @@ class ReactRepository extends BaseRepository implements ReactRepositoryInterface
         return $react;
     }
 
+    public function getByUserAndReply($userId, $replyId){
+        $react = $this->model->where("user_id", $userId)
+        ->where("reply_id", $replyId)
+        ->first();
+        return $react;
+    }
+
    
 
 

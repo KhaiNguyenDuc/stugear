@@ -53,11 +53,8 @@ const RegisterForm = () => {
         });
       } else if (response.status === 200) {
         const result = UserService.sendVerifyEmail(user.email);
-        console.log(result);
         navigate(`/verify/${user.email}`);
-      } else {
-        console.log(response);
-      }
+      } 
     } else {
       setError({
         field: "confirmPassword",

@@ -76,7 +76,7 @@ const ThreadDetailPage = () => {
   return <>{isLoading ? <Loading /> :
   ( 
   <>
-  <ThreadDetail threadDetail={thread} replies={replies} setFilter={setFilter} filter={filter} isReplyLoading={isReplyLoading}/>
+  <ThreadDetail threadDetail={thread} repliesDetail={replies} setFilter={setFilter} filter={filter} isReplyLoading={isReplyLoading}/>
   <div  className="mt-4 ">
         <CustomPagination 
             currentPage={currentPage}

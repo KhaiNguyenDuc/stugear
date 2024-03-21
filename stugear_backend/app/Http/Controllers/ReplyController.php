@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\React;
+use App\Repositories\React\ReactRepositoryInterface;
 use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
@@ -11,25 +13,28 @@ use Illuminate\Http\Request;
 use App\Util\AuthService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 class ReplyController extends Controller
 {
 
     protected $threadRepository;
     protected $userRepository;
     protected $tagRepository;
-
+    protected $reactRepository;
     protected $replyRepository;
     public function __construct(
         ThreadRepositoryInterface $threadRepository,
         UserRepositoryInterface $userRepository,
         TagRepositoryInterface $tagRepository,
         ReplyRepositoryInterface $replyRepository,
+        ReactRepositoryInterface $reactRepository,
 
     ) {
         $this->threadRepository = $threadRepository;
         $this->userRepository = $userRepository;
         $this->tagRepository = $tagRepository;
         $this->replyRepository = $replyRepository;
+        $this->reactRepository = $reactRepository;
     }
 
     public function getReplyByThreadId(Request $request, $threadId)
@@ -43,14 +48,31 @@ class ReplyController extends Controller
             AppConstant::$FILTER_REPLY[$filter] ?? $filter
         );
 
+        $token = $request->header();
+        if($token['authorization'][0] != "Bearer null"){
+            $bareToken = substr($token['authorization'][0], 7);
+            $userId = AuthService::getUserId($bareToken);
+        }else{
+            $userId = null;
+        }
+
         $data = [];
-        $memberData = [];
+        
         foreach ($replies as $reply) {
+            $memberData = [];
             $memberData['id'] = $reply->id;
+            if($userId){
+                $react = $this->reactRepository->getByUserAndReply($userId, $reply->id);
+                if($react){
+                    $memberData['is_like'] = $react->like === 1 ? true : false;
+                }
+
+               
+            }
             $memberData['user'] =  $this->userRepository->getById($reply->user_id);
             $memberData['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
-            $memberData['total_like'] = $reply->total_like;
-            $memberData['total_dislike'] = $reply->total_dislike;
+            $memberData['like'] = $reply->like;
+            $memberData['dislike'] = $reply->dislike;
             $memberData['content'] = $reply->content;
             if ($reply->parent_id != 0) {
                 $parentComment = $this->replyRepository->getById($reply->parent_id);
@@ -221,6 +243,93 @@ class ReplyController extends Controller
                 'status' => 'Lỗi',
                 'message' => 'Chỉ có Admin, chủ thread và chủ reply được phép xóa!'
             ], 400);
+        }
+    }
+
+    public function reactByReplyAndUser(Request $request, $replyId) {
+        $validator = Validator::make($request->all(), [
+            'like' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        $likeArray = [true, false];
+
+
+        if (!in_array($request->like, $likeArray))
+        {
+            return response()->json([
+                'status'=> 'Lỗi',
+                'message' => 'React không được',
+            ], 400);
+        }
+
+        $reply = $this->replyRepository->getById($replyId);
+        $react = $this->reactRepository->getByUserAndReply($userId, $replyId);
+        if($react != null){
+            if($react->like == true && $request->like == true){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'react không được',
+                ], 400);
+            }else if($react->like == false && $request->like == false){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'react không được',
+                ], 400);
+            }
+            // if it has already react, for each swap, reduce the other
+            if ($request->like == true) {
+                $reply->increment('like');
+                $reply->decrement('dislike');
+                $react->like = true;
+            }
+    
+            if ($request->like == false) {
+                $reply->increment('dislike');
+                $reply->decrement('like');
+                $react->like = false;
+            }
+        }else{
+            $react = new React();
+            $react->user_id = $userId;
+            $react->reply_id = intval($replyId);
+            // if new, then just increase or decrease
+            if ($request->like == true) {
+                $reply->increment('like');
+                $react->like = true;
+            }
+    
+            if ($request->like == false) {
+                $reply->increment('dislike');
+                $react->like = false;
+            }
+        }
+
+       
+        $result = $this->reactRepository->save([
+            'reply_id' => $react->reply_id,
+            'user_id' => $react->user_id,
+            'like' => $react->like
+        ], $react->id);
+        logger()->info('React retrieved:', [$react]);
+        if ($result)
+        {
+            return response()->json([
+                'status'=> 'Thành công',
+                'message'=> 'React thành công',
+            ]);
+        } else {
+            return response()->json([
+                'status'=> 'Thất bại',
+                'message'=> 'React thất bại'
+            ]);
         }
     }
 }

@@ -29,7 +29,6 @@ const CommentList = ({ productId }) => {
       id,
       currentPage
     );
-    console.log(response);
     if (response?.status === 500) {
       console.log("Something wentwrong");
     } else {

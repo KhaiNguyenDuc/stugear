@@ -345,8 +345,8 @@ class ReplySeeder extends Seeder
                 'content' => $contents[$i]['content'],
                 'raw_content' => $contents[$i]['raw_content'],
                 'user_id' => rand(1, 10),
-                'total_like' => 0, // Initialize likes to 0
-                'total_dislike' => 0, // Initialize dislikes to 0
+                'like' => 0, // Initialize likes to 0
+                'dislike' => 0, // Initialize dislikes to 0
                 'thread_id' => rand(1, 14),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),
@@ -357,8 +357,8 @@ class ReplySeeder extends Seeder
             ]);
 
             // Determine the number of likes and dislikes for this reply
-            $numLikes = rand(0, 100);
-            $numDislikes = rand(0, 20);
+            $numLikes = rand(0, 5);
+            $numDislikes = rand(0, 5);
 
             // Insert reactions for this reply
             for ($j = 0; $j < $numLikes; $j++) {
@@ -395,8 +395,8 @@ class ReplySeeder extends Seeder
             DB::table('replies')
                 ->where('id', $replyId)
                 ->update([
-                    'total_like' => $numLikes,
-                    'total_dislike' => $numDislikes,
+                    'like' => $numLikes,
+                    'dislike' => $numDislikes,
                 ]);
         }
 
@@ -409,8 +409,8 @@ class ReplySeeder extends Seeder
                 'user_id' => rand(1, 10),
                 'parent_id' => rand(1, 18), // assuming this is required
                 'reply_on' => rand(1, 10), // assuming this is required
-                'total_like' => 0, // Initialize likes to 0
-                'total_dislike' => 0,  // Initialize dislikes to 0
+                'like' => 0, // Initialize likes to 0
+                'dislike' => 0,  // Initialize dislikes to 0
                 'thread_id' => rand(1, 14),
                 'created_by' => 1,
                 'created_at' => now()->subDays(rand(1, 30)),
@@ -421,8 +421,8 @@ class ReplySeeder extends Seeder
             ]);
 
             // Determine the number of likes and dislikes for this reply
-            $numLikes = rand(0, 100);
-            $numDislikes = rand(0, 20);
+            $numLikes = rand(0, 5);
+            $numDislikes = rand(0, 5);
 
             // Insert reactions for this reply
             for ($j = 0; $j < $numLikes; $j++) {
@@ -459,8 +459,8 @@ class ReplySeeder extends Seeder
             DB::table('replies')
                 ->where('id', $replyId)
                 ->update([
-                    'total_like' => $numLikes,
-                    'total_dislike' => $numDislikes,
+                    'like' => $numLikes,
+                    'dislike' => $numDislikes,
                 ]);
         }
 

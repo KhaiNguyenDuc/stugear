@@ -26,7 +26,6 @@ const General = () => {
   const handleChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
-  console.log(userInfo)
   const handleFileChange = async (e) => {
     await UserService.uploadImage(user?.user_id, e.target.files[0]);
     setUser({

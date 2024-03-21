@@ -21,7 +21,6 @@ const MySell = () => {
       myOrder: orderCount,
     });
  
-    console.log(response);
     if (response?.status !== 400) {
       setOrders(response?.data);
     }

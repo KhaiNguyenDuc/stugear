@@ -5,7 +5,6 @@ const AUTH_URL = BASE_API_URL + '/auth';
 
 class AuthService {
   register (user) {
-    console.log(user.name)
     return axios.post(AUTH_URL + '/register', {
       name: user.name,
       email: user.email,

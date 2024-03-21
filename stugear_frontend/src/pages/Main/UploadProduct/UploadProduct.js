@@ -116,7 +116,6 @@ const UploadProduct = () => {
       tags: response?.tags,
       owner_id: response?.owner_id,
     });
-    console.log(product);
   };
   const validate = async (categoryId) => {
     // Check if categoryId exists in the categories array
@@ -167,9 +166,9 @@ const UploadProduct = () => {
     if (selectedFile) {
       formData.append("image", selectedFile);
       const responseImg = await ProductService.uploadImage(productId, formData);
-      console.log(responseImg);
+
       if (responseImg?.status === 400) {
-        console.log("aaa");
+        console.log("something went wrong");
       }
     }
     const newItems = selected.filter((item) => item.__isNew__);

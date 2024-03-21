@@ -64,9 +64,7 @@ const Comment = ({
       setCurrentPage(currentPage);
     }
   };
-  useEffect(() => {
-    console.log(replyComment);
-  }, [replyComment]);
+
 
   const handleChange = (e) => {
     setReplyComment({ ...replyComment, [e.target.name]: e.target.value });

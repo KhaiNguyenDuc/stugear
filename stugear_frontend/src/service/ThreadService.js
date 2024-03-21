@@ -28,7 +28,6 @@ class ThreadService {
   }
 
   createThread(thread){
-    console.log(thread)
     return axiosPrivate.post(THREAD_URL,thread)
       .then(response => response?.data?.data)
       .catch(error => error?.response)
