@@ -59,6 +59,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Reply\ReplyRepositoryInterface::class,
             \App\Repositories\Reply\ReplyRepository::class,
         );
+        $this->app->singleton(
+            \App\Repositories\React\ReactRepositoryInterface::class,
+            \App\Repositories\React\ReactRepository::class,
+        );
     }
 
     /**

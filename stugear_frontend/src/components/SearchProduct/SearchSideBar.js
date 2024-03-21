@@ -55,10 +55,10 @@ const SearchSideBar = ({
     }));
     setCategories(options);
   };
-
+  let debounceTimer;
 
   const handleChange = (e) => {
-    let debounceTimer;
+    
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       setQuery(e.target.value);
@@ -160,7 +160,6 @@ const SearchSideBar = ({
 
   useEffect(() => {
 
-      console.log("lấy");
       const criteria = {
         tags: selected.map((item) => item.value),
         category_id: cateSelected.map((item) => item.value),
@@ -174,8 +173,6 @@ const SearchSideBar = ({
         date_to: endDate?.toLocaleDateString("en-GB"),
       }
       if (slug !== "") {
-        console.log("select here");
-        console.log(slug);
   
         // Parse the search query from the URL
         const searchParams = new URLSearchParams(location.search);
@@ -283,7 +280,6 @@ const SearchSideBar = ({
               options={tags}
               value={selected}
               onChange={(selected) => {
-                console.log(selected)
                 setSelected(selected);
                 setCurrentPage(1) // Reset currentPage
               }}

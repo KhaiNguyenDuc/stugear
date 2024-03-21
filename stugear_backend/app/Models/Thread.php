@@ -24,8 +24,6 @@ class Thread extends Model
         'like',
         'dislike',
         'reply',
-        'total_like',
-        'total_dislike',
         'category_id',
         'user_id',
         'created_at',
@@ -63,5 +61,10 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function reacts()
+    {
+        return $this->hasMany(React::class);
     }
 }

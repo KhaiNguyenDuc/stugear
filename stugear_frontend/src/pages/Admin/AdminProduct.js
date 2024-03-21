@@ -68,10 +68,8 @@ const AdminUser = () => {
     }else{
       selectedStatus = status
     }
-    console.log(selectedStatus);
     await updateStatus(productId, selectedStatus);
     const selectedStatusString = convertStatusToName(selectedStatus);
-    console.log(selectedStatusString);
     // Update products status here
     const updatedProducts = products.map((product) => {
       if (product.id === productId) {

@@ -43,7 +43,6 @@ const Verify = () => {
    
     const result = await AuthService.sendVerifyPin(email, pin)
     setLoading(false)
-    console.log(result)
     if (result.status === "success") {
       setSuccess(true)
       await toast.success("Xác thực tài khoản thành công!", {

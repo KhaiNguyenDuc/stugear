@@ -13,7 +13,6 @@ const MyProduct = () => {
     
     setLoading(true);
     const response = await UserService.getCurrentUserProducts(currentPage);
-    console.log(response)
     setTotalPage(response?.total_page);
     setProducts(response?.data);
     

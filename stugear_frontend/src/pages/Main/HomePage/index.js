@@ -16,7 +16,7 @@ const HomePage = () => {
       setLoading(true)
 
         const response = await CategoryService.getCategoriesById(slug)
-        console.log(response)
+
         if (response?.status === 500) {
           console.log('Something wentwrong')
         } else {

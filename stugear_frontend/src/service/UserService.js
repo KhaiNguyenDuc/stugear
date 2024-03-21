@@ -13,7 +13,7 @@ class UserService {
   }
 
   removeCurrentUserWishListByProductId(id) {
-    console.log(id);
+
     return axiosPrivate
       .post(BASE_API_URL + "/wishlists/remove", {
         product_id: id,
@@ -76,7 +76,7 @@ class UserService {
       .catch((error) => error?.response);
   }
   uploadImage(userId, file) {
-    console.log(file);
+
     return axiosPrivate
       .post(
         USER_URL + `/${userId}/upload-image`,

@@ -47,7 +47,6 @@ const BalancePage = () => {
   const handlePayement = async () => {
     if (method === "1") {
       const response = await PaymentService.MomoPay(amountToAdd);
-      console.log(response);
       if (response?.status === 400) {
         setError(response?.data?.message);
       } else {
@@ -56,7 +55,6 @@ const BalancePage = () => {
       }
     } else if (method === "2") {
       const response = await PaymentService.VNPay(amountToAdd);
-      console.log(response);
       if (response?.status === 400) {
         setError(response?.data?.message);
       } else {

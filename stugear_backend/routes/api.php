@@ -138,7 +138,9 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
 
 Route::controller(ThreadController::class)->prefix('threads')->group(function (){
     Route::post('/filter','index');
-    Route::get('/{id}', 'view');
+    Route::get('/{id}', 'getThreadById'); 
+    Route::patch('/{id}/react', 'reactByThreadAndUser')->middleware('auth_jwt'); 
+    
     Route::post('/', 'create');
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
     Route::delete('/{id}', 'delete')->middleware('auth_jwt');
@@ -147,6 +149,7 @@ Route::controller(ThreadController::class)->prefix('threads')->group(function ()
 Route::controller(ReplyController::class)->group(function (){
     Route::get('/thread/{id}/replies', 'getReplyByThreadId');
     Route::delete('/replies/{id}', 'delete')->middleware('auth_jwt');
+    Route::patch('/replies/{id}/react', 'reactByReplyAndUser')->middleware('auth_jwt');
 });
 
 

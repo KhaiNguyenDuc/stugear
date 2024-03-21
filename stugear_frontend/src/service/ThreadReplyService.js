@@ -1,7 +1,9 @@
 import axios from 'axios'
 import {BASE_API_URL} from "../utils/Constant.js"
+import { axiosPrivate } from '../api/axios.js';
 
 const THREAD_REPLY_URL = BASE_API_URL + '/thread'
+const REPLY_URL = BASE_API_URL + '/replies'
 class ThreadReplyService {
 
 
@@ -16,10 +18,17 @@ class ThreadReplyService {
     if(filter != undefined && filter != ""){
       url += `&filter=${filter}`;
     }
-    return axios.get(url)
+    return axiosPrivate.get(url)
       .then(response => response?.data)
       .catch(error => error?.response)
   }
+
+  reactReply(replyId, react){
+    axiosPrivate
+    .patch(REPLY_URL + `/${replyId}/react`, react)
+    .catch(error => error?.response)
+  }
+  
 
 }
 

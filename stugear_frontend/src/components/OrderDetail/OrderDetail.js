@@ -137,10 +137,7 @@ const OrderDetail = () => {
     }
     if (response?.status !== 400) {
       setOrder({ ...order, status: status });
-    } else {
-      console.log(response);
-      console.log("wrong");
-    }
+    } 
   };
   const getOrder = async (orderId) => {
     setLoading(true);

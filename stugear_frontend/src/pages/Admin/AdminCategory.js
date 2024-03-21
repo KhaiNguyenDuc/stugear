@@ -118,7 +118,6 @@ const AdminCategory = () => {
       setCategories(
         categories.map((category) => {
           if (category?.id === selectedCategory.id) {
-            console.log(selectedCategory)
             return { ...category, name: selectedCategory?.name, description: selectedCategory?.description, image:   selectedCategory.image ?  selectedCategory.image : category.image };
           }
           return category;

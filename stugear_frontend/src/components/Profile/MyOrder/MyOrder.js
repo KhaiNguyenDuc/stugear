@@ -26,7 +26,6 @@ const MyOrder = () => {
   const getOrders = async () => {
     setLoading(true)
     const response = await UserService.getCurrentUserOrdersHistory(currentPage)
-    console.log(response)
     if(response?.status !== 400) {
       setOrder(response?.data)
       setTotalPage(response?.total_page)

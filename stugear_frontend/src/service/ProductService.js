@@ -53,7 +53,7 @@ class ProductService {
   }
 
   uploadImage(productId, formData) {
-    console.log(formData);
+
     return axiosPrivate.post(
       PRODUCT_URL + `/${productId}/upload-image`,
       formData,
@@ -90,20 +90,7 @@ class ProductService {
       .catch((error) => error?.response);
   }
   updateProduct(product) {
-    console.log({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      condition: product.condition,
-      edition: product.edition,
-      origin_price: product.origin_price,
-      quantity: product.quantity,
-      brand: product.brand,
-      status: product.status,
-      category_id: product.category_id,
-      transaction_id: product.transaction_id,
-      description: product.description,
-    });
+
     return axiosPrivate
       .patch(PRODUCT_URL +  `/${product.id}/update`, {
         name: product.name,
@@ -123,19 +110,7 @@ class ProductService {
   }
 
   createProduct(product) {
-    console.log({
-      name: product.name,
-      price: product.price,
-      condition: product.condition,
-      edition: product.edition,
-      origin_price: product.origin_price,
-      quantity: product.quantity,
-      brand: product.brand,
-      status: product.status,
-      category_id: product.category_id,
-      transaction_id: product.transaction_id,
-      description: product.description,
-    });
+
     return axiosPrivate
       .post(PRODUCT_URL, {
         name: product.name,
@@ -188,7 +163,6 @@ class ProductService {
   }
 
   getProductsByCriteria(criteria, currentPage){
-    console.log(PRODUCT_URL + `/search-criteria?page=${currentPage}&limit=6`)
     return axios
     .post(PRODUCT_URL + `/search-criteria?page=${currentPage}&limit=6`, criteria)
     .then((response) => response?.data)

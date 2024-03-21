@@ -10,8 +10,7 @@ const Info = () => {
 
     try {
       const response = await ProductService.uploadImageByProductId(1, selectedFile);
-      console.log("Success");
-      console.log(response);
+
     } catch (error) {
       console.error("Error uploading image:", error);
     }

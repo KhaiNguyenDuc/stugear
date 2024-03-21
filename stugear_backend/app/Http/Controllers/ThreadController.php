@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\React;
 use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\Reply\ReplyRepositoryInterface;
 use App\Repositories\Category\CategoryRepositoryInterface;
+use App\Repositories\React\ReactRepositoryInterface;
 use App\Util\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,14 +21,16 @@ class ThreadController extends Controller
     protected $userRepository;
     protected $tagRepository;
     protected $categoryRepository;
-
+    protected $reactRepository;
     protected $replyRepository;
+
     public function __construct(
         ThreadRepositoryInterface $threadRepository,
         UserRepositoryInterface $userRepository,
         TagRepositoryInterface $tagRepository,
         ReplyRepositoryInterface $replyRepository,
-        CategoryRepositoryInterface $categoryRepository
+        CategoryRepositoryInterface $categoryRepository,
+        ReactRepositoryInterface $reactRepository,
 
     ) {
         $this->threadRepository = $threadRepository;
@@ -34,6 +38,7 @@ class ThreadController extends Controller
         $this->tagRepository = $tagRepository;
         $this->replyRepository = $replyRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->reactRepository = $reactRepository;
     }
 
     public function index(Request $request)
@@ -81,7 +86,7 @@ class ThreadController extends Controller
         ]);
     }
 
-    public function view($id)
+    public function getThreadById(Request $request, $id)
     {
         Carbon::setLocale('vi');
         $thread = $this->threadRepository->getById($id);
@@ -91,7 +96,20 @@ class ThreadController extends Controller
                 'message' => 'not found thread'
             ], 404);
         } else {
+
+          
             $data = [];
+            $token = $request->header();
+            if($token['authorization'][0] != "Bearer null"){
+                $bareToken = substr($token['authorization'][0], 7);
+                $userId = AuthService::getUserId($bareToken);
+                $react = $this->reactRepository->getByUserAndThread($userId, $thread->id);
+                if($react){
+                    $data['is_like'] = $react->like == 1 ? true: false;
+                }
+                
+            }
+
             $data['id'] = $thread->id;
             $data['title'] = $thread->title;
             $data['description'] = $thread->description;
@@ -103,7 +121,6 @@ class ThreadController extends Controller
             $data['dislike'] = $thread->dislike;
             $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $data['user_id'] = $thread->user_id;
-            $data['total_like'] = $thread->total_like;
             $data['user'] = $this->userRepository->getById($thread->user_id);
             $threadTags = $thread->threadTags;
             $tags = [];
@@ -266,6 +283,94 @@ class ThreadController extends Controller
                 'status' => 'Lỗi',
                 'message' => 'Chỉ có Admin hoặc chủ thread được phép xóa!'
             ], 400);
+        }
+    }
+
+    public function reactByThreadAndUser(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'like' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        $likeArray = [true, false];
+
+
+        if (!in_array($request->like, $likeArray))
+        {
+            return response()->json([
+                'status'=> 'Lỗi',
+                'message' => 'React không được',
+            ], 400);
+        }
+
+        $thread = $this->threadRepository->getById($id);
+        $react = $this->reactRepository->getByUserAndThread($userId, $id);
+        if($react != null){
+            if($react->like == true && $request->like == true){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'react không được',
+                ], 400);
+            }else if($react->like == false && $request->like == false){
+                return response()->json([
+                    'status'=> 'Lỗi',
+                    'message' => 'react không được',
+                ], 400);
+            }
+            // if it has already react, for each swap, reduce the other
+            if ($request->like == true) {
+                $thread->increment('like');
+                $thread->decrement('dislike');
+                $react->like = true;
+            }
+    
+            if ($request->like == false) {
+                $thread->increment('dislike');
+                $thread->decrement('like');
+                $react->like = false;
+            }
+        }else{
+            $react = new React();
+            // $react->id = null;
+            $react->user_id = $userId;
+            $react->thread_id = intval($id);
+            // if new, then just increase or decrease
+            if ($request->like == true) {
+                $thread->increment('like');
+                $react->like = true;
+            }
+    
+            if ($request->like == false) {
+                $thread->increment('dislike');
+                $react->like = false;
+            }
+        }
+
+       
+        $result = $this->reactRepository->save([
+            'thread_id' => $react->thread_id,
+            'user_id' => $react->user_id,
+            'like' => $react->like
+        ], $react->id);
+        logger()->info('React retrieved:', [$react]);
+        if ($result)
+        {
+            return response()->json([
+                'status'=> 'Thành công',
+                'message'=> 'React thành công',
+            ]);
+        } else {
+            return response()->json([
+                'status'=> 'Thất bại',
+                'message'=> 'React thất bại'
+            ]);
         }
     }
 }

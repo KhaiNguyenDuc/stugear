@@ -16,7 +16,6 @@ const ProductDetail = ({ product, isMember }) => {
     const response = await UserService.addCurrentWishtlistByProductId(
       product.id
     );
-    console.log(response)
     if (response == 500) {
       console.log("Some thing wrong");
     } else if(response?.status === 400){

@@ -63,7 +63,7 @@ const CheckoutPage = () => {
   };
   const getUserById = async (id) => {
     const response = await UserService.getUserById(id);
-    console.log(response);
+
     if (response?.status !== 400) {
       setOwner(response[0]);
     }

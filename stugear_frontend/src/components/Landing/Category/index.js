@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom"
 
 const Category = ({ category }) => {
-    console.log(category)
     return (
       <div className="col-lg-4" data-aos="fade-up" data-aos-delay={200}>
         <div className="box" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
