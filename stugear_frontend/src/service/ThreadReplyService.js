@@ -6,6 +6,12 @@ const THREAD_REPLY_URL = BASE_API_URL + '/thread'
 const REPLY_URL = BASE_API_URL + '/replies'
 class ThreadReplyService {
 
+  createReply(threadId, reply){
+    return axiosPrivate
+    .post(THREAD_REPLY_URL + `/${threadId}/replies`, reply)
+    .then(response => response?.data)
+    .catch(error => error?.response)
+  }
 
   getByThreadId(id, currentPage, filter) {
     let url = THREAD_REPLY_URL + `/${id}/replies`;
