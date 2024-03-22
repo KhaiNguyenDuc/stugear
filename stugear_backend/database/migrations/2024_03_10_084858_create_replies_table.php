@@ -17,10 +17,10 @@ return new class extends Migration
             $table->longText('raw_content')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('parent_id')->default(0)->nullable();
-            $table->unsignedBigInteger('reply_on')->default(0)->nullable();
-            $table->integer('like')->nullable();
-            $table->integer('dislike')->nullable();
+            $table->unsignedBigInteger('parent_id')->default(0)->nullable(); // id of parent reply, not render but used to retrieve data
+            $table->unsignedBigInteger('reply_on')->default(0)->nullable(); // id of user has parent reply
+            $table->integer('like')->default(0)->nullable();
+            $table->integer('dislike')->default(0)->nullable();
             $table->unsignedBigInteger('thread_id')->nullable();
             $table->foreign('thread_id')->references('id')->on('threads');
             $table->integer('created_by')->nullable();

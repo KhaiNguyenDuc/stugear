@@ -935,12 +935,12 @@ html.touch-device {
 }
 
 .tt-single-topic .tt-item-description .topic-inner-list {
-    margin-top: 37px;
+    margin-bottom: 37px;
     padding-bottom: 8px;
 }
 
 .tt-single-topic .tt-item-description .topic-inner-list .topic-inner:not(:first-child) {
-    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .tt-single-topic .tt-item-description .topic-inner {
@@ -1022,7 +1022,7 @@ html.touch-device {
 @media (min-width: 1025px) {
     .tt-single-topic {
         padding: 30px 30px 40px 125px;
-    }
+    }   
 
     .tt-single-topic .tt-avatar-icon {
         position: absolute;
@@ -1035,6 +1035,31 @@ html.touch-device {
     .tt-single-topic {
         padding: 30px 20px 40px 20px;
     }
+
+    .tt-single-topic .tt-item-header .tt-item-info.info-top .tt-avatar-title {
+        -ms-flex: 2 1 auto;
+        -webkit-box-flex: 2;
+        flex: 2 1 auto;
+        padding-left: 25px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .tt-single-topic.thread-reply {
+        padding: 0px !important;
+    }   
+
+    .tt-single-topic .tt-avatar-icon {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .tt-single-topic.thread-reply {
+        padding: 0px !important;
+    }  
 
     .tt-single-topic .tt-item-header .tt-item-info.info-top .tt-avatar-title {
         -ms-flex: 2 1 auto;
@@ -1525,12 +1550,12 @@ html.touch-device {
     font-size: 14px;
     letter-spacing: 0.01em; }
     .tt-topic-list .tt-list-header .tt-col-topic {
-      width: 50%;
+      width: 20%;
       -webkit-box-flex: 2;
       -ms-flex: 2 1 auto;
       flex: 2 1 auto; }
     .tt-topic-list .tt-list-header .tt-col-category {
-      width: 16.66667%; }
+      width: 28%; }
       @media (max-width: 991px) {
         .tt-topic-list .tt-list-header .tt-col-category {
           display: none; } }
@@ -1543,9 +1568,9 @@ html.touch-device {
       padding: 20px 15px 22px; }
     @media (max-width: 991px) {
       .tt-topic-list .tt-list-header .tt-col-topic {
-        width: 68.66666%; }
+        width: 38.66666%; }
       .tt-topic-list .tt-list-header .tt-col-category {
-        width: 23%; }
+        width: 31%; }
       .tt-topic-list .tt-list-header .tt-col-value {
         text-align: right; } }
     @media (max-width: 991px) {
@@ -1672,10 +1697,10 @@ html.touch-device {
         display: none; } }
     @media (min-width: 992px) {
       .tt-topic-list .tt-item .tt-col-category:not(.tt-col-value-large) {
-        width: 16.66667%; } }
+        width: 31%; } }
     @media (max-width: 991px) {
       .tt-topic-list .tt-item .tt-col-category:not(.tt-col-value-large) {
-        width: 23%; } }
+        width: 31%; } }
     @media (max-width: 991px) {
       .tt-topic-list .tt-item .tt-col-category {
         display: none; } }
@@ -1837,11 +1862,21 @@ html.touch-device {
 
 @media (max-width: 991px) {
 
-    .ql-editor { height: 150px !important }
+    .pt-editor .ql-editor { height: 80px !important }
 }
 
 @media (min-width: 992px) {
 
-    .ql-editor { height: 350px !important }
+    .pt-editor .ql-editor { height: 120px !important }
+}
+
+@media (max-width: 991px) {
+
+    .reply-editor .ql-editor { height: 60px !important }
+}
+
+@media (min-width: 992px) {
+
+    .reply-editor .ql-editor { height: 150px !important }
 }
 

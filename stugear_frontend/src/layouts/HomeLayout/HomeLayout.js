@@ -17,7 +17,11 @@ const HomeLayout = ({title, sub_title, titleUrl}) => {
     if (response?.status === 500) {
       console.log('Something went wrong')
     } else {
-      setCategories(response)
+      setCategories(response.filter(category => category.name === "Sách" || category.name === "Tài liệu"
+      || category.name === "Linh kiện"
+      || category.name === "Khác"
+      )
+      )
       
     }
   }

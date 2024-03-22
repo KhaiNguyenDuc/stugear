@@ -27,10 +27,10 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
 
         switch ($filter) {
             case '1':
-                $query->orderByDesc('updated_at');
+                $query->orderByDesc('created_at');
                 break;
             case '2':
-                $query->orderByDesc(DB::raw('total_like'));
+                $query->orderByDesc('like');
                 break;
             case '3':
                 $query->orderByDesc(DB::raw('LENGTH(raw_content)'));
@@ -43,7 +43,7 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
                 // được đồng ý
                 break;
             default:
-                $query->orderByDesc('updated_at');
+                $query->orderByDesc('created_at');
                 break;
         }
 

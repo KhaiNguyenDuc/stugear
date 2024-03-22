@@ -15,9 +15,7 @@ const SuggestThread = ({ threads }) => {
         <div className="tt-col-category">
           <b>Thẻ</b>
         </div>
-        <div className="tt-col-value hide-mobile">
-          <b>Lượt thích</b>
-        </div>
+
         <div className="tt-col-value hide-mobile">
           <b>Phản hồi</b>
         </div>
@@ -36,7 +34,7 @@ const SuggestThread = ({ threads }) => {
           </div>
           <div className="tt-col-description">
             <h6 className="tt-title">
-              <a href="#">{thread?.title}</a>
+              <Link to={`/thread/${thread?.id}`}>{thread?.title}</Link>
             </h6>
           </div>
           <div className="tt-col-category">
@@ -57,7 +55,7 @@ const SuggestThread = ({ threads }) => {
               </ul>
             </div>
           </div>
-          <div className="tt-col-value hide-mobile">{thread?.like}</div>
+         
           <div className="tt-col-value tt-color-select hide-mobile">
             {thread?.reply}
           </div>

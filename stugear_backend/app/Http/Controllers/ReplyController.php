@@ -124,65 +124,48 @@ class ReplyController extends Controller
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
 
-        // $validator = Validator::make($request->all(), [
-        //     'product_id' => 'required|integer|min:1',
-        //     'parent_id' => 'required|integer|min:0',
-        //     'reply_on' => 'required|integer|min:0',
-        //     'rating' => 'required|integer|between:0,5'
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'raw_content' => 'required|string',
+            'content' => 'required|string'
+        ]);
 
-        // if ($validator->fails()) {
-        //      return response()->json(['error' => $validator->errors()], 400);
-        // }
 
-        // if ($request->content == '') {
-        //     return response()->json([
-        //         'status' => 'Lỗi',
-        //         'message' => 'Nội dung comment không thể rỗng'
-        //     ], 400);
-        // }
+        if ($validator->fails()) {
+             return response()->json(['error' => $validator->errors()], 400);
+        }
 
-        // if ($request->parent_id != 0 && $request->rating != 0) {
-        //     return response()->json([
-        //         'status'=> 'Lỗi',
-        //         'message' => 'Khi reply không được rating'
-        //     ], 400);
-        // }
+        if ($request->content == '') {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Nội dung thread reply không thể rỗng'
+            ], 400);
+        }
 
-        // if ($request->parent_id == 0 && $request->rating == 0) {
-        //     return response()->json([
-        //         'status'=> 'Lỗi',
-        //         'message' => 'Khi comment phải rating, chỉ reply comment là không rating!'
-        //     ], 400);
-        // }
 
-        // $this->ratingRepository->rating($request->product_id, $request->rating, $userId);
+        $result = $this->replyRepository->save([
+            'content' => $request->input('content'),
+            'raw_content' => $request->input('raw_content'),
+            'user_id' => $userId,
+            'parent_id' => $request->input('parent_id'), // id of reply
+            'thread_id' => $threadId,
+            'reply_on' => $request->input('reply_on'), // id of user has parent reply
+            'created_by' => $userId,
+            'updated_by' => $userId,
+            'created_at' => Carbon::now(),
+            'updated_at'=> Carbon::now()
+        ]);
 
-        // $result = $this->commentRepository->save([
-        //     'content' => $request->input('content'),
-        //     'owner_id' => $userId,
-        //     'parent_id' => $request->input('parent_id'),
-        //     'product_id' => $request->input('product_id'),
-        //     'reply_on' => $request->input('reply_on'),
-        //     'vote' => 0,
-        //     'rating_id' => $request->input('rating'),
-        //     'created_by' => $userId,
-        //     'updated_by' => $userId,
-        //     'created_at' => Carbon::now(),
-        //     'updated_at'=> Carbon::now()
-        // ]);
-
-        // if ($result) {
-        //     return response()->json([
-        //         'status'=> 'Thành công',
-        //         'message' => 'Comment thành công',
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'status'=> 'Thất bại',
-        //         'message' => 'Comment thất bại',
-        //     ],400);
-        // }
+        if ($result) {
+            return response()->json([
+                'status'=> 'Thành công',
+                'message' => 'Reply thread thành công',
+            ]);
+        } else {
+            return response()->json([
+                'status'=> 'Thất bại',
+                'message' => 'Reply thread thất bại',
+            ],400);
+        }
     }
 
     public function update(Request $request)
