@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProductCreated;
 use App\Models\Product;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\Comment\CommentRepositoryInterface;
@@ -535,6 +536,7 @@ class ProductController extends Controller
                 'message' => 'Tạo sản phẩm thất bại',
             ], 400);
         } else {
+            event(new ProductCreated($product));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Tạo sản phẩm thành công',

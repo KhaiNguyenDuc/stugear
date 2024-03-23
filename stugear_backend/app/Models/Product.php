@@ -89,4 +89,14 @@ class Product extends Model
     {
         return $this->hasMany(ProductTag::class);
     }
+
+    public function validation(){
+        return $this->belongsTo(Validation::class);
+    }
+
+    public function getValidationData(){
+        return $this->name . " " . $this->description . " " . $this->brand;
+    }
+    
 }
+

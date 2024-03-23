@@ -63,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\React\ReactRepositoryInterface::class,
             \App\Repositories\React\ReactRepository::class,
         );
+        $this->app->singleton(
+            \App\Repositories\Validation\ValidationRepositoryInterface::class,
+            \App\Repositories\Validation\ValidationRepository::class,
+        );
     }
 
     /**

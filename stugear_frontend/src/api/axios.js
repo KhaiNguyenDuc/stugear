@@ -55,15 +55,15 @@ axiosPrivate.interceptors.response.use(
         localStorage.removeItem("username")
         localStorage.removeItem("roles")
         localStorage.removeItem("access_token")
-        window.location.href = "/login"
+        // window.location.href = "/login"
       }
     } else if (error.response.status === 500){
       console.log("500 rui")
       console.log(error)
-      window.location.href = "/internal-error" 
+      // window.location.href = "/internal-error" 
     } else if (error.response.status === 401){
       console.log("Need login")
-      window.location.href = "/login"
+      // window.location.href = "/login"
     } else if (error.response.status === 400){
       return Promise.reject(error)
     }

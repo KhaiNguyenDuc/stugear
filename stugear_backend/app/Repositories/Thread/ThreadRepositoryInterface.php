@@ -11,4 +11,5 @@ interface ThreadRepositoryInterface extends RepositoryInterface
     public function getWithCriteria($tag, $key, $status, $categories, $limit);
 
     public function getThreadTagsByThreadId($threadId);
+
 }

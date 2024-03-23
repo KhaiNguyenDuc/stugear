@@ -4,7 +4,6 @@ use App\Http\Controllers\AskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\WishlistController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
@@ -151,6 +150,9 @@ Route::controller(ReplyController::class)->group(function (){
     Route::delete('/replies/{id}', 'delete')->middleware('auth_jwt');
     Route::patch('/replies/{id}/react', 'reactByReplyAndUser')->middleware('auth_jwt');
 });
+
+
+
 
 
 

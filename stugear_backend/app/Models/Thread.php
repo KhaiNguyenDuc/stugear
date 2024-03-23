@@ -48,6 +48,9 @@ class Thread extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function getValidationData(){
+        return $this->title . " " . $this->description . " " . $this->raw_content;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -66,5 +69,9 @@ class Thread extends Model
     public function reacts()
     {
         return $this->hasMany(React::class);
+    }
+
+    public function validation(){
+        return $this->belongsTo(Validation::class);
     }
 }
