@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\ProductCreated;
+use App\Events\ThreadCreated;
+use App\Listeners\ValidateProduct;
+use App\Listeners\ValidateThread;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,7 +25,15 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        ThreadCreated::class => [
+            ValidateThread::class,
+        ],
+        ProductCreated::class => [
+            ValidateProduct::class,
+        ],
     ];
+
+
 
     /**
      * Register any events for your application.

@@ -238,7 +238,27 @@ const ThreadDetail = ({
         heading={"Vui lòng tạo tài khoản để tương tác"}
         body={'Bấm vào nút "Đồng ý" để đến trang đăng nhập'}
       ></CustomModal>
-
+      {thread?.valid[0]?.is_valid == 0 && (
+        <>
+         <div
+                className="product-status mb-5 rounded-xl1"
+                style={{
+                  backgroundColor: "#F59E0B",
+                }}
+              >
+                <div className="d-flex mb-3">
+                  <span
+                    className="ping my-2 me-2"
+                    style={{ border: "4px solid #10B981" }}
+                  ></span>
+                  <span>{thread?.valid[0]?.description}</span>
+                </div>
+                <h4>Bài đăng của bạn đang chờ được duyệt.</h4>
+                <p>Chúng tôi sẽ cho bạn biết khi bài đăng đã được duyệt</p>
+              </div>
+        </>
+      )}
+      
       <div classname="tt-single-topic-list">
         <div className="tt-item">
           <div

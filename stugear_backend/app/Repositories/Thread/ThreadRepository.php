@@ -54,15 +54,15 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
     public function getWithCriteria($tag, $key, $status, $categories, $limit)
     {
         $query = DB::table('threads');
+    
         if (!empty($key)) {
             $query->where(function ($subQuery) use ($key) {
                 $subQuery->where('threads.title', 'like', '%' . $key . '%')
-                      ->orWhere('threads.description', 'like', '%' . $key . '%')
-                      ->orWhere('threads.raw_content', 'like', '%' . $key . '%');
-                    }
-                );
+                         ->orWhere('threads.description', 'like', '%' . $key . '%')
+                         ->orWhere('threads.raw_content', 'like', '%' . $key . '%');
+            });
         }
-
+    
         if (!empty($status) && array_key_exists($status, AppConstant::$FILTER_STATUS_THREAD)) {
             if ($status == 'new') {
                 $query->orderBy('threads.updated_at', 'desc');
@@ -72,15 +72,14 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                 $query->orderBy('threads.reply', 'desc');
             }
         }
-
+    
         if (!empty($categories)) {
             $query->whereIn('category_id', $categories);
         }
         if (!empty($tag)) {
-            // dd($tag);
             $query->join('product_tags', 'threads.id', '=', 'product_tags.thread_id')
-                ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
-                ->whereIn('tags.id', $tag);
+                  ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
+                  ->whereIn('tags.id', $tag);
             $query->select(
                 'threads.id',
                 'threads.title',
@@ -91,15 +90,23 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                 'threads.like',
                 'threads.reply',
                 'threads.user_id',
-                'threads.category_id',
+                'threads.category_id'
             )->distinct();
         }
-
+    
+        // Join with the validations table
+        $query->join('validations', 'threads.id', '=', 'validations.thread_id');
+    
+        // Add a condition to filter threads with validation.is_valid = true
+        $query->where('validations.is_valid', true);
+    
+        // Additional conditions
         $query->whereNull('threads.deleted_by');
         $query->whereNull('threads.deleted_at');
-
+    
         return $query->paginate($limit);
     }
+    
 
     public function getThreadTagsByThreadId($threadId) {
         $result = DB::table('threads')
@@ -109,4 +116,6 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             ->get();
         return $result;
     }
+
+    
 }

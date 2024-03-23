@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->binary('content')->nullable();
             $table->longText('raw_content');
-            // 1: chờ duyệt, 2: đã duyệt
-            $table->integer('status')->nullable();
+            // 0: chờ duyệt, 1: đã duyệt
+            // $table->integer('status')->default(0)->nullable();
             $table->integer('view')->default(0);
             $table->integer('like')->default(0);
             $table->integer('dislike')->default(0);

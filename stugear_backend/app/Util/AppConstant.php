@@ -7,7 +7,6 @@ class AppConstant {
     public static $UPLOAD_DIRECTORY_CATEGORY_IMAGE = 'uploads/categories';
     public static $UPLOAD_DIRECTORY_PRODUCT_IMAGE = 'uploads/products';
     public static $UPLOAD_DIRECTORY_ASK_IMAGE = 'uploads/asks';
-
     public static $UPLOAD_SUCCESS = "Upload successfully!";
 
     public static $UPLOAD_FAILURE = "Upload fail, please check again!";

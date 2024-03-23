@@ -125,6 +125,11 @@ class ThreadSeeder extends Seeder
                 'deleted_at' => null,
             ]);
 
+            DB::table('validations')->insert([
+                'thread_id'=>$threadId,
+                'is_valid'=>true
+            ]);
+
             // Determine the number of likes and dislikes for this thread
             $numLikes = rand(0, 20);
             $numDislikes = rand(0, 10);

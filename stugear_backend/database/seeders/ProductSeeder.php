@@ -650,7 +650,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $product) {
-            DB::table('products')->insert([
+            $productId = DB::table('products')->insertGetId([
                 'name' => $product['name'],
                 'price' => $product['price'],
                 'description' => $product['description'],
@@ -666,6 +666,11 @@ class ProductSeeder extends Seeder
                 'updated_by' => $product['updated_by'],
                 'created_at' => $product['created_at'],
                 'updated_at' => $product['updated_at'],
+            ]);
+
+            DB::table('validations')->insert([
+                'product_id'=>$productId,
+                'is_valid'=>true
             ]);
         }
 

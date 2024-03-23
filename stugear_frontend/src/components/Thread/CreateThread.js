@@ -6,7 +6,7 @@ import { MultiSelect } from "react-multi-select-component";
 import SuggestThread from "./SuggestThread";
 import ThreadService from "../../service/ThreadService"
 import CategoryService from "../../service/CategoryService";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -25,6 +25,7 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
 );
 const CreateThread = () => {
   let reactQuillRef = null;
+  const navigate = useNavigate();
   const maxTitleLength = 99;
   const maxDescriptionLength = 200;
   const [suggestThread, setSuggestThread] = useState([])
@@ -81,11 +82,13 @@ const CreateThread = () => {
   }
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setValid(true)
     if(thread?.title == undefined
       || thread?.description == undefined
-      || thread?.content == undefined
-      || thread?.category_id == undefined){
+      || htmlContent == undefined
+      || selectedCategory == undefined){
         setValid(false)
+      return;
     }
     const response = await ThreadService.createThread(
       {...thread, content: htmlContent, category_id: selectedCategory}
@@ -101,10 +104,7 @@ const CreateThread = () => {
         otherItems.map((item) => item.value).concat(tag_ids)
       );
     }
-    Navigate("/thread");
-
-
-
+    navigate("/thread");
   }
   useEffect(() => {
     getAllCategories();
@@ -253,7 +253,6 @@ const CreateThread = () => {
             <div className="row">
               <div className="">
                 <button
-                  href="#"
                   className="btn mt-3"
                   disabled={
                     maxTitleLength < thread?.title?.length 

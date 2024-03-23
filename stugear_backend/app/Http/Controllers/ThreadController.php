@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ThreadCreated;
 use App\Models\React;
 use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
@@ -9,6 +10,7 @@ use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\Reply\ReplyRepositoryInterface;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\React\ReactRepositoryInterface;
+use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Util\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +25,7 @@ class ThreadController extends Controller
     protected $categoryRepository;
     protected $reactRepository;
     protected $replyRepository;
+    protected $validationRepository;
 
     public function __construct(
         ThreadRepositoryInterface $threadRepository,
@@ -31,6 +34,8 @@ class ThreadController extends Controller
         ReplyRepositoryInterface $replyRepository,
         CategoryRepositoryInterface $categoryRepository,
         ReactRepositoryInterface $reactRepository,
+        ValidationRepositoryInterface $validationRepository,
+
 
     ) {
         $this->threadRepository = $threadRepository;
@@ -39,6 +44,7 @@ class ThreadController extends Controller
         $this->replyRepository = $replyRepository;
         $this->categoryRepository = $categoryRepository;
         $this->reactRepository = $reactRepository;
+        $this->validationRepository = $validationRepository;
     }
 
     public function index(Request $request)
@@ -64,7 +70,6 @@ class ThreadController extends Controller
             $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $memberData['user_id'] = $thread->user_id;
             $memberData['user'] = $this->userRepository->getById($thread->user_id);
-            // $threadTags = $thread->threadTags;
             $threadTags = $this->threadRepository->getThreadTagsByThreadId($thread->id);
             $tags = [];
             foreach ($threadTags as $threadTag) {
@@ -96,8 +101,6 @@ class ThreadController extends Controller
                 'message' => 'not found thread'
             ], 404);
         } else {
-
-          
             $data = [];
             $token = $request->header();
             if($token['authorization'][0] != "Bearer null"){
@@ -107,9 +110,22 @@ class ThreadController extends Controller
                 if($react){
                     $data['is_like'] = $react->like == 1 ? true: false;
                 }
-                
             }
-
+            $user = $this->userRepository->getById($thread->user_id);
+            $data['user'] = $user;
+            $validtion = $this->validationRepository->getByThreadId($thread->id);
+            if($userId){
+                if($user->id === $userId){
+                    $data['valid'] = $validtion;
+                }
+            }else{
+                if(json_decode($validtion)->is_valid == false){
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'not found thread'
+                    ], 404);
+                }
+            }
             $data['id'] = $thread->id;
             $data['title'] = $thread->title;
             $data['description'] = $thread->description;
@@ -121,7 +137,7 @@ class ThreadController extends Controller
             $data['dislike'] = $thread->dislike;
             $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $data['user_id'] = $thread->user_id;
-            $data['user'] = $this->userRepository->getById($thread->user_id);
+            
             $threadTags = $thread->threadTags;
             $tags = [];
             foreach ($threadTags as $threadTag) {
@@ -163,13 +179,13 @@ class ThreadController extends Controller
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
 
-        $user = $this->userRepository->getById($userId);
-        if ($user->reputation < 0) {
-            return response()->json([
-                'status' => 'Lỗi',
-                'message' => 'Không cho phép tạo bài đăng vì uy tín thấp!'
-            ],400);
-        }
+        // $user = $this->userRepository->getById($userId);
+        // if ($user->reputation < 0) {
+        //     return response()->json([
+        //         'status' => 'Lỗi',
+        //         'message' => 'Không cho phép tạo bài đăng vì uy tín thấp!'
+        //     ],400);
+        // }
 
         $data = [
             'title' => $request->title,
@@ -179,7 +195,7 @@ class ThreadController extends Controller
             'content' => $request->content,
             'category_id' => $request->category_id,
             'user_id' => $userId,
-            'status' => 0, // Chờ duyệt
+            // 'status' => 0, // Chờ duyệt
             'created_at' => Carbon::now(),
             'created_by' => $userId,
             'updated_at' => Carbon::now(),
@@ -194,6 +210,7 @@ class ThreadController extends Controller
                 'message' => 'Tạo sản phẩm thất bại',
             ], 400);
         } else {
+            event(new ThreadCreated($thread));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Tạo sản phẩm thành công',
