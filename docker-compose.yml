@@ -28,3 +28,10 @@ services:
       - "3006:3006"
     depends_on:
       - backend
+  queue-worker:
+    build:
+      context: stugear_backend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    command: php artisan queue:work --tries=3
