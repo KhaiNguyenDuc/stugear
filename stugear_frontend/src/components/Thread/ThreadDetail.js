@@ -238,7 +238,7 @@ const ThreadDetail = ({
         heading={"Vui lòng tạo tài khoản để tương tác"}
         body={'Bấm vào nút "Đồng ý" để đến trang đăng nhập'}
       ></CustomModal>
-      {thread?.valid[0]?.is_valid == 0 && (
+      {thread?.valid?.is_valid == 0 && (
         <>
          <div
                 className="product-status mb-5 rounded-xl1"

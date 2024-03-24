@@ -52,7 +52,7 @@ class ValidateThread
         return $chatRequest->getResponse();
     }
     private function getValidatePrompt(Thread $thread){
-      
+
         return sprintf(PromptConstant::$VALIDATE_PROMPT, $thread->getValidationData());
     }
 
@@ -101,7 +101,7 @@ class ValidateThread
                 'message' => 'could not send email, try again'
             ],502);
         }
-    
+
     }
- 
+
 }

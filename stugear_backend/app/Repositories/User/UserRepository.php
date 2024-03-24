@@ -86,4 +86,30 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         return $result;
     }
 
+    public function getTopContributor($limit)
+    {
+        $usersWithContactDetails = DB::table('users')
+        ->join('contact_details', 'users.id', '=', 'contact_details.user_id')
+        ->select('users.id',
+        'users.name',
+        'users.email',
+        'users.first_name',
+        'last_name',
+        'is_enable',
+        'users.reputation',
+        'contact_details.phone_number',
+        'contact_details.gender',
+        'contact_details.birthdate',
+        'contact_details.full_address',
+        'contact_details.province',
+        'contact_details.ward',
+        'contact_details.district',
+        'contact_details.city',
+        'contact_details.social_link',)
+        ->orderBy('users.reputation', 'desc')
+        ->take($limit)
+        ->get();
+        return $usersWithContactDetails;
+    }
+
 }

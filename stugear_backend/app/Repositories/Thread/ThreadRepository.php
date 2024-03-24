@@ -54,7 +54,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
     public function getWithCriteria($tag, $key, $status, $categories, $limit)
     {
         $query = DB::table('threads');
-    
+
         if (!empty($key)) {
             $query->where(function ($subQuery) use ($key) {
                 $subQuery->where('threads.title', 'like', '%' . $key . '%')
@@ -62,7 +62,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                          ->orWhere('threads.raw_content', 'like', '%' . $key . '%');
             });
         }
-    
+
         if (!empty($status) && array_key_exists($status, AppConstant::$FILTER_STATUS_THREAD)) {
             if ($status == 'new') {
                 $query->orderBy('threads.updated_at', 'desc');
@@ -72,41 +72,43 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                 $query->orderBy('threads.reply', 'desc');
             }
         }
-    
+
         if (!empty($categories)) {
             $query->whereIn('category_id', $categories);
         }
+
+        // Join with the validations table
+        $query->join('validations', 'threads.id', '=', 'validations.thread_id');
+
+        // Add a condition to filter threads with validation.is_valid = true
+        $query->where('validations.is_valid', true);
+
         if (!empty($tag)) {
             $query->join('product_tags', 'threads.id', '=', 'product_tags.thread_id')
                   ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
                   ->whereIn('tags.id', $tag);
-            $query->select(
-                'threads.id',
-                'threads.title',
-                'threads.description',
-                'threads.content',
-                'threads.view',
-                'threads.created_at',
-                'threads.like',
-                'threads.reply',
-                'threads.user_id',
-                'threads.category_id'
-            )->distinct();
         }
-    
-        // Join with the validations table
-        $query->join('validations', 'threads.id', '=', 'validations.thread_id');
-    
-        // Add a condition to filter threads with validation.is_valid = true
-        $query->where('validations.is_valid', true);
-    
+
         // Additional conditions
         $query->whereNull('threads.deleted_by');
         $query->whereNull('threads.deleted_at');
-    
+
+        $query->select(
+            'threads.id',
+            'threads.title',
+            'threads.description',
+            'threads.content',
+            'threads.view',
+            'threads.created_at',
+            'threads.like',
+            'threads.reply',
+            'threads.user_id',
+            'threads.category_id'
+        )->distinct();
+
         return $query->paginate($limit);
     }
-    
+
 
     public function getThreadTagsByThreadId($threadId) {
         $result = DB::table('threads')
@@ -117,5 +119,38 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
         return $result;
     }
 
-    
+    public function getCurrentUserThreads($userId, $limit) {
+        $query = DB::table('threads');
+
+        //** ================= hỏi khải xem có cho user truy cập thread đã bị chặn ko ======================*/
+        // // Join with the validations table
+        // $query->join('validations', 'threads.id', '=', 'validations.thread_id');
+
+        // // Add a condition to filter threads with validation.is_valid = true
+        // $query->where('validations.is_valid', true);
+        //** ================= hỏi khải xem có cho user truy cập thread đã bị chặn ko ======================*/
+
+        // Additional conditions
+        $query->where('threads.user_id', '=', $userId);
+        $query->whereNull('threads.deleted_by');
+        $query->whereNull('threads.deleted_at');
+
+        $query->select(
+            'threads.id',
+            'threads.title',
+            'threads.description',
+            'threads.content',
+            'threads.view',
+            'threads.created_at',
+            'threads.like',
+            'threads.reply',
+            'threads.user_id',
+            'threads.category_id'
+        )->distinct();
+
+        $query->orderBy('threads.updated_at', 'desc');
+
+        return $query->paginate($limit);
+    }
+
 }

@@ -84,6 +84,7 @@ Route::controller(UserController::class)->prefix('users')->group(function (){
     Route::get('/', 'index');
     Route::get('/info', 'getCurrentUserInfo')->middleware('auth_jwt');
     Route::get('/balance','getCurrentUserBalance')->middleware('auth_jwt');
+    Route::get('/top-contributor', 'getTopContributor');
     Route::get('/{id}', 'view');
     Route::post('/{id}/upload-image', 'uploadImage')->middleware('auth_jwt');
     Route::get('/{id}/images', 'getImage');
@@ -136,9 +137,10 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
 });
 
 Route::controller(ThreadController::class)->prefix('threads')->group(function (){
+    Route::get('/users/{id}', 'getCurrentUserThreads')->middleware('auth_jwt');
     Route::post('/filter','index');
-    Route::get('/{id}', 'getThreadById'); 
-    Route::patch('/{id}/react', 'reactByThreadAndUser')->middleware('auth_jwt'); 
+    Route::get('/{id}', 'getThreadById');
+    Route::patch('/{id}/react', 'reactByThreadAndUser')->middleware('auth_jwt');
     Route::post('/', 'create');
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
     Route::delete('/{id}', 'delete')->middleware('auth_jwt');

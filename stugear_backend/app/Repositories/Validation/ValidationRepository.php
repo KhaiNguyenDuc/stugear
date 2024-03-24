@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ValidationRepository extends BaseRepository implements ValidationRepositoryInterface
 {
-    public function getModel() 
+    public function getModel()
     {
         return Validation::class;
     }
@@ -24,25 +24,25 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
             'is_valid' => $validation->getIsValid(),
             'description' => $validation->getDescription(),
         ]);
-    
+
         return $result;
     }
 
-    
+
     public function createProductValidation($productId, ValidationRequest $validation){
         $result = DB::table('validations')->insert([
             'product_id' => $productId,
             'is_valid' => $validation->getIsValid(),
             'description' => $validation->getDescription(),
         ]);
-    
+
         return $result;
     }
 
     public function getByThreadId($threadId){
         $result = DB::table('validations')
         ->where('thread_id', '=', $threadId)
-        ->get();
+        ->first();
         return $result;
     }
 

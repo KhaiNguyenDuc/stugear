@@ -201,4 +201,15 @@ class UserController extends Controller
             'balance' => number_format($user->wallet) . ' VNĐ'
         ]);
     }
+
+    public function getTopContributor(Request $request)
+    {
+        // dd(1);
+        $users = $this->userRepository->getTopContributor($request->limit ?? 3);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'get data sucesss',
+            'data' => $users
+        ]);
+    }
 }

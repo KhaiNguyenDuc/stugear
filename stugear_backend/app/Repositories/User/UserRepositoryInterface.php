@@ -15,4 +15,6 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     public function updateContactDetail($data, $userId);
 
+    public function getTopContributor($limit);
+
 }
