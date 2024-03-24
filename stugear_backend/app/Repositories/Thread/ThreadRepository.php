@@ -87,8 +87,14 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             $query->join('product_tags', 'threads.id', '=', 'product_tags.thread_id')
                   ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
                   ->whereIn('tags.id', $tag);
+
         }
 
+        // Join with the validations table
+        $query->join('validations', 'threads.id', '=', 'validations.thread_id');
+
+        // Add a condition to filter threads with validation.is_valid = true
+        $query->where('validations.is_valid', true);
         // Additional conditions
         $query->whereNull('threads.deleted_by');
         $query->whereNull('threads.deleted_at');
