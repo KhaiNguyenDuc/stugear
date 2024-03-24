@@ -42,7 +42,7 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
     public function getByThreadId($threadId){
         $result = DB::table('validations')
         ->where('thread_id', '=', $threadId)
-        ->get();
+        ->first();
         return $result;
     }
 

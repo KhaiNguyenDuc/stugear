@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ThreadCreated;
+use App\Jobs\ValidateThreadJob;
 use App\Models\React;
 use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
@@ -93,6 +94,7 @@ class ThreadController extends Controller
 
     public function getThreadById(Request $request, $id)
     {
+        logger()->info(config('queue.default'));
         Carbon::setLocale('vi');
         $thread = $this->threadRepository->getById($id);
         if (!$thread) {
@@ -211,6 +213,7 @@ class ThreadController extends Controller
             ], 400);
         } else {
             event(new ThreadCreated($thread));
+            // dispatch(new ValidateThreadJob($thread, $this->validationRepository));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Tạo sản phẩm thành công',

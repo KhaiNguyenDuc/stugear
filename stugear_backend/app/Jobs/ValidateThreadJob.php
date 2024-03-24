@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Jobs;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use App\Dto\ChatRequest;
 use App\Dto\Message;
 use App\Dto\ValidationRequest;
-use App\Events\ThreadCreated;
 use App\Mail\ValidationMail;
 use App\Models\Thread;
 use App\Repositories\Validation\ValidationRepositoryInterface;
@@ -13,32 +17,40 @@ use App\Util\PromptConstant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class ValidateThread
+class ValidateThreadJob implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Create a new job instance.
+     */
     protected ValidationRepositoryInterface $validationRepository;
+    private $thread;
     /**
      * Create the event listener.
      */
-    public function __construct(ValidationRepositoryInterface $validationRepository)
+    public function __construct($thread, $validationRepository)
+    {
+        $this->thread = $thread;
+        $this->validationRepository = $validationRepository;
+
+    }
+
+    public function setValidationRepository(ValidationRepositoryInterface $validationRepository)
     {
         $this->validationRepository = $validationRepository;
     }
 
-    /**
-     * Handle the event.
-     */
-    public function handle(ThreadCreated $event): void
+    public function handle(): void
     {
-        $thread = $event->getThread();
-        $response = $this->sendToGPT($thread);
+        $response = $this->sendToGPT($this->thread);
         logger()->info("ResponseGPT: ",[$response]);
         if($this->isValid($response)){
             logger()->info("Allow to publish");
-            $this->publishThread($thread, $response);
+            $this->publishThread($this->thread, $response);
         }else{
             logger()->info("Reject");
-            $this->rejectThread($thread, $response);
+            $this->rejectThread($this->thread, $response);
         }
     }
 
@@ -72,7 +84,7 @@ class ValidateThread
         $this->updateThread($thread, $response, $isValid);
         $mailData = [
             'subject' => 'Chúng tôi đã xem xét bài đăng của bạn',
-            'content' => 'Bài đăng của bạn không được duyệt do chứa nội dung không hợp lệ' .$response['description'],
+            'content' => 'Bài đăng của bạn không được duyệt do chứa nội dung không hợp lệ.' .$response['description'],
             'signature' => 'Stugear'
         ];
         $this->sendEmail($thread, $mailData);
@@ -103,5 +115,4 @@ class ValidateThread
         }
     
     }
- 
 }
