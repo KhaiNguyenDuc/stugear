@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Jobs;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use App\Dto\ChatRequest;
 use App\Dto\Message;
 use App\Dto\ValidationRequest;
-use App\Events\ProductCreated;
 use App\Mail\ValidationMail;
 use App\Models\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
@@ -14,36 +18,39 @@ use App\Util\PromptConstant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class ValidateProduct
+class ValidateProductJob implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected ValidationRepositoryInterface $validationRepository;
     protected ProductRepositoryInterface $productRepository;
+    private $product;
     /**
      * Create the event listener.
      */
     public function __construct(
+        $product,
         ValidationRepositoryInterface $validationRepository,
         ProductRepositoryInterface $productRepository,
         )
     {
+        $this->product = $product;
         $this->validationRepository = $validationRepository;
         $this->productRepository = $productRepository;
     }
-
     /**
-     * Handle the event.
+     * Execute the job.
      */
-    public function handle(ProductCreated $event): void
+    public function handle(): void
     {
-        $product = $event->getProduct();
-        $response = $this->sendToGPT($product);
+        $response = $this->sendToGPT($this->product);
         logger()->info("ResponseGPT: ",[$response]);
         if($this->isValid($response)){
             logger()->info("Allow to publish");
-            $this->publishProduct($product, $response);
+            $this->publishProduct($this->product, $response);
         }else{
             logger()->info("Reject");
-            $this->rejectProduct($product, $response);
+            $this->rejectProduct($this->product, $response);
         }
     }
 
@@ -78,7 +85,7 @@ class ValidateProduct
         $this->updateproduct($product, $response, $isValid);
         $mailData = [
             'subject' => 'Chúng tôi đã xem xét sản phẩm của bạn',
-            'content' => 'Sản phẩm của bạn không được duyệt do chứa nội dung không hợp lệ',
+            'content' => 'Sản phẩm của bạn không được duyệt do chứa nội dung không hợp lệ.' .$response['description'],
             'signature' => 'Stugear'
         ];
         $this->sendEmail($product, $mailData);

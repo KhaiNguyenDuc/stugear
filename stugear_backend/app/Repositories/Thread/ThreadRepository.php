@@ -80,18 +80,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             $query->join('product_tags', 'threads.id', '=', 'product_tags.thread_id')
                   ->join('tags', 'product_tags.tag_id', '=', 'tags.id')
                   ->whereIn('tags.id', $tag);
-            $query->select(
-                'threads.id',
-                'threads.title',
-                'threads.description',
-                'threads.content',
-                'threads.view',
-                'threads.created_at',
-                'threads.like',
-                'threads.reply',
-                'threads.user_id',
-                'threads.category_id'
-            )->distinct();
+
         }
     
         // Join with the validations table
@@ -99,6 +88,18 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
     
         // Add a condition to filter threads with validation.is_valid = true
         $query->where('validations.is_valid', true);
+        $query->select(
+            'threads.id',
+            'threads.title',
+            'threads.description',
+            'threads.content',
+            'threads.view',
+            'threads.created_at',
+            'threads.like',
+            'threads.reply',
+            'threads.user_id',
+            'threads.category_id'
+        )->distinct();
     
         // Additional conditions
         $query->whereNull('threads.deleted_by');
