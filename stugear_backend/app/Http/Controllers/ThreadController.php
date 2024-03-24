@@ -92,6 +92,56 @@ class ThreadController extends Controller
         ]);
     }
 
+    public function getCurrentUserThreads(Request $request)
+    {
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        if (!$userId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'not found thread for this user or user not login'
+            ], 404);
+        } else {
+            $limit = $request->limit ?? 10;
+            $threads = $this->threadRepository->getCurrentUserThreads($userId, $limit);
+            $data = [];
+            $memberData = [];
+            foreach ($threads as $thread) {
+                $memberData['id'] = $thread->id;
+                $memberData['title'] = $thread->title;
+                $memberData['description'] = $thread->description;
+                $memberData['content'] = $thread->content;
+                $memberData['view'] = $thread->view;
+                $memberData['create_at'] =  Carbon::parse($thread->created_at)->format('d/m/Y');
+                $memberData['like'] = $thread->like;
+                $memberData['reply'] = $thread->reply;
+                $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
+                $memberData['user_id'] = $thread->user_id;
+                $memberData['user'] = $this->userRepository->getById($thread->user_id);
+                $threadTags = $this->threadRepository->getThreadTagsByThreadId($thread->id);
+                $tags = [];
+                foreach ($threadTags as $threadTag) {
+                    $tagMember['id'] = $threadTag->tag_id;
+                    $tagMember['name'] = $threadTag->name;
+                    $tagMember['color'] = $threadTag->color;
+                    array_push($tags, $tagMember);
+                }
+                $memberData['tags'] = $tags;
+                array_push($data, $memberData);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $data,
+                'page' => $request->page ?? 1,
+                'total_page' => $threads->lastPage(),
+                'total_items' => count($threads)
+            ]);
+        }
+    }
+
     public function getThreadById(Request $request, $id)
     {
         logger()->info(config('queue.default'));
@@ -139,7 +189,7 @@ class ThreadController extends Controller
             $data['dislike'] = $thread->dislike;
             $data['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $data['user_id'] = $thread->user_id;
-            
+
             $threadTags = $thread->threadTags;
             $tags = [];
             foreach ($threadTags as $threadTag) {
@@ -350,7 +400,7 @@ class ThreadController extends Controller
                 $thread->decrement('dislike');
                 $react->like = true;
             }
-    
+
             if ($request->like == false) {
                 $thread->increment('dislike');
                 $thread->decrement('like');
@@ -366,14 +416,14 @@ class ThreadController extends Controller
                 $thread->increment('like');
                 $react->like = true;
             }
-    
+
             if ($request->like == false) {
                 $thread->increment('dislike');
                 $react->like = false;
             }
         }
 
-       
+
         $result = $this->reactRepository->save([
             'thread_id' => $react->thread_id,
             'user_id' => $react->user_id,

@@ -12,4 +12,6 @@ interface ThreadRepositoryInterface extends RepositoryInterface
 
     public function getThreadTagsByThreadId($threadId);
 
+    public function getCurrentUserThreads($userId, $limit);
+
 }

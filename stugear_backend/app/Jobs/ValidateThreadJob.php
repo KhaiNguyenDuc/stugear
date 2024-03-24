@@ -64,7 +64,7 @@ class ValidateThreadJob implements ShouldQueue
         return $chatRequest->getResponse();
     }
     private function getValidatePrompt(Thread $thread){
-      
+
         return sprintf(PromptConstant::$VALIDATE_PROMPT, $thread->getValidationData());
     }
 
@@ -113,6 +113,7 @@ class ValidateThreadJob implements ShouldQueue
                 'message' => 'could not send email, try again'
             ],502);
         }
-    
+
     }
+
 }
