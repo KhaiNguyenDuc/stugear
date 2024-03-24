@@ -11,7 +11,7 @@ services:
       - .:/var/www/html
     environment:
       - APP_ENV=local
-    command: php artisan queue:work --tries=3 # Add this line to run queue worker
+    # command: php artisan queue:work --tries=3 # Add this line to run queue worker
   frontend:
     build:
       context: stugear_frontend
