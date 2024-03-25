@@ -15,13 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ReplyController;
-// Route::controller(AuthController::class)->group(function () {
-//     Route::post('login', 'login')->middleware('auth_jwt');
-//     Route::post('register', 'register');
-//     Route::post('logout', 'logout');
-//     Route::post('refresh', 'refresh');
 
-// });
 Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::post('/register', 'register');
     Route::post('/login', 'login');
@@ -151,6 +145,8 @@ Route::controller(ReplyController::class)->group(function (){
     Route::post('/thread/{id}/replies', 'create');
     Route::delete('/replies/{id}', 'delete')->middleware('auth_jwt');
     Route::patch('/replies/{id}/react', 'reactByReplyAndUser')->middleware('auth_jwt');
+    Route::get('/thread/{id}/auto/replies', 'getAIByThreadId');
+    
 });
 
 

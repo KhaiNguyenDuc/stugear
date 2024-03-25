@@ -2,28 +2,30 @@
 
 namespace App\Listeners;
 
-use App\Dto\ChatRequest;
-use App\Dto\Message;
-use App\Dto\ValidationRequest;
 use App\Events\ThreadCreated;
 use App\Jobs\ValidateThreadJob;
-use App\Mail\ValidationMail;
-use App\Models\Thread;
+use App\Repositories\Reply\ReplyRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Validation\ValidationRepositoryInterface;
-use App\Util\PromptConstant;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class ThreadCreatedListener
 {
 
     protected ValidationRepositoryInterface $validationRepository;
+    protected UserRepositoryInterface $userRepository;
+    protected ReplyRepositoryInterface $replyRepository;
+
     /**
      * Create the event listener.
      */
-    public function __construct(ValidationRepositoryInterface $validationRepository)
-    {
+    public function __construct(
+        ValidationRepositoryInterface $validationRepository,
+        UserRepositoryInterface $userRepository,
+        ReplyRepositoryInterface $replyRepository
+    ) {
         $this->validationRepository = $validationRepository;
+        $this->userRepository = $userRepository;
+        $this->replyRepository = $replyRepository;
     }
 
     /**
@@ -31,9 +33,11 @@ class ThreadCreatedListener
      */
     public function handle(ThreadCreated $event): void
     {
-        dispatch(new ValidateThreadJob($event->getThread(), $this->validationRepository));
+        dispatch(new ValidateThreadJob(
+            $event->getThread(),
+            $this->userRepository,
+            $this->replyRepository,
+            $this->validationRepository
+        ));
     }
-
-
- 
 }

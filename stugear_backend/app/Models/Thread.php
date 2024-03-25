@@ -48,7 +48,7 @@ class Thread extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function getValidationData(){
+    public function toString(){
         return $this->title . " " . $this->description . " " . $this->raw_content;
     }
     public function user()

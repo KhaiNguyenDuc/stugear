@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import TagService from "../../service/TagService";
 import UserModal from "../Profile/UserModal/UserModal";
+import UserService from "../../service/UserService";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -29,28 +30,7 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
     total_thread: 20,
     total_reply: 1200
   }
-  const highestPoint = [
-    {
-      id: 1,
-      name: "khải",
-      reputation: 200,
-    },
-    {
-      id: 2,
-      name: "Khang",
-      reputation: 167,
-    },
-    {
-      id: 3,
-      name: "Kiệt",
-      reputation: 142,
-    },
-    {
-      id: 4,
-      name: "Thịnh",
-      reputation: 91,
-    }
-  ]
+  const [contributors, setContributors] = useState();
   const [tags, setTags] = useState([]);
   const getAllTags = async () => {
     const tagResponse = await TagService.getAllTags();
@@ -60,9 +40,19 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
       value: tag.id, // Convert id to string if necessary
     }));
     setTags(options);
+
   };
+
+  const getTopContributors = async () => {
+    const topContributorNumber = 4;
+    const response = await UserService.getTopContributors(topContributorNumber);
+    if(response?.status !== 400){
+      setContributors(response?.data)
+    }
+  } 
   useEffect(() => {
     getAllTags();
+    getTopContributors();
   }, []);
   return (
     <>
@@ -103,7 +93,7 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
            
                   <div className="highest-part">
                   <h4>Người dùng uy tín</h4>  
-                  {highestPoint.map(user => (
+                  {contributors?.map(user => (
                     <>
                      <div className="pints-wrapper">
                     <div className="user-highest-point">

@@ -50,6 +50,8 @@ const ThreadDetail = ({
 
   const [isLike, setIsLike] = useState(thread?.is_like);
   const [isReplyLike, setIsReplyLike] = useState([]);
+  const [AIReply, setAIReply] = useState();
+
   useEffect(() => {
     setReplies(repliesDetail);
     setIsReplyLike(
@@ -59,6 +61,16 @@ const ThreadDetail = ({
       }))
     );
   }, [repliesDetail]);
+
+  useEffect(() => {
+    const getAIReply = async () => {
+      const reponse = await ThreadReplyService.getAIReplyByThreadId(threadDetail?.id);
+      if(reponse?.status != 400){
+        setAIReply(reponse);
+      }
+    }
+    getAIReply()
+  }, [])
   const handleThreadReact = async (react) => {
     let likeBoolean = react === "+" ? true : false;
     setIsLike(likeBoolean);
@@ -459,11 +471,58 @@ const ThreadDetail = ({
               </div>
             </div>
             <hr />
+
             {/* 'new' => '1',
         'like' => '2',
         'long' => '3',
         'short' => '4',
         'accept' => '5' */}
+        {AIReply && (
+          <>
+            
+                 <div
+                  className="tt-item mb-3 tt-wrapper-success"
+                
+                >
+                  <div className="tt-single-topic ">
+                    <div className="tt-item-header pt-noborder">
+                      <div className="tt-item-info info-top">
+                        <div className="tt-avatar-icon">
+                          <UserModal userId={AIReply?.user?.id} />
+                        </div>
+                        <div className="tt-avatar-title">
+                          <a href="#">{AIReply.user.name}</a>
+                        
+                          <span className="text-center">
+                            <FontAwesomeIcon
+                              icon={faMedal}
+                              style={{ color: "#DD9933" }}
+                            />{" "}
+                            {AIReply?.user?.reputation}
+                          </span>
+                          <span class="tt-color13 tt-badge ms-2">AI</span>
+                        </div>
+                        <a href="#" className="tt-info-time">
+                          <FontAwesomeIcon icon={faClock} className="pe-2" />
+                          {AIReply.create_at}
+                        </a>
+                      </div>
+                    </div>
+                    <div className="tt-item-description">
+                  
+                        <>
+                          <p
+                            dangerouslySetInnerHTML={{ __html: AIReply.content }}
+                          ></p>
+                        </>
+             
+                    </div>
+             
+                </div>
+                </div>
+
+          </>
+        )}
             <div className="row-object-inline form-default">
               <h6 className="tt-title">Lọc phản hồi theo:</h6>
               <ul className="tt-list-badge tt-size-lg">
@@ -519,9 +578,11 @@ const ThreadDetail = ({
           <Loading />
         ) : (
           <>
-            {replies?.map((reply) => (
+
+            {replies?.filter(reply => reply?.user?.first_name !== "GPT")?.map((reply) => (
               <>
-                <div
+                             <>
+                                <div
                   className="tt-item mb-3"
                   style={{ backgroundColor: "white" }}
                 >
@@ -751,6 +812,9 @@ const ThreadDetail = ({
                     </Modal>
                   </>
                 )}
+                </>
+          
+
               </>
             ))}
           </>

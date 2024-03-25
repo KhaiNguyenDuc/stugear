@@ -66,14 +66,14 @@ class ValidateProductJob implements ShouldQueue
     }
     private function getValidatePrompt(Product $product){
       
-        return sprintf(PromptConstant::$VALIDATE_PROMPT, $product->getValidationData());
+        return sprintf(PromptConstant::$VALIDATE_PROMPT, $product->toString());
     }
 
     private function publishproduct(Product $product, $response){
         $isValid = true;
         $this->updateProduct($product, $response, $isValid);
         $mailData = [
-            'subject' => 'Sản phẩm đã được duyệt' . $product->title,
+            'subject' => 'Sản phẩm: ' . $product->title,
             'content' => 'Sản phẩm của bạn đã được duyệt. Link: '.env("APP_URL")."/product" ."/". $product->id,
             'signature' => 'Stugear'
         ];

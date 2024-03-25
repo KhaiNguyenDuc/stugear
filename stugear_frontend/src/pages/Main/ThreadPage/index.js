@@ -2,13 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./index.css";
 import ThreadList from "../../../components/Thread/ThreadList";
 import { faInbox } from "@fortawesome/free-solid-svg-icons";
-
 import { MultiSelect } from "react-multi-select-component";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ThreadService from "../../../service/ThreadService";
 import CustomPagination from "../../../components/Pagination/Pagination";
-import ThreadReplyService from "../../../service/ThreadReplyService";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import { Button, InputGroup } from "react-bootstrap";
 import ThreadStats from "../../../components/Thread/ThreadStats";

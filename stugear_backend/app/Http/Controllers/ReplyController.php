@@ -99,6 +99,23 @@ class ReplyController extends Controller
 
     }
 
+    public function getAIByThreadId($threadId)
+    {
+        Carbon::setLocale('vi');
+        $data  = [];
+        $reply = $this->replyRepository->getAIReplyByThreadId($threadId);
+        $data['user'] =  $this->userRepository->getById($reply->user_id);
+        $data['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
+        $data['content'] = $reply->content;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data
+        ]);
+
+
+    }
+
     public function create(Request $request, $threadId)
     {
         // validate thread_id, do not reply deleted thread
