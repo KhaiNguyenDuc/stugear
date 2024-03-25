@@ -12,6 +12,9 @@ use App\Dto\Message;
 use App\Dto\ValidationRequest;
 use App\Mail\ValidationMail;
 use App\Models\Thread;
+use App\Repositories\Reply\ReplyRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Validation\ValidationRepository;
 use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Util\PromptConstant;
 use Illuminate\Support\Facades\Log;
@@ -25,15 +28,24 @@ class ValidateThreadJob implements ShouldQueue
      * Create a new job instance.
      */
     protected ValidationRepositoryInterface $validationRepository;
+    protected UserRepositoryInterface $userRepository;
+    protected ReplyRepositoryInterface $replyRepository;
+    
     private $thread;
     /**
      * Create the event listener.
      */
-    public function __construct($thread, $validationRepository)
+
+    public function __construct(
+        Thread $thread,
+        UserRepositoryInterface $userRepository,
+        ReplyRepositoryInterface $replyRepository,
+        ValidationRepository $validationRepository)
     {
         $this->thread = $thread;
+        $this->userRepository = $userRepository;
+        $this->replyRepository = $replyRepository;
         $this->validationRepository = $validationRepository;
-
     }
 
     public function setValidationRepository(ValidationRepositoryInterface $validationRepository)
@@ -48,6 +60,7 @@ class ValidateThreadJob implements ShouldQueue
         if($this->isValid($response)){
             logger()->info("Allow to publish");
             $this->publishThread($this->thread, $response);
+            dispatch(new ReplyAIJob($this->thread, $this->userRepository, $this->replyRepository));
         }else{
             logger()->info("Reject");
             $this->rejectThread($this->thread, $response);
@@ -65,14 +78,14 @@ class ValidateThreadJob implements ShouldQueue
     }
     private function getValidatePrompt(Thread $thread){
 
-        return sprintf(PromptConstant::$VALIDATE_PROMPT, $thread->getValidationData());
+        return sprintf(PromptConstant::$VALIDATE_PROMPT, $thread->toString());
     }
 
     private function publishThread(Thread $thread, $response){
         $isValid = true;
         $this->updateThread($thread, $response, $isValid);
         $mailData = [
-            'subject' => 'Bài đăng đã được duyệt' . $thread->title,
+            'subject' => 'Bài đăng: ' . $thread->title,
             'content' => 'Bài đăng của bạn đã được duyệt. Link: '.env("APP_URL")."/thread" ."/". $thread->id,
             'signature' => 'Stugear'
         ];

@@ -5,6 +5,7 @@ namespace App\Repositories\Reply;
 use App\Models\Reply;
 use App\Repositories\BaseRepository;
 use App\Repositories\Reply\ReplyRepositoryInterface;
+use App\Util\AppConstant;
 use Illuminate\Support\Facades\DB;
 
 class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
@@ -21,13 +22,26 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
         return $result;
     }
 
+    
+    public function getAIReplyByThreadId($threadId){
+        $result = DB::table('replies')
+        ->select('replies.*', 'users.id', 'replies.content')
+        ->join('users', 'replies.user_id', '=', 'users.id')
+        ->join('user_roles', 'user_roles.user_id', '=', 'users.id')
+        ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+        ->whereIn('roles.role_name', [AppConstant::$ROLE_ASSISTANT])
+        ->where('replies.thread_id', $threadId)
+        ->first();
+    return $result;
+    }
+
     public function getReplyByThreadIdWithFilter($id, $limit, $filter)
     {
         $query = DB::table('replies')->where('thread_id', $id);
 
         switch ($filter) {
             case '1':
-                $query->orderByDesc('created_at');
+                $query->orderByDesc('replies.created_at');
                 break;
             case '2':
                 $query->orderByDesc('like');
@@ -49,6 +63,7 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
 
         $query->whereNull('replies.deleted_by');
         $query->whereNull('replies.deleted_at');
+
 
         return $query->paginate($limit);
     }

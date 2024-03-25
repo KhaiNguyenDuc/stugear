@@ -94,7 +94,7 @@ class Product extends Model
         return $this->belongsTo(Validation::class);
     }
 
-    public function getValidationData(){
+    public function toString(){
         return $this->name . " " . $this->description . " " . $this->brand;
     }
     

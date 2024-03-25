@@ -7,6 +7,7 @@ use App\Repositories\RepositoryInterface;
 interface UserRepositoryInterface extends RepositoryInterface
 {
     public function findUserByEmail($email);
+    
 
     public function getAllUserWithContactDetail();
 
@@ -16,5 +17,6 @@ interface UserRepositoryInterface extends RepositoryInterface
     public function updateContactDetail($data, $userId);
 
     public function getTopContributor($limit);
+    public function getAssistant();
 
 }

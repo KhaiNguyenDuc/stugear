@@ -69,9 +69,9 @@ class UserService {
       .then((response) => response?.data)
       .catch((error) => error?.response);
   }
-  getTopContributors() {
+  getTopContributors(limit) {
     return axios
-      .get(USER_URL)
+      .get(USER_URL + `/top-contributor?limit=${limit}`)
       .then((response) => response?.data)
       .catch((error) => error?.response);
   }
@@ -152,6 +152,7 @@ class UserService {
     .then((response) => response?.data)
     .catch((error) => error?.response);
   }
+
 }
 
 export default new UserService();

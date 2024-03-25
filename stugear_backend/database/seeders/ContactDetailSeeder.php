@@ -177,6 +177,22 @@ class ContactDetailSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(0, 365) . ' days')),
                 'full_address' => $ward . ', ' . $district . ', ' . 'Đồng Nai' . ', ' . 'Đồng Nai',
             ],
+            [
+                'phone_number' => '0783511740',
+                'gender' => 1,
+                'birthdate' => date('Y-m-d', strtotime('1990-01-01 +' . rand(0, 5760) . ' days')),
+                'province' => 'San Francisco',
+                'ward' => 'Mission',
+                'district' => 'Pioneer tower',
+                'city' => 'San Francisco',
+                'social_link' => 'https://platform.openai.com/docs/overview',
+                'user_id' => 11,
+                'created_by' => 10,
+                'updated_by' => 10,
+                'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(0, 365) . ' days')),
+                'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(0, 365) . ' days')),
+                'full_address' => 'Tòa nhà Pioneer ở Quận Mission, San Francisco',
+            ],
         ];
 
         foreach($contact_details as $contact_detail) {

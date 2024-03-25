@@ -6,8 +6,9 @@ const TopContributorList = () => {
 
   const [contributors, setContributors] = useState([])
   const loadData = async () => {
-    const response = await UserService.getTopContributors()
-    setContributors(response?.data.slice(0, 4))
+    const topContributorNumber = 4;
+    const response = await UserService.getTopContributors(topContributorNumber);
+    setContributors(response?.data)
   }
   useEffect(() => {
     loadData()

@@ -164,7 +164,22 @@ class UserSeeder extends Seeder
                 'updated_by' => 1,
                 'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
-            ]
+            ],
+            [
+                'name' => 'Trợ lý ảo',
+                'email' => 'duckhailinux@gmail.com',
+                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+                'first_name' => 'GPT',
+                'last_name' => 'OPENAI',
+                'reputation' => 100,
+                'is_enable' => 1,
+                'is_verify_email' => 1,
+                'wallet' => 0,
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+                'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day')),
+            ],
         ];
 
         $user_roles = [
@@ -278,6 +293,30 @@ class UserSeeder extends Seeder
                 'updated_at' => $user_role['updated_at']
             ]);
         }
+        
+        // Create AI assistant account. 2: user, 3: assistant
+        DB::table('user_roles')->insert([
+            'user_id' => 11,
+            'role_id' => 2,
+            'created_by' => 1,
+            'updated_by' => 1,
+            'updated_by' => 1,
+            'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+            'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day'))
+        ]);
+        DB::table('user_roles')->insert([
+            'user_id' => 11,
+            'role_id' => 3,
+            'created_by' => 1,
+            'updated_by' => 1,
+            'updated_by' => 1,
+            'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years')),
+            'updated_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 5) . ' years +1 day'))
+        ]);
+
+
+
+        
 
         for($i = 1; $i <= 10; $i++){
             DB::table('wishlists')->insert(['user_id' => $i]);

@@ -35,7 +35,7 @@ class ImageSeeder extends Seeder
             ]);
         }
 
-        $userLimit = 10;
+        $userLimit = 11;
 
         for ($i = 0; $i < $userLimit; $i++) {
             DB::table('images')->insert([

@@ -788,20 +788,20 @@ html.touch-device {
 /*
 	Single-Topic
 */
-.tt-single-topic-list>.tt-item:not(:first-child) {
+.tt-single-topic>.tt-item:not(:first-child) {
     margin-top: 30px;
 }
 
-.tt-single-topic-list>.tt-item:not([class^="tt-wrapper-success"]) {
+.tt-item:not([class^="tt-wrapper-success"]) {
     background-color: #ffffff;
 }
 
-.tt-single-topic-list>.tt-item.tt-wrapper-success {
+.tt-item.tt-wrapper-success {
     border: 1px solid #68c193;
     background-color: #e6fbf0;
 }
 
-.tt-single-topic-list>.tt-item.tt-wrapper-danger {
+.tt-item.tt-wrapper-danger {
     border: 1px dashed #f56e6f;
     background-color: #fff2f2;
 }

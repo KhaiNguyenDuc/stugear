@@ -29,6 +29,13 @@ class ThreadReplyService {
       .catch(error => error?.response)
   }
 
+  getAIReplyByThreadId(id) {
+    let url = THREAD_REPLY_URL + `/${id}/auto/replies`;
+    return axios.get(url)
+      .then(response => response?.data?.data)
+      .catch(error => error?.response)
+  }
+
   reactReply(replyId, react){
     axiosPrivate
     .patch(REPLY_URL + `/${replyId}/react`, react)
