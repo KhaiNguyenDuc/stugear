@@ -670,7 +670,7 @@ class ProductSeeder extends Seeder
 
             DB::table('validations')->insert([
                 'product_id'=>$productId,
-                'is_valid'=>true
+                'status'=>1
             ]);
         }
 

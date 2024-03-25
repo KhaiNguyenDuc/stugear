@@ -85,9 +85,8 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
     
         // Join with the validations table
         $query->join('validations', 'threads.id', '=', 'validations.thread_id');
-    
-        // Add a condition to filter threads with validation.is_valid = true
-        $query->where('validations.is_valid', true);
+        $allowStatus = 1;
+        $query->where('validations.status', $allowStatus);
         $query->select(
             'threads.id',
             'threads.title',
@@ -121,14 +120,6 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
 
     public function getCurrentUserThreads($userId, $limit) {
         $query = DB::table('threads');
-
-        //** ================= hỏi khải xem có cho user truy cập thread đã bị chặn ko ======================*/
-        // // Join with the validations table
-        // $query->join('validations', 'threads.id', '=', 'validations.thread_id');
-
-        // // Add a condition to filter threads with validation.is_valid = true
-        // $query->where('validations.is_valid', true);
-        //** ================= hỏi khải xem có cho user truy cập thread đã bị chặn ko ======================*/
 
         // Additional conditions
         $query->where('threads.user_id', '=', $userId);

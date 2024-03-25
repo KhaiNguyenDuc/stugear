@@ -31,6 +31,7 @@ import ThreadLayout from '../layouts/ThreadLayout/ThreadLayout.js'
 import ThreadDetailPage from '../pages/Main/ThreadDetailPage/index.js'
 import CreateThread from '../components/Thread/CreateThread.js'
 import ThreadCreatePage from '../pages/Main/ThreadCreatePage/index.js'
+import MyThread from '../components/Profile/MyThread/MyThread.js'
 function useRouteElements () {
 
   // const AdminRoute = ({ children }) => {
@@ -103,6 +104,10 @@ function useRouteElements () {
         {
           path: '/member/order',
           element: <MyOrder/>
+        },
+        {
+          path: '/member/my-thread',
+          element: <MyThread/>
         },
       ]
     },

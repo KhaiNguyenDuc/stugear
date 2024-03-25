@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import "./AccountSideBar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { faProductHunt } from "@fortawesome/free-brands-svg-icons";
+import { faProductHunt, faThreads } from "@fortawesome/free-brands-svg-icons";
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../../service/UserService";
@@ -84,6 +84,19 @@ const AccountSideBar = () => {
             Đơn hàng của tôi{" "}
             {productCount?.myOrder != 0 && (
               <div className="counter">{productCount?.myOrder}</div>
+            )}
+          </NavLink>
+          <NavLink
+            className="list-group-item with-badge "
+            to={"/member/my-thread"}
+          >
+            <FontAwesomeIcon
+              icon={faThreads}
+              style={{ marginRight: "10px" }}
+            />{" "}
+            Bài đăng của tôi{" "}
+            {productCount?.thread != 0 && (
+              <div className="counter">{productCount?.thread}</div>
             )}
           </NavLink>
           <NavLink

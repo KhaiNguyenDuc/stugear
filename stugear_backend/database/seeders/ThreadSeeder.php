@@ -127,7 +127,7 @@ class ThreadSeeder extends Seeder
 
             DB::table('validations')->insert([
                 'thread_id'=>$threadId,
-                'is_valid'=>true
+                'status'=>1 //allow status
             ]);
 
             // Determine the number of likes and dislikes for this thread

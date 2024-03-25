@@ -6,7 +6,8 @@ const ProductProvider = ({ children }) => {
   const [productCount, setProductCount] = useState({
     wishlist: localStorage.getItem("wishlist"),
     myProduct: localStorage.getItem("product"),
-    myOrder: localStorage.getItem("order")
+    myOrder: localStorage.getItem("order"),
+    thread: localStorage.getItem("thread"),
   })
 
 

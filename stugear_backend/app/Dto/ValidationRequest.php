@@ -7,7 +7,7 @@ class ValidationRequest
    
     private $thread_id;
     private $product_id;
-    private $is_valid;
+    private $status;
     private $description;
 
     public function __construct()
@@ -15,8 +15,8 @@ class ValidationRequest
        
     }
 
-    public function getIsValid(){
-        return $this->is_valid;
+    public function getStatus(){
+        return $this->status;
     }
 
     public function getThreadId(){
@@ -31,8 +31,8 @@ class ValidationRequest
         return $this->description;
     }
 
-    public function isValid($is_valid){
-        $this->is_valid = $is_valid;
+    public function setStatus($status){
+        $this->status = $status;
     }
 
     public function setThreadId($thread_id){

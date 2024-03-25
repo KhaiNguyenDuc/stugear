@@ -9,7 +9,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Dto\ChatRequest;
 use App\Dto\Message;
-use App\Dto\ValidationRequest;
 use App\Mail\ValidationMail;
 use App\Models\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
@@ -70,8 +69,8 @@ class ValidateProductJob implements ShouldQueue
     }
 
     private function publishproduct(Product $product, $response){
-        $isValid = true;
-        $this->updateProduct($product, $response, $isValid);
+        $allowStatus = 1;
+        $this->updateProduct($product, $response, $allowStatus);
         $mailData = [
             'subject' => 'Sản phẩm: ' . $product->title,
             'content' => 'Sản phẩm của bạn đã được duyệt. Link: '.env("APP_URL")."/product" ."/". $product->id,
@@ -81,8 +80,8 @@ class ValidateProductJob implements ShouldQueue
     }
 
     private function rejectProduct(Product $product, $response){
-        $isValid = false;
-        $this->updateproduct($product, $response, $isValid);
+        $rejectStatus = 0;
+        $this->updateproduct($product, $response, $rejectStatus);
         $mailData = [
             'subject' => 'Chúng tôi đã xem xét sản phẩm của bạn',
             'content' => 'Sản phẩm của bạn không được duyệt do chứa nội dung không hợp lệ.' .$response['description'],
@@ -91,13 +90,17 @@ class ValidateProductJob implements ShouldQueue
         $this->sendEmail($product, $mailData);
     }
 
-    private function updateproduct(Product $product, $response, $isValid){
-        $validation = new ValidationRequest();
-        $validation->setProductId($product->id);
-        $validation->isValid($isValid);
-        $validation->setDescription($response['description']);
-        $this->validationRepository->createProductValidation($product->id, $validation);
-        if($isValid === false){
+
+    private function updateproduct(Product $product, $response, $status){
+
+        $validation = $this->validationRepository->getByProductId($product->id);
+
+        $this->validationRepository->save([
+            'status' => $status,
+            'description' => $response['description'],
+        ], $validation->id);
+        
+        if($status === false){
             $this->updateProductStatus($product->id, 0);
         }else{
             $this->updateProductStatus($product->id, 3);

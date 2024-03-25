@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
         Schema::create('validations', function (Blueprint $table) {
+            $waitingApproveStatus = 3;
             $table->id();
             $table->unsignedBigInteger('thread_id')->nullable();
             $table->foreign('thread_id')->references('id')->on('threads');
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
-            $table->boolean('is_valid')->default(true);
+            $table->boolean('status')->default($waitingApproveStatus);
             $table->text('description')->nullable();
             $table->timestamps();
         });

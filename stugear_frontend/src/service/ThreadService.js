@@ -45,6 +45,21 @@ class ThreadService {
     .catch(error => error?.response)
   }
 
+  
+  getCurrentUserThreads(currentPage){
+
+    let url = THREAD_URL + '/current';
+    if (currentPage !== undefined) {
+      url += `?page=${currentPage}&limit=6`;
+    }else{
+      url += `?page=1&limit=100`;
+    }
+
+    return axiosPrivate
+    .get(url)
+    .then((response) => response?.data)
+    .catch((error) => error?.response);
+  }
 
 }
 

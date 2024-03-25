@@ -18,10 +18,11 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
     }
 
 
-    public function createThreadValidation($threadId, ValidationRequest $validation){
+    public function createThreadValidation($threadId, ValidationRequest $validation)
+    {
         $result = DB::table('validations')->insert([
             'thread_id' => $threadId,
-            'is_valid' => $validation->getIsValid(),
+            'status' => $validation->getStatus(),
             'description' => $validation->getDescription(),
         ]);
 
@@ -29,21 +30,33 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
     }
 
 
-    public function createProductValidation($productId, ValidationRequest $validation){
+
+    public function createProductValidation($productId, ValidationRequest $validation)
+    {
         $result = DB::table('validations')->insert([
             'product_id' => $productId,
-            'is_valid' => $validation->getIsValid(),
+            'status' => $validation->getStatus(),
             'description' => $validation->getDescription(),
         ]);
 
         return $result;
     }
 
-    public function getByThreadId($threadId){
+
+
+    public function getByThreadId($threadId)
+    {
         $result = DB::table('validations')
-        ->where('thread_id', '=', $threadId)
-        ->first();
+            ->where('thread_id', '=', $threadId)
+            ->first();
         return $result;
     }
 
+    public function getByProductId($productId)
+    {
+        $result = DB::table('validations')
+            ->where('product_id', '=', $productId)
+            ->first();
+        return $result;
+    }
 }

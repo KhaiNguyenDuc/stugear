@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+
 class ThreadController extends Controller
 {
 
@@ -113,22 +114,19 @@ class ThreadController extends Controller
                 $memberData['title'] = $thread->title;
                 $memberData['description'] = $thread->description;
                 $memberData['content'] = $thread->content;
-                $memberData['view'] = $thread->view;
-                $memberData['create_at'] =  Carbon::parse($thread->created_at)->format('d/m/Y');
-                $memberData['like'] = $thread->like;
-                $memberData['reply'] = $thread->reply;
-                $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
-                $memberData['user_id'] = $thread->user_id;
-                $memberData['user'] = $this->userRepository->getById($thread->user_id);
-                $threadTags = $this->threadRepository->getThreadTagsByThreadId($thread->id);
-                $tags = [];
-                foreach ($threadTags as $threadTag) {
-                    $tagMember['id'] = $threadTag->tag_id;
-                    $tagMember['name'] = $threadTag->name;
-                    $tagMember['color'] = $threadTag->color;
-                    array_push($tags, $tagMember);
+                $validtion =  $this->validationRepository->getByThreadId($thread->id);
+
+                if ($validtion->status == 1) {
+                    $memberData['status'] = "Đã duyệt";
+                } else if ($validtion->status == 0) {
+                    $memberData['status'] = "Chặn";
+                } else {
+                    $memberData['status'] = "Chờ duyệt";
                 }
-                $memberData['tags'] = $tags;
+
+
+                $memberData['create_at'] =  Carbon::parse($thread->created_at)->format('d/m/Y');
+
                 array_push($data, $memberData);
             }
             return response()->json([
@@ -156,23 +154,25 @@ class ThreadController extends Controller
         } else {
             $data = [];
             $token = $request->header();
-            if($token['authorization'][0] != "Bearer null"){
+            if ($token['authorization'][0] != "Bearer null") {
                 $bareToken = substr($token['authorization'][0], 7);
                 $userId = AuthService::getUserId($bareToken);
                 $react = $this->reactRepository->getByUserAndThread($userId, $thread->id);
-                if($react){
-                    $data['is_like'] = $react->like == 1 ? true: false;
+                if ($react) {
+                    $data['is_like'] = $react->like == 1 ? true : false;
                 }
             }
             $user = $this->userRepository->getById($thread->user_id);
             $data['user'] = $user;
             $validtion = $this->validationRepository->getByThreadId($thread->id);
-            if($userId){
-                if($user->id === $userId){
+            if ($userId !== null) {
+                if ($user->id === $userId) {
+
                     $data['valid'] = $validtion;
                 }
-            }else{
-                if($validtion->is_valid == false){
+            } else {
+
+                if ($validtion->status == 0 || $validtion->status == 3) {
                     return response()->json([
                         'status' => 'error',
                         'message' => 'not found thread'
@@ -225,7 +225,7 @@ class ThreadController extends Controller
         ]);
 
         if ($validator->fails()) {
-             return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
         $token = $request->header();
@@ -282,34 +282,34 @@ class ThreadController extends Controller
         $thread = $this->threadRepository->getById($id);
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         $tags = $request->tags;
 
         foreach ($tags as $tag) {
             if (!is_int($tag) || $tag < 1) {
                 return response()->json([
-                    'status'=> 'Lỗi',
-                    'message'=> 'Mã tag không đúng'
+                    'status' => 'Lỗi',
+                    'message' => 'Mã tag không đúng'
                 ], 400);
             }
         }
 
         if (in_array('USER', $role) && $userId != $thread->user_id) {
             return response()->json([
-                'status'=> 'error',
-                'message'=> 'Không được phép đính tag cho sản phẩm của user khác, hãy là chủ sở hữu hoặc admin!',
+                'status' => 'error',
+                'message' => 'Không được phép đính tag cho sản phẩm của user khác, hãy là chủ sở hữu hoặc admin!',
             ], 400);
         }
 
         $this->threadRepository->attachTag($id, $request->tags, $userId);
 
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Gắn tag thành công',
+            'status' => 'success',
+            'message' => 'Gắn tag thành công',
         ]);
     }
 
@@ -327,10 +327,10 @@ class ThreadController extends Controller
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
         if (in_array('ADMIN', $role) || $thread->user_id == $userId) {
             // update deleted in DB
             $result = $this->threadRepository->save([
@@ -340,14 +340,14 @@ class ThreadController extends Controller
             // return result
             if ($result) {
                 return response()->json([
-                    'status'=> 'Thành công',
+                    'status' => 'Thành công',
                     'message' => 'Xóa reply thành công',
                 ]);
             } else {
                 return response()->json([
-                    'status'=> 'Thất bại',
+                    'status' => 'Thất bại',
                     'message' => 'Xóa reply thất bại',
-                ],400);
+                ], 400);
             }
         } else {
             return response()->json([
@@ -357,7 +357,8 @@ class ThreadController extends Controller
         }
     }
 
-    public function reactByThreadAndUser(Request $request, $id){
+    public function reactByThreadAndUser(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
             'like' => 'required'
         ]);
@@ -373,25 +374,24 @@ class ThreadController extends Controller
         $likeArray = [true, false];
 
 
-        if (!in_array($request->like, $likeArray))
-        {
+        if (!in_array($request->like, $likeArray)) {
             return response()->json([
-                'status'=> 'Lỗi',
+                'status' => 'Lỗi',
                 'message' => 'React không được',
             ], 400);
         }
 
         $thread = $this->threadRepository->getById($id);
         $react = $this->reactRepository->getByUserAndThread($userId, $id);
-        if($react != null){
-            if($react->like == true && $request->like == true){
+        if ($react != null) {
+            if ($react->like == true && $request->like == true) {
                 return response()->json([
-                    'status'=> 'Lỗi',
+                    'status' => 'Lỗi',
                     'message' => 'react không được',
                 ], 400);
-            }else if($react->like == false && $request->like == false){
+            } else if ($react->like == false && $request->like == false) {
                 return response()->json([
-                    'status'=> 'Lỗi',
+                    'status' => 'Lỗi',
                     'message' => 'react không được',
                 ], 400);
             }
@@ -407,7 +407,7 @@ class ThreadController extends Controller
                 $thread->decrement('like');
                 $react->like = false;
             }
-        }else{
+        } else {
             $react = new React();
             // $react->id = null;
             $react->user_id = $userId;
@@ -431,16 +431,15 @@ class ThreadController extends Controller
             'like' => $react->like
         ], $react->id);
         logger()->info('React retrieved:', [$react]);
-        if ($result)
-        {
+        if ($result) {
             return response()->json([
-                'status'=> 'Thành công',
-                'message'=> 'React thành công',
+                'status' => 'Thành công',
+                'message' => 'React thành công',
             ]);
         } else {
             return response()->json([
-                'status'=> 'Thất bại',
-                'message'=> 'React thất bại'
+                'status' => 'Thất bại',
+                'message' => 'React thất bại'
             ]);
         }
     }

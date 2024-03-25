@@ -152,8 +152,13 @@ const ThreadDetailPage = () => {
               <div className="p-3 bg-danger text-white my-3">Nội dung không hợp lệ, xin hãy nhập lại</div>
            
             )}
-              
-              <div className="tt-wrapper-inner my-3" ref={targetRef}>
+              {(thread?.valid?.status == 0 || thread?.valid?.status == 3) ? (
+              <>
+                <div className="text-center">Không thể phản hồi bài đăng này.</div>
+              </>
+            ) : (
+              <>
+                          <div className="tt-wrapper-inner my-3" ref={targetRef}>
                 <h4 className="text-center">Phản hồi tại đây</h4>
               </div>
 
@@ -186,6 +191,9 @@ const ThreadDetailPage = () => {
                 </div>
               </div>
               </>
+            )}
+    
+              </>
           ) : (
             <>
               <div className="tt-topic-list">
@@ -194,7 +202,7 @@ const ThreadDetailPage = () => {
                     <FontAwesomeIcon icon={faUser} />
                   </div>
                   <div className="tt-col-message">
-                    Có vẻ bạn chưa có tài khoảng, hãy đăng ký miễn phí và tham
+                    Có vẻ bạn chưa có tài khoản, hãy đăng ký miễn phí và tham
                     gia vào cuộc thảo luận.
                   </div>
                   <div className="tt-col-btn">

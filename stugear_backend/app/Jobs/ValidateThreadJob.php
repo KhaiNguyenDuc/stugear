@@ -82,8 +82,8 @@ class ValidateThreadJob implements ShouldQueue
     }
 
     private function publishThread(Thread $thread, $response){
-        $isValid = true;
-        $this->updateThread($thread, $response, $isValid);
+        $allowStatus = 1;
+        $this->updateThread($thread, $response, $allowStatus);
         $mailData = [
             'subject' => 'Bài đăng: ' . $thread->title,
             'content' => 'Bài đăng của bạn đã được duyệt. Link: '.env("APP_URL")."/thread" ."/". $thread->id,
@@ -93,8 +93,8 @@ class ValidateThreadJob implements ShouldQueue
     }
 
     private function rejectThread(Thread $thread, $response){
-        $isValid = false;
-        $this->updateThread($thread, $response, $isValid);
+        $rejectStatus = 0;
+        $this->updateThread($thread, $response, $rejectStatus);
         $mailData = [
             'subject' => 'Chúng tôi đã xem xét bài đăng của bạn',
             'content' => 'Bài đăng của bạn không được duyệt do chứa nội dung không hợp lệ.' .$response['description'],
@@ -103,12 +103,17 @@ class ValidateThreadJob implements ShouldQueue
         $this->sendEmail($thread, $mailData);
     }
 
-    private function updateThread(Thread $thread, $response, $isValid){
-        $validation = new ValidationRequest();
-        $validation->setThreadId($thread->id);
-        $validation->isValid($isValid);
-        $validation->setDescription($response['description']);
-        $this->validationRepository->createThreadValidation($thread->id, $validation);
+    private function updateThread(Thread $thread, $response, $status){
+        $validation = $this->validationRepository->getByThreadId($thread->id);
+        logger()->info([
+            'status' => $status,
+            'description' => $response['description'],
+            'id' => $validation,
+        ]);
+        $this->validationRepository->save([
+            'status' => $status,
+            'description' => $response['description'],
+        ], $validation->id);
     }
 
     private function sendEmail(Thread $thread, $mailData){

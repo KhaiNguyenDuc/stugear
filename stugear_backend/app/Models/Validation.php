@@ -19,7 +19,7 @@ class Validation extends Model
     
         'thread_id',
         'product_id',
-        'is_valid',
+        'status',
         'description',
 
     ];

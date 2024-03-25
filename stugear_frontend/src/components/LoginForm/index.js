@@ -9,6 +9,7 @@ import Loading from "../Loading";
 import UserService from "../../service/UserService";
 import useProduct from "../../hooks/useProduct";
 import {BASE_API_URL} from "../../utils/Constant.js"
+import ThreadService from "../../service/ThreadService.js";
 const LoginForm = () => {
   const { setUser } = useAuth();
   const { setProductCount } = useProduct();
@@ -79,6 +80,7 @@ const LoginForm = () => {
     let wishlistCount = 0;
     let orderCount = 0;
     let productCount = 0;
+    let threadCount = 0;
     const wishlistResponse = await UserService.getCurrentUserWishlist();
     if (wishlistResponse?.status != 400) {
       wishlistCount = wishlistResponse?.length;
@@ -97,11 +99,18 @@ const LoginForm = () => {
       localStorage.setItem("product", productCount)
     }
 
+    const threadResponse = await ThreadService.getCurrentUserThreads();
+    if (threadResponse?.status != 400) {
+      threadCount = threadResponse?.total_items;
+      localStorage.setItem("thread", threadCount)
+    }
+
     setProductCount({
       ...productCount,
       wishlist: wishlistCount,
       myProduct: productCount,
       myOrder: orderCount,
+      thread: threadCount,
     });
   };
 

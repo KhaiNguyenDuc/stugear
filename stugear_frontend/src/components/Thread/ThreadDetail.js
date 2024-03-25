@@ -64,13 +64,15 @@ const ThreadDetail = ({
 
   useEffect(() => {
     const getAIReply = async () => {
-      const reponse = await ThreadReplyService.getAIReplyByThreadId(threadDetail?.id);
-      if(reponse?.status != 400){
+      const reponse = await ThreadReplyService.getAIReplyByThreadId(
+        threadDetail?.id
+      );
+      if (reponse?.status != 400) {
         setAIReply(reponse);
       }
-    }
-    getAIReply()
-  }, [])
+    };
+    getAIReply();
+  }, []);
   const handleThreadReact = async (react) => {
     let likeBoolean = react === "+" ? true : false;
     setIsLike(likeBoolean);
@@ -250,27 +252,39 @@ const ThreadDetail = ({
         heading={"Vui lòng tạo tài khoản để tương tác"}
         body={'Bấm vào nút "Đồng ý" để đến trang đăng nhập'}
       ></CustomModal>
-      {thread?.valid?.is_valid == 0 && (
+      {(thread?.valid?.status == 0 || thread?.valid?.status == 3) && (
         <>
-         <div
-                className="product-status mb-5 rounded-xl1"
-                style={{
-                  backgroundColor: "#F59E0B",
-                }}
-              >
-                <div className="d-flex mb-3">
-                  <span
-                    className="ping my-2 me-2"
-                    style={{ border: "4px solid #10B981" }}
-                  ></span>
-                  <span>{thread?.valid[0]?.description}</span>
-                </div>
+          <div
+            className="product-status mb-5 rounded-xl1"
+            style={ thread?.valid?.status == 3 ?{
+              backgroundColor: "#DD9933",
+            } : {backgroundColor: '#D33B33'}}
+          >
+            <div className="d-flex mb-3">
+              <span
+                className="ping my-2 me-2"
+                style={ thread?.valid?.status == 3 ?{
+                  border: "4px solid yellow"
+                } : { border: "4px solid red"}}
+     
+              ></span>
+              <span>{thread?.valid?.description}</span>
+            </div>
+            {thread?.valid?.status == 0 ? (
+              <>
+                <h4>Bài đăng của bạn bị chặn vì chứa nội dung không phù hợp.</h4>
+                <p>Mọi thắc mắc xin vui lòng liên hệ sđt: 0783511740</p>
+              </>
+            ) : (
+              <>
                 <h4>Bài đăng của bạn đang chờ được duyệt.</h4>
                 <p>Chúng tôi sẽ cho bạn biết khi bài đăng đã được duyệt</p>
-              </div>
+              </>
+            )}
+          </div>
         </>
       )}
-      
+
       <div classname="tt-single-topic-list">
         <div className="tt-item">
           <div
@@ -329,95 +343,102 @@ const ThreadDetail = ({
               <p dangerouslySetInnerHTML={{ __html: thread?.content }} />
             </div>
             <div className="tt-item-info info-bottom">
-              {localStorage.getItem("user_id") ? (
+              {thread?.valid?.status != 0 && thread?.valid?.status != 3 && (
                 <>
-                  <Link
-                    onClick={
-                      isLike === false || isLike === undefined
-                        ? () => handleThreadReact("+")
-                        : () => {}
-                    }
-                    className="tt-icon-btn"
-                    title={isLike ? "Đã thích" : "Thích"}
-                  >
-                    <FontAwesomeIcon
-                      icon={faThumbsUp}
-                      style={isLike === true ? { color: "blue" } : {}}
-                    />{" "}
-                    <span
-                      className="tt-text"
-                      style={isLike === true ? { color: "blue" } : {}}
-                    >
-                      {thread?.like}
-                    </span>
-                  </Link>
-                  <Link
-                    onClick={
-                      isLike === true || isLike === undefined
-                        ? () => handleThreadReact("-")
-                        : () => {}
-                    }
-                    className="tt-icon-btn"
-                    title={isLike === false ? "Đã không thích" : "Không thích"}
-                  >
-                    <FontAwesomeIcon
-                      icon={faThumbsDown}
-                      style={isLike === false ? { color: "blue" } : {}}
-                    />{" "}
-                    <span
-                      className="tt-text"
-                      style={isLike === false ? { color: "blue" } : {}}
-                    >
-                      {thread?.dislike}
-                    </span>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    onClick={() => setShow(true)}
-                    className="tt-icon-btn"
-                    title="Thích"
-                  >
-                    <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                    <span className="tt-text">{thread?.like}</span>
-                  </Link>
-                  <Link
-                    onClick={() => setShow(true)}
-                    className="tt-icon-btn"
-                    title="Không thích"
-                  >
-                    <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                    <span className="tt-text">{thread?.dislike}</span>
-                  </Link>
-                </>
-              )}
+                  {localStorage.getItem("user_id") ? (
+                    <>
+                      <Link
+                        onClick={
+                          isLike === false || isLike === undefined
+                            ? () => handleThreadReact("+")
+                            : () => {}
+                        }
+                        className="tt-icon-btn"
+                        title={isLike ? "Đã thích" : "Thích"}
+                      >
+                        <FontAwesomeIcon
+                          icon={faThumbsUp}
+                          style={isLike === true ? { color: "blue" } : {}}
+                        />{" "}
+                        <span
+                          className="tt-text"
+                          style={isLike === true ? { color: "blue" } : {}}
+                        >
+                          {thread?.like}
+                        </span>
+                      </Link>
+                      <Link
+                        onClick={
+                          isLike === true || isLike === undefined
+                            ? () => handleThreadReact("-")
+                            : () => {}
+                        }
+                        className="tt-icon-btn"
+                        title={
+                          isLike === false ? "Đã không thích" : "Không thích"
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faThumbsDown}
+                          style={isLike === false ? { color: "blue" } : {}}
+                        />{" "}
+                        <span
+                          className="tt-text"
+                          style={isLike === false ? { color: "blue" } : {}}
+                        >
+                          {thread?.dislike}
+                        </span>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        onClick={() => setShow(true)}
+                        className="tt-icon-btn"
+                        title="Thích"
+                      >
+                        <FontAwesomeIcon icon={faThumbsUp} />{" "}
+                        <span className="tt-text">{thread?.like}</span>
+                      </Link>
+                      <Link
+                        onClick={() => setShow(true)}
+                        className="tt-icon-btn"
+                        title="Không thích"
+                      >
+                        <FontAwesomeIcon icon={faThumbsDown} />{" "}
+                        <span className="tt-text">{thread?.dislike}</span>
+                      </Link>
 
-              <div className="col-separator" />
+                    </>
+                  )}
+                  
+                  <div className="col-separator" />
 
-              <Link
-                href="#"
-                className="tt-icon-btn tt-hover-02 tt-small-indent"
-              >
-                <FontAwesomeIcon icon={faBug} />
-              </Link>
-              {localStorage.getItem("user_id") ? (
-                <>
-                  <Link
-                    onClick={() => scrollToTarget()}
-                    className="tt-icon-btn tt-hover-02 tt-small-indent"
-                  >
-                    <FontAwesomeIcon icon={faReply} />
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    onClick={() => setShow(true)}
-                    className="tt-icon-btn tt-hover-02 tt-small-indent"
-                  >
-                    <FontAwesomeIcon icon={faReply} />
-                  </Link>
+<Link
+  href="#"
+  className="tt-icon-btn tt-hover-02 tt-small-indent"
+>
+  <FontAwesomeIcon icon={faBug} />
+</Link>
+{localStorage.getItem("user_id") ? (
+  <>
+    <Link
+      onClick={() => scrollToTarget()}
+      className="tt-icon-btn tt-hover-02 tt-small-indent"
+    >
+      <FontAwesomeIcon icon={faReply} />
+    </Link>
+  </>
+) : (
+  <>
+    <Link
+      onClick={() => setShow(true)}
+      className="tt-icon-btn tt-hover-02 tt-small-indent"
+    >
+      <FontAwesomeIcon icon={faReply} />
+    </Link>
+  </>
+)}
                 </>
               )}
             </div>
@@ -477,13 +498,9 @@ const ThreadDetail = ({
         'long' => '3',
         'short' => '4',
         'accept' => '5' */}
-        {AIReply?.length != 0 && (
-          <>
-            
-                 <div
-                  className="tt-item mb-3 tt-wrapper-success"
-                
-                >
+            {AIReply?.length != 0 && (
+              <>
+                <div className="tt-item mb-3 tt-wrapper-success">
                   <div className="tt-single-topic ">
                     <div className="tt-item-header pt-noborder">
                       <div className="tt-item-info info-top">
@@ -492,7 +509,7 @@ const ThreadDetail = ({
                         </div>
                         <div className="tt-avatar-title">
                           <a href="#">{AIReply?.user?.name}</a>
-                        
+
                           <span className="text-center">
                             <FontAwesomeIcon
                               icon={faMedal}
@@ -509,20 +526,16 @@ const ThreadDetail = ({
                       </div>
                     </div>
                     <div className="tt-item-description">
-                  
-                        <>
-                          <p
-                            dangerouslySetInnerHTML={{ __html: AIReply?.content }}
-                          ></p>
-                        </>
-             
+                      <>
+                        <p
+                          dangerouslySetInnerHTML={{ __html: AIReply?.content }}
+                        ></p>
+                      </>
                     </div>
-             
+                  </div>
                 </div>
-                </div>
-
-          </>
-        )}
+              </>
+            )}
             <div className="row-object-inline form-default">
               <h6 className="tt-title">Lọc phản hồi theo:</h6>
               <ul className="tt-list-badge tt-size-lg">
@@ -578,245 +591,251 @@ const ThreadDetail = ({
           <Loading />
         ) : (
           <>
+            {replies
+              ?.filter((reply) => reply?.user?.first_name !== "GPT")
+              ?.map((reply) => (
+                <>
+                  <>
+                    <div
+                      className="tt-item mb-3"
+                      style={{ backgroundColor: "white" }}
+                    >
+                      <div className="tt-single-topic">
+                        <div className="tt-item-header pt-noborder">
+                          <div className="tt-item-info info-top">
+                            <div className="tt-avatar-icon">
+                              <UserModal userId={reply?.user?.id} />
+                            </div>
+                            <div className="tt-avatar-title">
+                              <a href="#">{reply.user.name}</a>
+                              <span className="text-center">
+                                <FontAwesomeIcon
+                                  icon={faMedal}
+                                  style={{ color: "#DD9933" }}
+                                />{" "}
+                                {reply?.user?.reputation}
+                              </span>
+                            </div>
+                            <a href="#" className="tt-info-time">
+                              <FontAwesomeIcon
+                                icon={faClock}
+                                className="pe-2"
+                              />
+                              {reply.create_at}
+                            </a>
+                          </div>
+                        </div>
+                        <div className="tt-item-description">
+                          {reply?.reply_on ? (
+                            <>
+                              <div className="topic-inner-list">
+                                <div className="topic-inner">
+                                  <div className="topic-inner-title">
+                                    <div className="topic-inner-avatar">
+                                      <UserModal
+                                        userId={reply?.reply_on?.user?.id}
+                                      />
+                                    </div>
+                                    <div className="topic-inner-title">
+                                      <a href="#">{reply.reply_on.user.name}</a>
+                                      <span className="text-center ms-2">
+                                        <FontAwesomeIcon
+                                          icon={faMedal}
+                                          style={{ color: "#DD9933" }}
+                                        />{" "}
+                                        {reply?.reply_on?.user?.reputation}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="topic-inner-description">
+                                    <p
+                                      dangerouslySetInnerHTML={{
+                                        __html: reply.reply_on.content,
+                                      }}
+                                    ></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <p
+                                dangerouslySetInnerHTML={{
+                                  __html: reply.content,
+                                }}
+                              ></p>
+                            </>
+                          ) : (
+                            <>
+                              <p
+                                dangerouslySetInnerHTML={{
+                                  __html: reply.content,
+                                }}
+                              ></p>
+                            </>
+                          )}
+                        </div>
+                        <div className="tt-item-info info-bottom">
+                          {localStorage.getItem("user_id") ? (
+                            <>
+                              <Link
+                                onClick={
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === false ||
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === undefined
+                                    ? () => handleReplyReact(reply?.id, "+")
+                                    : () => {}
+                                }
+                                className="tt-icon-btn"
+                                title={
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === true
+                                    ? "Đã thích"
+                                    : "Thích"
+                                }
+                              >
+                                <FontAwesomeIcon
+                                  icon={faThumbsUp}
+                                  style={
+                                    isReplyLike.find(
+                                      (element) => element.id === reply?.id
+                                    )?.value === true
+                                      ? { color: "blue" }
+                                      : {}
+                                  }
+                                />{" "}
+                                <span
+                                  className="tt-text"
+                                  style={
+                                    isReplyLike.find(
+                                      (element) => element.id === reply?.id
+                                    )?.value === true
+                                      ? { color: "blue" }
+                                      : {}
+                                  }
+                                >
+                                  {reply?.like}
+                                </span>
+                              </Link>
+                              <Link
+                                onClick={
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === true ||
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === undefined
+                                    ? () => handleReplyReact(reply?.id, "-")
+                                    : () => {}
+                                }
+                                className="tt-icon-btn"
+                                title={
+                                  isReplyLike.find(
+                                    (element) => element.id === reply?.id
+                                  )?.value === false
+                                    ? "Đã không thích"
+                                    : "Không thích"
+                                }
+                              >
+                                <FontAwesomeIcon
+                                  icon={faThumbsDown}
+                                  style={
+                                    isReplyLike.find(
+                                      (element) => element.id === reply?.id
+                                    )?.value === false
+                                      ? { color: "blue" }
+                                      : {}
+                                  }
+                                />{" "}
+                                <span
+                                  className="tt-text"
+                                  style={
+                                    isReplyLike.find(
+                                      (element) => element.id === reply?.id
+                                    )?.value === false
+                                      ? { color: "blue" }
+                                      : {}
+                                  }
+                                >
+                                  {reply?.dislike}
+                                </span>
+                              </Link>
+                            </>
+                          ) : (
+                            <>
+                              <Link
+                                onClick={() => setShow(true)}
+                                className="tt-icon-btn"
+                                title="Đồng ý"
+                              >
+                                <FontAwesomeIcon icon={faThumbsUp} />{" "}
+                                <span className="tt-text">{reply.like}</span>
+                              </Link>
+                              <Link
+                                onClick={() => setShow(true)}
+                                className="tt-icon-btn"
+                                title="Không thích"
+                              >
+                                <FontAwesomeIcon icon={faThumbsDown} />{" "}
+                                <span className="tt-text">{reply.dislike}</span>
+                              </Link>
+                            </>
+                          )}
 
-            {replies?.filter(reply => reply?.user?.first_name !== "GPT")?.map((reply) => (
-              <>
-                             <>
-                                <div
-                  className="tt-item mb-3"
-                  style={{ backgroundColor: "white" }}
-                >
-                  <div className="tt-single-topic">
-                    <div className="tt-item-header pt-noborder">
-                      <div className="tt-item-info info-top">
-                        <div className="tt-avatar-icon">
-                          <UserModal userId={reply?.user?.id} />
+                          <div className="col-separator" />
+                          <Link
+                            title="Báo cáo"
+                            className="tt-icon-btn tt-hover-02 tt-small-indent"
+                          >
+                            <FontAwesomeIcon icon={faBug} />
+                          </Link>
+                          {localStorage.getItem("user_id") ? (
+                            <>
+                              <Link
+                                onClick={() => {
+                                  handleReplyClick(reply?.id);
+                                  openModal();
+                                }}
+                                title="Phản hồi"
+                                className="tt-icon-btn tt-hover-02 tt-small-indent"
+                              >
+                                <FontAwesomeIcon icon={faReply} />
+                              </Link>
+                            </>
+                          ) : (
+                            <>
+                              <Link
+                                onClick={() => setShow(true)}
+                                title="Phản hồi"
+                                className="tt-icon-btn tt-hover-02 tt-small-indent"
+                              >
+                                <FontAwesomeIcon icon={faReply} />
+                              </Link>
+                            </>
+                          )}
                         </div>
-                        <div className="tt-avatar-title">
-                          <a href="#">{reply.user.name}</a>
-                          <span className="text-center">
-                            <FontAwesomeIcon
-                              icon={faMedal}
-                              style={{ color: "#DD9933" }}
-                            />{" "}
-                            {reply?.user?.reputation}
-                          </span>
-                        </div>
-                        <a href="#" className="tt-info-time">
-                          <FontAwesomeIcon icon={faClock} className="pe-2" />
-                          {reply.create_at}
-                        </a>
                       </div>
                     </div>
-                    <div className="tt-item-description">
-                      {reply?.reply_on ? (
-                        <>
-                          <div className="topic-inner-list">
-                            <div className="topic-inner">
-                              <div className="topic-inner-title">
-                                <div className="topic-inner-avatar">
-                                  <UserModal
-                                    userId={reply?.reply_on?.user?.id}
-                                  />
-                                </div>
-                                <div className="topic-inner-title">
-                                  <a href="#">{reply.reply_on.user.name}</a>
-                                  <span className="text-center ms-2">
-                                    <FontAwesomeIcon
-                                      icon={faMedal}
-                                      style={{ color: "#DD9933" }}
-                                    />{" "}
-                                    {reply?.reply_on?.user?.reputation}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="topic-inner-description">
-                                <p
-                                  dangerouslySetInnerHTML={{
-                                    __html: reply.reply_on.content,
-                                  }}
-                                ></p>
-                              </div>
-                            </div>
-                          </div>
-                          <p
-                            dangerouslySetInnerHTML={{ __html: reply.content }}
-                          ></p>
-                        </>
-                      ) : (
-                        <>
-                          <p
-                            dangerouslySetInnerHTML={{ __html: reply.content }}
-                          ></p>
-                        </>
-                      )}
-                    </div>
-                    <div className="tt-item-info info-bottom">
-                      {localStorage.getItem("user_id") ? (
-                        <>
-                          <Link
-                            onClick={
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === false ||
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === undefined
-                                ? () => handleReplyReact(reply?.id, "+")
-                                : () => {}
-                            }
-                            className="tt-icon-btn"
-                            title={
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === true
-                                ? "Đã thích"
-                                : "Thích"
-                            }
-                          >
-                            <FontAwesomeIcon
-                              icon={faThumbsUp}
-                              style={
-                                isReplyLike.find(
-                                  (element) => element.id === reply?.id
-                                )?.value === true
-                                  ? { color: "blue" }
-                                  : {}
-                              }
-                            />{" "}
-                            <span
-                              className="tt-text"
-                              style={
-                                isReplyLike.find(
-                                  (element) => element.id === reply?.id
-                                )?.value === true
-                                  ? { color: "blue" }
-                                  : {}
-                              }
-                            >
-                              {reply?.like}
-                            </span>
-                          </Link>
-                          <Link
-                            onClick={
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === true ||
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === undefined
-                                ? () => handleReplyReact(reply?.id, "-")
-                                : () => {}
-                            }
-                            className="tt-icon-btn"
-                            title={
-                              isReplyLike.find(
-                                (element) => element.id === reply?.id
-                              )?.value === false
-                                ? "Đã không thích"
-                                : "Không thích"
-                            }
-                          >
-                            <FontAwesomeIcon
-                              icon={faThumbsDown}
-                              style={
-                                isReplyLike.find(
-                                  (element) => element.id === reply?.id
-                                )?.value === false
-                                  ? { color: "blue" }
-                                  : {}
-                              }
-                            />{" "}
-                            <span
-                              className="tt-text"
-                              style={
-                                isReplyLike.find(
-                                  (element) => element.id === reply?.id
-                                )?.value === false
-                                  ? { color: "blue" }
-                                  : {}
-                              }
-                            >
-                              {reply?.dislike}
-                            </span>
-                          </Link>
-                        </>
-                      ) : (
-                        <>
-                          <Link
-                            onClick={() => setShow(true)}
-                            className="tt-icon-btn"
-                            title="Đồng ý"
-                          >
-                            <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                            <span className="tt-text">{reply.like}</span>
-                          </Link>
-                          <Link
-                            onClick={() => setShow(true)}
-                            className="tt-icon-btn"
-                            title="Không thích"
-                          >
-                            <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                            <span className="tt-text">{reply.dislike}</span>
-                          </Link>
-                        </>
-                      )}
-
-                      <div className="col-separator" />
-                      <Link
-                        title="Báo cáo"
-                        className="tt-icon-btn tt-hover-02 tt-small-indent"
-                      >
-                        <FontAwesomeIcon icon={faBug} />
-                      </Link>
-                      {localStorage.getItem("user_id") ? (
-                        <>
-                          <Link
-                            onClick={() => {
-                              handleReplyClick(reply?.id);
-                              openModal();
-                            }}
-                            title="Phản hồi"
-                            className="tt-icon-btn tt-hover-02 tt-small-indent"
-                          >
-                            <FontAwesomeIcon icon={faReply} />
-                          </Link>
-                        </>
-                      ) : (
-                        <>
-                          <Link
-                            onClick={() => setShow(true)}
-                            title="Phản hồi"
-                            className="tt-icon-btn tt-hover-02 tt-small-indent"
-                          >
-                            <FontAwesomeIcon icon={faReply} />
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                {isReply?.value == true && isReply?.id == reply?.id && (
-                  <>
-                    <Modal
-                      isOpen={modalIsOpen}
-                      onRequestClose={closeModal}
-                      style={customStyles}
-                      contentLabel="Example Modal"
-                    >
-                      <ThreadReply
-                        parentReply={reply}
-                        closeModal={closeModal}
-                        setReload={setReload}
-                      />
-                    </Modal>
+                    {isReply?.value == true && isReply?.id == reply?.id && (
+                      <>
+                        <Modal
+                          isOpen={modalIsOpen}
+                          onRequestClose={closeModal}
+                          style={customStyles}
+                          contentLabel="Example Modal"
+                        >
+                          <ThreadReply
+                            parentReply={reply}
+                            closeModal={closeModal}
+                            setReload={setReload}
+                          />
+                        </Modal>
+                      </>
+                    )}
                   </>
-                )}
                 </>
-          
-
-              </>
-            ))}
+              ))}
           </>
         )}
       </div>
