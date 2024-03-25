@@ -477,7 +477,7 @@ const ThreadDetail = ({
         'long' => '3',
         'short' => '4',
         'accept' => '5' */}
-        {AIReply && (
+        {AIReply?.length != 0 && (
           <>
             
                  <div
@@ -491,7 +491,7 @@ const ThreadDetail = ({
                           <UserModal userId={AIReply?.user?.id} />
                         </div>
                         <div className="tt-avatar-title">
-                          <a href="#">{AIReply.user.name}</a>
+                          <a href="#">{AIReply?.user?.name}</a>
                         
                           <span className="text-center">
                             <FontAwesomeIcon
@@ -504,7 +504,7 @@ const ThreadDetail = ({
                         </div>
                         <a href="#" className="tt-info-time">
                           <FontAwesomeIcon icon={faClock} className="pe-2" />
-                          {AIReply.create_at}
+                          {AIReply?.create_at}
                         </a>
                       </div>
                     </div>
@@ -512,7 +512,7 @@ const ThreadDetail = ({
                   
                         <>
                           <p
-                            dangerouslySetInnerHTML={{ __html: AIReply.content }}
+                            dangerouslySetInnerHTML={{ __html: AIReply?.content }}
                           ></p>
                         </>
              

@@ -146,6 +146,7 @@ class ThreadController extends Controller
     {
         logger()->info(config('queue.default'));
         Carbon::setLocale('vi');
+        $userId = null; // Initialize $userId to null
         $thread = $this->threadRepository->getById($id);
         if (!$thread) {
             return response()->json([
@@ -171,7 +172,7 @@ class ThreadController extends Controller
                     $data['valid'] = $validtion;
                 }
             }else{
-                if(json_decode($validtion)->is_valid == false){
+                if($validtion->is_valid == false){
                     return response()->json([
                         'status' => 'error',
                         'message' => 'not found thread'
