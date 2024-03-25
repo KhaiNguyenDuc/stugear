@@ -136,7 +136,8 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             'threads.like',
             'threads.reply',
             'threads.user_id',
-            'threads.category_id'
+            'threads.category_id',
+            'threads.updated_at',
         )->distinct();
 
         $query->orderBy('threads.updated_at', 'desc');

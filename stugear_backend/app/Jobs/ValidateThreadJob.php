@@ -16,6 +16,7 @@ use App\Repositories\Reply\ReplyRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Validation\ValidationRepository;
 use App\Repositories\Validation\ValidationRepositoryInterface;
+use App\Util\AppConstant;
 use App\Util\PromptConstant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -86,7 +87,7 @@ class ValidateThreadJob implements ShouldQueue
         $this->updateThread($thread, $response, $allowStatus);
         $mailData = [
             'subject' => 'Bài đăng: ' . $thread->title,
-            'content' => 'Bài đăng của bạn đã được duyệt. Link: '.env("APP_URL")."/thread" ."/". $thread->id,
+            'content' => 'Bài đăng của bạn đã được duyệt. Link: '.AppConstant::$DOMAIN."/thread" ."/". $thread->id,
             'signature' => 'Stugear'
         ];
         $this->sendEmail($thread, $mailData);
