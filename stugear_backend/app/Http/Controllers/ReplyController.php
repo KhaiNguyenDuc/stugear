@@ -104,14 +104,21 @@ class ReplyController extends Controller
         Carbon::setLocale('vi');
         $data  = [];
         $reply = $this->replyRepository->getAIReplyByThreadId($threadId);
-        $data['user'] =  $this->userRepository->getById($reply->user_id);
-        $data['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
-        $data['content'] = $reply->content;
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Lấy dữ liệu thành công',
-            'data' => $data
-        ]);
+        if($reply){
+            $data['user'] =  $this->userRepository->getById($reply->user_id);
+            $data['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
+            $data['content'] = $reply->content;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $data
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'error',
+                'message' => 'not found thread for this user or user not login'
+            ], 404);
+        }
 
 
     }
