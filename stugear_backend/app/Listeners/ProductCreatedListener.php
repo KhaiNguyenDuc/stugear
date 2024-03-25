@@ -2,8 +2,10 @@
 
 namespace App\Listeners;
 
+use App\Dto\ValidationRequest;
 use App\Events\ProductCreated;
 use App\Jobs\ValidateProductJob;
+use App\Models\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Validation\ValidationRepositoryInterface;
 
@@ -28,8 +30,18 @@ class ProductCreatedListener
      */
     public function handle(ProductCreated $event): void
     {
+        $waitingApprovedStatus = 3;
+        $this->createProductValidation($event->getProduct(), $waitingApprovedStatus);
         dispatch(new ValidateProductJob($event->getProduct(), $this->validationRepository, $this->productRepository));
    
+    }
+
+    private function createProductValidation(Product $product, $status){
+        $validation = new ValidationRequest();
+        $validation->setProductId($product->id);
+        $validation->setStatus($status);
+        $validation->setDescription("Đang chờ duyệt");
+        $this->validationRepository->createProductValidation($product->id, $validation);
     }
 
 

@@ -48,7 +48,7 @@ class UserService {
   getCurrentUserProducts(currentPage) {
     let url = BASE_API_URL + `/products/current`;
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=3`;
+      url += `?page=${currentPage}&limit=6`;
     }else{
       url += `?page=1&limit=100`;
     }
@@ -153,6 +153,9 @@ class UserService {
     .catch((error) => error?.response);
   }
 
+
+
+  
 }
 
 export default new UserService();

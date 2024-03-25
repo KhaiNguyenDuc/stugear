@@ -11,5 +11,5 @@ interface ValidationRepositoryInterface extends RepositoryInterface
     public function createThreadValidation($threadId, ValidationRequest $validation);
     public function createProductValidation($productId, ValidationRequest $validation);
     public function getByThreadId($threadId);
-    
+    public function getByProductId($productId);
 }

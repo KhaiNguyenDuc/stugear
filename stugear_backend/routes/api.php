@@ -131,7 +131,7 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
 });
 
 Route::controller(ThreadController::class)->prefix('threads')->group(function (){
-    Route::get('/users/{id}', 'getCurrentUserThreads')->middleware('auth_jwt');
+    Route::get('/current', 'getCurrentUserThreads')->middleware('auth_jwt');
     Route::post('/filter','index');
     Route::get('/{id}', 'getThreadById');
     Route::patch('/{id}/react', 'reactByThreadAndUser')->middleware('auth_jwt');
