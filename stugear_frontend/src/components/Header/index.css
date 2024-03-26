@@ -42,6 +42,11 @@
     background: #4C25F5;
 }
 
+
+.mainNav .nav-link.active:after {
+    width: 100%;
+    background: #4C25F5;
+}
 .navBrn {
     font-weight: 700;
     font-size: 1.5rem;

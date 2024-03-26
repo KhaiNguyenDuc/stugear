@@ -663,7 +663,7 @@ const UploadProduct = () => {
             <><Loading/></>
           ): (
             <>
-               <div className="mt-5 d-flex" style={{ marginLeft: "76%" }}>
+               <div className="mt-5 d-flex" style={{ marginLeft: "78%" }}>
             {slug == undefined ||
               slug.includes("category-id=") ? (
                 <>
@@ -672,7 +672,7 @@ const UploadProduct = () => {
                       style={{ textDecoration: "None", color: "black" }}
                       onClick={(e) => handleDraft(e)}
                     >
-                      <button className="product-draft">
+                      <button className="btn btn-primary">
                         {" "}
                         <FontAwesomeIcon
                           icon="drafting-compass"
@@ -693,7 +693,7 @@ const UploadProduct = () => {
                   } else handleSubmit(e);
                 }}
               > 
-           <button className="product-edit">
+           <button className="btn btn-dark">
                 {" "}
                 <FontAwesomeIcon icon="pencil" /> Đăng
               </button>
@@ -703,12 +703,12 @@ const UploadProduct = () => {
 
             {isUpdated === true ? (
               <>
-                <div className="mb-3">
+                <div className="mb-3 ">
                   <Link
                     style={{ textDecoration: "None", color: "black" }}
                     onClick={() => setShow(true)}
                   >
-                    <button className="product-remove">
+                    <button className="btn btn-danger">
                       <FontAwesomeIcon icon="trash" className="me-2" />
                       {""}
                       Xóa sản phẩm

@@ -4,7 +4,7 @@ import { Col } from 'react-bootstrap'
 
 const FooterCol = (props) => {
   return (
-        <Col md={6} lg={3} className="footerLink">
+        <Col md={6} lg={3} className="footerLink hide-mobile">
             <h5>{props.title ? props.title : ''}</h5>
             {
                 props.menuItems?.map(({ name, id }) => <Link to="/" key={id}><li>

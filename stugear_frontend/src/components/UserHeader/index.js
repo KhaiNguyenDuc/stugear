@@ -125,7 +125,7 @@ const UserHeader = () => {
          
               <hr className="bg-dark" />
 
-              <button className="btn text-white" onClick={(e) => signOut(e)}>
+              <button className="btn btn-danger text-white" onClick={(e) => signOut(e)}>
                 Đăng xuất
               </button>
             </ul>

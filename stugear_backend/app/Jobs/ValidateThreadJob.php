@@ -87,7 +87,7 @@ class ValidateThreadJob implements ShouldQueue
         $this->updateThread($thread, $response, $allowStatus);
         $mailData = [
             'subject' => 'Bài đăng: ' . $thread->title,
-            'content' => 'Bài đăng của bạn đã được duyệt. Link: '.AppConstant::$DOMAIN."/thread" ."/". $thread->id,
+            'content' => 'Bài đăng của bạn đã được duyệt. Link: '.AppConstant::$DOMAIN."thread" ."/". $thread->id,
             'signature' => 'Stugear'
         ];
         $this->sendEmail($thread, $mailData);

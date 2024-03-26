@@ -53,7 +53,7 @@ const MyOrder = () => {
             <tr>
 
               <th
-                className="text-white"
+                className="text-white hide-mobile"
                 style={{ background: "#7355F7" }}
                 scope="col"
               >
@@ -94,13 +94,13 @@ const MyOrder = () => {
               return (
                 <tr>
 
-                  <td>{item.id}</td>
+                  <td className="hide-mobile">{item.id}</td>
                   <td>{item.product_title}</td>
                   <td>{item.status}</td>
                   <td>{item.created_date}</td>
                   <td>
                     <button
-                      className="btn"
+                      className="btn btn-dark"
                       onClick={(e) => hanldeViewDetail(e, item.id)}
                     >
                       Chi tiết

@@ -120,7 +120,7 @@ const LoginForm = () => {
 
   return (
     <div className="row my-3 justify-content-center w-100">
-      <div className="col col-4 box-shadow px-5">
+      <div className="col col-lg-4 box-shadow px-5">
 
         <OauthSection text="Đăng nhập với: " />
        
@@ -202,8 +202,8 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
-      <div className="col col-1"></div>
-      <div className="col col-3 text-center">
+      <div className="col col-1  hide-mobile"></div>
+      <div className="col col-3 text-center hide-mobile">
         <h1>Hãy đăng nhập</h1>
         <p className="font-italic text-muted mb-0">
           Đăng nhập tài khoản của bạn tại đây

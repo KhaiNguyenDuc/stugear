@@ -22,7 +22,7 @@ function UserAvatar({userInfo}) {
 
   return (
     <>
-      <aside className="user-info-wrapper">
+      <aside className="user-info-wrapper hide-mobile">
         <div
           className="user-cover"
           style={{

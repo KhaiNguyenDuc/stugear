@@ -9,7 +9,7 @@ class ThreadService {
    
     let url = THREAD_URL + "/filter";
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=6`;
+      url += `?page=${currentPage}&limit=8`;
     }else{
       url += `?page=1&limit=100`;
     }
@@ -50,7 +50,7 @@ class ThreadService {
 
     let url = THREAD_URL + '/current';
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=6`;
+      url += `?page=${currentPage}&limit=8`;
     }else{
       url += `?page=1&limit=100`;
     }

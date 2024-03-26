@@ -11,7 +11,7 @@ const PersonalLayout = ({children}) => {
         <Header sticky={true }/>
         <Container>
             <div className="row my-5">
-                <div className="col-3">
+                <div className="col-lg-3 col-12">
                     <AccountSideBar/>
                 </div>
                 <div className="col card ms-2">

@@ -7,7 +7,7 @@ const SideBar = ({ categories }) => {
 
   return (
     <>
-      <nav className="sidebar card sticky-top   ">
+      <nav className="sidebar card sticky-top">
         <ul>
 
 

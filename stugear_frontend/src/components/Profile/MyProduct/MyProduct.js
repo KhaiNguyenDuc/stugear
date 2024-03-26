@@ -70,7 +70,7 @@ const MyProduct = () => {
           (
               <>
               {products.map((product) => (
-              <div className="col-4 mt-5">
+              <div className="col-lg-4 col-6 mt-5">
                 <Link
                   className="my-product-item"
                   style={{ textDecoration: "none", color: "black" }}

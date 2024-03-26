@@ -53,7 +53,7 @@ const ThreadReply = ({ parentReply, closeModal, setReload }) => {
                   <UserModal userId={parentReply?.user?.id} />
                 </div>
                 <div className="topic-inner-title">
-                  <a href="#">{parentReply?.user?.name}</a>
+                  <span>{parentReply?.user?.name}</span>
                   <span className="text-center ms-2">
                     <FontAwesomeIcon
                       icon={faMedal}
@@ -90,13 +90,12 @@ const ThreadReply = ({ parentReply, closeModal, setReload }) => {
       </div>
       <div className="d-flex justify-content-between">
         <button
-          className="btn"
-          style={{ backgroundColor: "red" }}
+          className="btn btn-danger"
           onClick={closeModal}
         >
           Thoát
         </button>
-        <button className="btn" onClick={(e) => handleSubmitReply(e)}>
+        <button className="btn btn-success" onClick={(e) => handleSubmitReply(e)}>
           <FontAwesomeIcon icon={faReply} /> Gửi
         </button>
       </div>

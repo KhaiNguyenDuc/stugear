@@ -9,13 +9,18 @@
   background-color: #F7F7F8;
 }
 
-.btn {
+.btn-default {
   background-color: #7355F7;
   color: white;
 }
 
-.btn:hover {
+/* .btn:hover {
   background-color: #4F29F5;
+  color: white;
+} */
+
+.rmsc .btn {
+  background-color: black;
   color: white;
 }
 
@@ -46,3 +51,7 @@
   vertical-align: top;
 
 }
+
+@media (max-width: 991px) {
+  .hide-mobile {
+    display: none; } }

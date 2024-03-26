@@ -436,6 +436,7 @@ html.touch-device {
     .tt-button-icon .tt-icon svg {
         max-width: 60px;
         max-height: 60px;
+
     }
 }
 
@@ -1139,8 +1140,10 @@ html.touch-device {
     }
 
     .tt-single-topic .tt-text {
-        display: none;
+        padding-left: 10px;
     }
+
+
 }
 
 .tt-info-box {
@@ -1171,15 +1174,6 @@ html.touch-device {
     }
 }
 
-@media (max-width: 575px) {
-    .tt-info-box {
-        padding: 21px 20px 30px;
-    }
-
-    .tt-info-box .row-object-inline .tt-list-badge {
-        display: none;
-    }
-}
 
 .tt-row-icon {
     display: -webkit-box;
@@ -1878,5 +1872,19 @@ html.touch-device {
 @media (min-width: 992px) {
 
     .reply-editor .ql-editor { height: 150px !important }
+}
+
+.tt-item-text {
+    word-wrap: break-word; /* For older browsers */
+    overflow-wrap: break-word; /* For modern browsers */
+    max-height: 800px;
+    overflow-y: scroll
+}
+
+.topic-inner-description {
+    word-wrap: break-word; /* For older browsers */
+    overflow-wrap: break-word; /* For modern browsers */
+    max-height: 50px;
+    overflow-y: scroll
 }
 
