@@ -63,22 +63,22 @@ const ProductCard = ({ product }) => {
                 : product?.description?.slice(0, 60)}
             </div>
           </div>
-          <div class="card-text">
+          <div class="card-text mt-3">
             {parseInt(product?.origin_price) > parseInt(product?.price) ? (
               <>
                 <span
-                  className="me-4"
+                  className="me-1"
                   style={{ textDecoration: "line-through" }}
                 >
                   {product.origin_price}
                 </span>
-                <span style={{ fontSize: "17px", color: "red", fontWeight: 'bold' }}>
+                <span style={{ fontSize: "17px", color: "red", fontWeight: 'bold'}}>
                   {product.price}
                 </span>
               </>
             ) : (
               <>
-                <b style={{ fontSize: "17px", marginLeft: '50%'}}>
+                <b style={{ fontSize: "17px", marginLeft: 'auto'}}>
                   {product.price}
                 </b>
               </>

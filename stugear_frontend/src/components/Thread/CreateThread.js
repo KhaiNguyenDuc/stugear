@@ -50,7 +50,7 @@ const CreateThread = () => {
   }, [])
 
   const [selectedTag, setSelectedTag] = useState([]);
-  const [selectedCategory, setCategory] = useState([]);
+  const [selectedCategory, setCategory] = useState();
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [isValid, setValid] = useState(true);
@@ -103,8 +103,11 @@ const CreateThread = () => {
         response?.id, 
         otherItems.map((item) => item.value).concat(tag_ids)
       );
+    }else{
+      setValid(false)
+      return;
     }
-    navigate("/thread");
+    navigate("/member/my-thread");
   }
   useEffect(() => {
     getAllCategories();

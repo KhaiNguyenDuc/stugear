@@ -40,7 +40,7 @@ const HomeLayout = ({title, sub_title, titleUrl}) => {
 
 
         <div className="row">
-          <div className="col-2 ">
+          <div className="col-xl-2 col-12 ">
 
             {isLoading
               ? (

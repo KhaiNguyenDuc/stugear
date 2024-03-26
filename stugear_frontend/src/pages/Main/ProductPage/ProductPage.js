@@ -112,7 +112,7 @@ const ProductPage = () => {
 
           <hr className="bg-dark my-4"></hr>
           <div className="row">
-            <div className="col-8">
+            <div className="col col-md-8">
               {isOwner ? (
                 <>
                 
@@ -141,7 +141,7 @@ const ProductPage = () => {
                         style={{ textDecoration: "None", color: "black" }}
                         to={`/member/upload/${slug}`}
                       >
-                        <button className="product-edit ">
+                        <button className="btn btn-dark w-100">
                           {" "}
                           <FontAwesomeIcon
                             icon={faPencil}
@@ -156,7 +156,7 @@ const ProductPage = () => {
                         style={{ textDecoration: "None", color: "black" }}
                         onClick={() => setShow(true)}
                       >
-                        <button className="product-remove mb-2">
+                        <button className="btn btn-danger mb-2 w-100">
                           <FontAwesomeIcon icon={faTrash} className="me-2" />{" "}
                           Xóa sản phẩm
                         </button>
@@ -168,9 +168,9 @@ const ProductPage = () => {
                   </div>
                 </>
               ) : (
-                <ChatSection product={product} />
+                <div className="hide-mobile"><ChatSection product={product} /></div>
               )}
-              <div className="mt-4">
+              <div className="mt-4 hide-mobile">
                 
                 <RelateProduct products={relateProducts} />
               </div>

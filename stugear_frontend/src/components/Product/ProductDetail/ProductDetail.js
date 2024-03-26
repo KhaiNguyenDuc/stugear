@@ -128,7 +128,7 @@ const ProductDetail = ({ product, isMember }) => {
             </div>
             
             <div className="wishtlist-btn" >
-              <button className="btn" onClick={() => addToWishlist()}>
+              <button className="btn text-white" onClick={() => addToWishlist()}>
                 <FontAwesomeIcon icon="heart" /> Yêu thích
               </button>
 

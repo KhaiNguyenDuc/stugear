@@ -27,7 +27,7 @@ const SearchProduct = () => {
     <>
       <div className="search-product my-5">
         <div className="row">
-          <div className="col-3 filter">
+          <div className="col-12 col-xl-3 filter">
             <SearchSideBar setProducts={setProducts} setTotalPage={setTotalPage} currentPage={currentPage} 
             setCurrentPage={setCurrentPage}
             setLoading={setLoading}/>
@@ -42,7 +42,7 @@ const SearchProduct = () => {
             )}
             {products?.map((product, index) => (
                <>
-                <div className="col-4 my-4 search-item">
+                <div className="col-xl-4 col-6 mt-1 mb-4 search-item">
                 <Link  style={{textDecoration: 'None'}} to={`/home-page/product-detail/${product.id}`}>
                  <ProductCard key={index} product={product} />
                  </Link>
@@ -65,7 +65,6 @@ const SearchProduct = () => {
       </div>
            
           </div>
-
         </div>
   
       </div>

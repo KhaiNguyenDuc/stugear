@@ -39,7 +39,7 @@ const AdminSideBar = () => {
             </Link>
           </div>
           <button
-            className="btn admin-logout ms-5 my-4"
+            className="btn btn-danger admin-logout ms-5 my-4"
             onClick={(e) => signOut(e)}
           >
             Đăng xuất

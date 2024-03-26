@@ -16,7 +16,7 @@ class ThreadReplyService {
   getByThreadId(id, currentPage, filter) {
     let url = THREAD_REPLY_URL + `/${id}/replies`;
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=4`;
+      url += `?page=${currentPage}&limit=6`;
     }else{
       url += `?page=1&limit=100`;
     }

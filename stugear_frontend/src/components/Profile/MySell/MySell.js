@@ -56,7 +56,7 @@ const MySell = () => {
                   <thead style={{ background: "#7355F7" }}>
                     <tr>
                       <th
-                        className="text-white"
+                        className="text-white hide-mobile"
                         style={{ background: "#7355F7" }}
                         scope="col"
                       >
@@ -66,11 +66,12 @@ const MySell = () => {
                         className="text-white"
                         style={{ background: "#7355F7" }}
                         scope="col"
+                        
                       >
                         Sản phẩm
                       </th>
                       <th
-                        className="text-white"
+                        className="text-white hide-mobile"
                         style={{ background: "#7355F7" }}
                         scope="col"
                       >
@@ -87,6 +88,7 @@ const MySell = () => {
                         className="text-white"
                         style={{ background: "#7355F7" }}
                         scope="col"
+                        width="10%"
                       >
                         Chi tiết
                       </th>
@@ -96,13 +98,13 @@ const MySell = () => {
                     {orders?.map((item) => {
                       return (
                         <tr>
-                          <td>{item?.id}</td>
+                          <td className="hide-mobile">{item?.id}</td>
                           <td>{item?.product_title}</td>
-                          <td>{item?.status}</td>
+                          <td className="hide-mobile">{item?.status}</td>
                           <td>{item?.created_date}</td>
                           <td>
                             <button
-                              className="btn"
+                              className="btn btn-dark"
                               onClick={(e) => hanldeViewDetail(e, item?.id)}
                             >
                               Chi tiết

@@ -13,6 +13,7 @@ use App\Mail\ValidationMail;
 use App\Models\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Validation\ValidationRepositoryInterface;
+use App\Util\AppConstant;
 use App\Util\PromptConstant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -73,7 +74,7 @@ class ValidateProductJob implements ShouldQueue
         $this->updateProduct($product, $response, $allowStatus);
         $mailData = [
             'subject' => 'Sản phẩm: ' . $product->title,
-            'content' => 'Sản phẩm của bạn đã được duyệt. Link: '.env("APP_URL")."/product" ."/". $product->id,
+            'content' => 'Sản phẩm của bạn đã được duyệt. Link: '.AppConstant::$DOMAIN."product" ."/". $product->id,
             'signature' => 'Stugear'
         ];
         $this->sendEmail($product, $mailData);

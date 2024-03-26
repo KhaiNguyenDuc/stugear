@@ -18,7 +18,7 @@ const CategoryFilter = ({
   const [query, setQuery] = useState("");
   const [sortLastUpdate, setSortLastUpdate] = useState("increase"); // Sort direction for "Ngày đăng"
   const [sortPrice, setSortPrice] = useState("increase"); // Sort direction for "Giá bán"
-  
+
   const search = async (criterial, currentPage) => {
     setLoading(true);
     const response = await ProductService.searchInCategory(
@@ -57,14 +57,16 @@ const CategoryFilter = ({
   };
   const handleSortClick = (fieldValue) => {
     setField(fieldValue);
-    
+
     // Toggle the sort direction based on the field
     if (fieldValue === "lastUpdate") {
-      setSortLastUpdate(sortLastUpdate === "increase" ? "decrease" : "increase");
+      setSortLastUpdate(
+        sortLastUpdate === "increase" ? "decrease" : "increase"
+      );
     } else if (fieldValue === "price") {
       setSortPrice(sortPrice === "increase" ? "decrease" : "increase");
     }
-    setSort(sort === "increase" ? "decrease" : "increase")
+    setSort(sort === "increase" ? "decrease" : "increase");
     setCurrentPage(1);
   };
 
@@ -74,7 +76,7 @@ const CategoryFilter = ({
   return (
     <>
       <div className="row">
-        <div className="col-4 mt-2">
+        <div className="hide-mobile col-4 mt-2">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"
@@ -126,45 +128,61 @@ const CategoryFilter = ({
           </div>
         </div>
 
-        <div className="col">
-          <div className="row">
-            <div className="col-4" style={{ marginRight: "300px" }}>
-              <InputGroup
-                className="form-outline"
-                id="search-group"
-                style={{ width: "280px" }}
-              >
-                <input
-                  id="search-input"
-                  placeholder="Nhập tên sản phẩm, tên người bán,..."
-                  type="search"
-                  className="form-control"
-                  onChange={(e) => handleInputChange(e)}
-                />
-                <Button id="search-button">
-                  <FontAwesomeIcon icon="search" id="search-icon" />
-                </Button>
-              </InputGroup>
-            </div>
-            <div className="dropdown col-3">
-        <button className="btn dropdown-toggle" id="dropdown" data-bs-toggle="dropdown" >
-          Sắp xếp
-        </button>
+        <div className="col-6 col-lg" >
+          <InputGroup
+            className="form-outline w-100"
+            id="search-group"
 
-        <ul className="dropdown-menu  mt-2" aria-labelledby="dropdown">
-          <li>
-            <button className="dropdown-item" onClick={() => handleSortClick("lastUpdate")}>
-              <FontAwesomeIcon icon={sortLastUpdate === "increase" ? "arrow-down" : "arrow-up"} style={{ color: getArrowIconColor(sortLastUpdate) }} /> Ngày đăng
-            </button>
-          </li>
-          <li>
-            <button className="dropdown-item" onClick={() => handleSortClick("price")}>
-              <FontAwesomeIcon icon={sortPrice === "increase" ? "arrow-down" : "arrow-up"} style={{ color: getArrowIconColor(sortPrice) }} /> Giá bán
-            </button>
-          </li>
-        </ul>
-      </div>
-          </div>
+          >
+            <input
+              id="search-input"
+              placeholder="Nhập tên sản phẩm, tên người bán,..."
+              type="search"
+              className="form-control"
+              onChange={(e) => handleInputChange(e)}
+            />
+            <Button id="search-button">
+              <FontAwesomeIcon icon="search" id="search-icon" />
+            </Button>
+          </InputGroup>
+        </div>
+        <div className="hide-mobile dropdown text-end col-1 col-md-3 me-3">
+          <button
+            className="btn btn-dark dropdown-toggle"
+            id="dropdown"
+            data-bs-toggle="dropdown"
+          >
+            Sắp xếp
+          </button>
+
+          <ul className="dropdown-menu  mt-2" aria-labelledby="dropdown">
+            <li>
+              <button
+                className="dropdown-item"
+                onClick={() => handleSortClick("lastUpdate")}
+              >
+                <FontAwesomeIcon
+                  icon={
+                    sortLastUpdate === "increase" ? "arrow-down" : "arrow-up"
+                  }
+                  style={{ color: getArrowIconColor(sortLastUpdate) }}
+                />{" "}
+                Ngày đăng
+              </button>
+            </li>
+            <li>
+              <button
+                className="dropdown-item"
+                onClick={() => handleSortClick("price")}
+              >
+                <FontAwesomeIcon
+                  icon={sortPrice === "increase" ? "arrow-down" : "arrow-up"}
+                  style={{ color: getArrowIconColor(sortPrice) }}
+                />{" "}
+                Giá bán
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </>

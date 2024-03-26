@@ -72,20 +72,20 @@ const ThreadList = ({ threads }) => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 d-none d-md-inline">
                   <div className="ques-type">
-                    <a href="#" className="d-block">
+                    <span className="me-2" >
                       <button type="button" className="q-type button-ques">
                         <FontAwesomeIcon icon={"comment"} />{" "}
                         {thread?.reply} phản hồi
                       </button>
-                    </a>
-                    <a href="#" className="d-block">
+                    </span>
+                    <span >
                       <button type="button" className="q-type button-ques">
                         <FontAwesomeIcon icon={"user"} className="i" />{" "}
                         {thread?.view} lượt xem
                       </button>
-                    </a>
+                    </span>
                   </div>
                 </div>
               </div>

@@ -105,8 +105,8 @@ const Verify = () => {
                     )}
 
                     <div className="my-4">
-                        <button className="btn btn-dark text-white w-100 ">Xác thực tài khoản</button>
-                        <button className="btn btn-dark text-white w-100 mt-3 " onClick={(e) => sendVerifyEmail(e)}>Gửi lại mã xác thực</button>
+                        <button className="btn btn-success text-white w-100 ">Xác thực tài khoản</button>
+                        <button className="btn btn-danger text-white w-100 mt-3 " onClick={(e) => sendVerifyEmail(e)}>Gửi lại mã xác thực</button>
                     </div>
 
                 </form>

@@ -272,8 +272,7 @@ const General = () => {
               <>
                 {" "}
                 <button
-                  className="btn"
-                  style={{ backgroundColor: "#c60303" }}
+                  className="btn btn-danger"
                   onClick={(e) => handleEdit(e)}
                 >
                   <FontAwesomeIcon icon="pencil" className="me-2" />

@@ -66,15 +66,15 @@ const RegisterForm = () => {
   return (
     <>
       <div className="row my-3 justify-content-center w-100">
-        <div className="col col-4 text-center">
+        <div className="col col-4 hide-mobile text-center">
           <h1>Hãy tạo tài khoản {loading}</h1>
           <p className="font-italic text-muted mb-0">
             Nhập thông tin để tạo tài khoản của bạn
           </p>
           <img src="/assets/images/register.gif" alt="" className="img-fluid" />
         </div>
-        <div className="col col-1"></div>
-        <div className="col col-4 box-shadow px-5">
+        <div className="col col-1 hide-mobile"></div>
+        <div className="col col-md-4 box-shadow px-5">
           {loading && <Loading />}
 
           <OauthSection text="Đăng ký với: " />

@@ -16,7 +16,7 @@ const Product = ({ product }) => {
           to={"/home-page/product-detail/"+product.id}
           style={{ textDecoration: 'none', color: 'black' }}
         >
-          <img src={product.product_image} alt="/assets/images/book-thumbnail.jpg" className="hover-effect small-image" />
+          <img src={product.product_image} alt="/assets/images/book-thumbnail.jpg" className="hide-mobile hover-effect small-image" />
           <span>{product.title}</span>
         </Link>
       </td>
@@ -34,12 +34,12 @@ const Product = ({ product }) => {
         </div>
       </td>
 
-      <td className="align-middle text-center">
+      <td className="align-middle text-center hide-mobile">
         <Link style={{ textDecoration: 'none' }} className="badge bg-primary ">
           <FontAwesomeIcon icon={faMessage} /> {product.comment_count}
         </Link>
       </td>
-      <td className="align-middle">
+      <td className="align-middle ">
         <p className="m-0 ms-3">{product.price}</p>
       </td>
 

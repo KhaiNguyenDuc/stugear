@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link} from 'react-router-dom'
+import { Link, NavLink} from 'react-router-dom'
 import './index.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -43,21 +43,21 @@ const Header = ({ sticky }) => {
         <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mainNav">
             <Nav.Item>
-              <Link to="/home-page/category/1" className="nav-link">
+              <NavLink to={"/home-page/category/1"} className="nav-link">
                 Trang chủ
-              </Link>
+              </NavLink>
             </Nav.Item>
           
             <Nav.Item>
-              <Link to="/search" className="nav-link">
+              <NavLink to={"/search"} className="nav-link">
                 Tìm kiếm
-              </Link>
+              </NavLink>
             </Nav.Item>
 
             <Nav.Item>
-              <Link to="/thread" className="nav-link">
+              <NavLink to={"/thread"} className="nav-link">
                 Diễn đàn
-              </Link>
+              </NavLink>
             </Nav.Item>
 
           </Nav>

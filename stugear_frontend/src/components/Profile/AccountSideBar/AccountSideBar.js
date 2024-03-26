@@ -54,7 +54,7 @@ const AccountSideBar = () => {
   return (
     <>
       <div>
-        <UserAvatar userInfo={userInfo}/>
+        <UserAvatar userInfo={userInfo} />
         <nav className="list-group">
           <NavLink
             className="list-group-item with-badge"
@@ -146,7 +146,7 @@ const AccountSideBar = () => {
 
       <div className="card mt-3">
         <div className="mx-auto my-3 personal-logout-btn">
-          <button className="btn" onClick={(e) => handleLogout(e)}>
+          <button className="btn btn-danger" onClick={(e) => handleLogout(e)}>
             Đăng xuất
           </button>
         </div>

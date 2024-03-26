@@ -451,7 +451,7 @@ const ThreadDetail = ({
             <div className="tt-row-icon mt-2">
               <div className="tt-item">
                 <a
-                  href="#"
+                  
                   className="tt-icon-btn tt-position-bottom"
                   title="Số lượt phản hồi"
                 >
@@ -461,7 +461,7 @@ const ThreadDetail = ({
               </div>
               <div className="tt-item">
                 <a
-                  href="#"
+                  
                   className="tt-icon-btn tt-position-bottom"
                   title="Số lượt xem"
                 >
@@ -470,26 +470,7 @@ const ThreadDetail = ({
                 </a>
               </div>
 
-              <div className="tt-item">
-                <a
-                  href="#"
-                  className="tt-icon-btn tt-position-bottom"
-                  title="Số lượt yêu thích"
-                >
-                  <FontAwesomeIcon icon={faThumbsUp} />
-                  <span className="tt-text">{thread?.like}</span>
-                </a>
-              </div>
-              <div className="tt-item">
-                <a
-                  href="#"
-                  className="tt-icon-btn tt-position-bottom"
-                  title="Số lượt phản đối"
-                >
-                  <FontAwesomeIcon icon={faThumbsDown} />
-                  <span className="tt-text">{thread?.dislike}</span>
-                </a>
-              </div>
+            
             </div>
             <hr />
 
@@ -508,7 +489,7 @@ const ThreadDetail = ({
                           <UserModal userId={AIReply?.user?.id} />
                         </div>
                         <div className="tt-avatar-title">
-                          <a href="#">{AIReply?.user?.name}</a>
+                          <span>{AIReply?.user?.name}</span>
 
                           <span className="text-center">
                             <FontAwesomeIcon
@@ -519,10 +500,10 @@ const ThreadDetail = ({
                           </span>
                           <span class="tt-color13 tt-badge ms-2">AI</span>
                         </div>
-                        <a href="#" className="tt-info-time">
+                        <span className="tt-info-time">
                           <FontAwesomeIcon icon={faClock} className="pe-2" />
                           {AIReply?.create_at}
-                        </a>
+                        </span>
                       </div>
                     </div>
                     <div className="tt-item-description">
@@ -607,7 +588,7 @@ const ThreadDetail = ({
                               <UserModal userId={reply?.user?.id} />
                             </div>
                             <div className="tt-avatar-title">
-                              <a href="#">{reply.user.name}</a>
+                              <span>{reply.user.name}</span>
                               <span className="text-center">
                                 <FontAwesomeIcon
                                   icon={faMedal}
@@ -616,7 +597,7 @@ const ThreadDetail = ({
                                 {reply?.user?.reputation}
                               </span>
                             </div>
-                            <a href="#" className="tt-info-time">
+                            <a className="tt-info-time">
                               <FontAwesomeIcon
                                 icon={faClock}
                                 className="pe-2"
@@ -637,7 +618,7 @@ const ThreadDetail = ({
                                       />
                                     </div>
                                     <div className="topic-inner-title">
-                                      <a href="#">{reply.reply_on.user.name}</a>
+                                      <a>{reply.reply_on.user.name}</a>
                                       <span className="text-center ms-2">
                                         <FontAwesomeIcon
                                           icon={faMedal}
@@ -664,7 +645,8 @@ const ThreadDetail = ({
                             </>
                           ) : (
                             <>
-                              <p
+                              <p 
+                                className="tt-item-text"
                                 dangerouslySetInnerHTML={{
                                   __html: reply.content,
                                 }}

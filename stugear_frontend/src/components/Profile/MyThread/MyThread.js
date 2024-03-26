@@ -54,7 +54,7 @@ const MyThread = () => {
             <tr>
 
               <th
-                className="text-white"
+                className="text-white hide-mobile"
                 style={{ background: "#7355F7" }}
                 scope="col"
               >
@@ -68,7 +68,7 @@ const MyThread = () => {
                 Tiêu đề
               </th>
               <th
-                className="text-white"
+                className="text-white hide-mobile"
                 style={{ background: "#7355F7" }}
                 scope="col"
               >
@@ -95,13 +95,13 @@ const MyThread = () => {
               return (
                 <tr>
 
-                  <td>{item.id}</td>
+                  <td className="hide-mobile">{item.id}</td>
                   <td>{item.title}</td>
-                  <td>{item.status}</td>
+                  <td className="hide-mobile">{item.status}</td>
                   <td>{item.create_at}</td>
                   <td>
                     <button
-                      className="btn"
+                      className="btn btn-dark"
                       onClick={(e) => hanldeViewDetail(e, item.id)}
                     >
                       Chi tiết

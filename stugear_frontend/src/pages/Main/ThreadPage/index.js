@@ -116,12 +116,12 @@ const ThreadPage = () => {
               </div>
               <div className="tt-col-message">
               
-              <div  style={{ marginRight: "300px" }}>
+              <div  style={{ width: '80%' }}>
               
                 <InputGroup
                   className="form-outline"
                   id="search-group"
-                  style={{ marginRight: '100%', width: '200%' }}
+                  // style={{ marginRight: '100%', width: '200%' }}
                 >
                   <input
                     id="search-input"
@@ -130,6 +130,7 @@ const ThreadPage = () => {
                     className="form-control"
                     name="key"
                     onChange={(e) => handleInputChange(e)}
+                    style={{ width: '60%' }}
                   />
                   <Button id="search-button">
                     <FontAwesomeIcon icon="search" id="search-icon" />
@@ -139,47 +140,67 @@ const ThreadPage = () => {
               </div>
             </div>
           </div>      
-          <div className="d-flex ">
-            <Link to="/thread/create" className="btn create-thread-btn">
-              + Đăng bài
-            </Link>
+          <div className="d-flex">
+  <Link to="/thread/create" className="btn create-thread-btn text-white">
+    + Đăng bài
+  </Link>
 
-            <div className="w-25 ms-1">
-              <MultiSelect
-                className="filter-category"
-                options={categories}
-                value={cateSelected}
-                onChange={(cateSelected) => {
-                  setCateSelected(cateSelected);
-                }}
-                labelledBy="Select"
-                overrideStrings={{
-                  allItemsAreSelected: "Đã chọn tất cả.",
-                  noOptions: "Không có",
-                  search: "Tìm kiếm",
-                  selectAll: "Chọn tất cả",
-                  selectSomeItems: "Danh mục...",
-                  create: "Tạo mới",
-                }}
-              />
-            </div>
-            <div className="thread-tab ms-1">
-              {filter.map((fil) => (
-                <>
-                  <input id={fil.id}
-                    className="tab"
-                    type="radio"
-                    name="status"
-                    checked={criteria?.status === fil.value}
-                    value={fil.value}
-                    onChange={ (e) => handleChange(e) } />
-                  <label htmlFor={fil.id}>
-                    <FontAwesomeIcon icon={faInbox} /> {fil.name}
-                  </label>
-                </>
-              ))}
-            </div>
-          </div>
+  <div className="w-25 ms-1">
+    <MultiSelect
+      className="filter-category"
+      options={categories}
+      value={cateSelected}
+      onChange={(cateSelected) => {
+        setCateSelected(cateSelected);
+      }}
+      labelledBy="Select"
+      overrideStrings={{
+        allItemsAreSelected: "Đã chọn tất cả.",
+        noOptions: "Không có",
+        search: "Tìm kiếm",
+        selectAll: "Chọn tất cả",
+        selectSomeItems: "Danh mục...",
+        create: "Tạo mới",
+      }}
+    />
+  </div>
+
+  {/* Conditionally render dropdown for mobile */}
+  <div className="thread-tab ms-1 d-none d-md-block">
+    {filter.map((fil) => (
+      <>
+        <input
+          id={fil.id}
+          className="tab"
+          type="radio"
+          name="status"
+          checked={criteria?.status === fil.value}
+          value={fil.value}
+          onChange={(e) => handleChange(e)}
+        />
+        <label htmlFor={fil.id}>
+          <FontAwesomeIcon icon={faInbox} /> {fil.name}
+        </label>
+      </>
+    ))}
+  </div>
+
+  {/* Dropdown for mobile */}
+  <div className="d-md-none ms-1">
+    <select
+      className="form-select"
+      value={criteria?.status}
+      onChange={(e) => handleChange(e)}
+    >
+      {filter.map((fil) => (
+        <option key={fil.id} value={fil.value}>
+          {fil.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
           {isLoading ? (
             <Loading/>
           ): (

@@ -127,7 +127,7 @@ const Comment = ({
             {user?.user_id ? (
               <>
                         <button
-              className="btn  btn-sm btn-reply  "
+              className="btn text-white btn-sm btn-reply  "
               style={{marginLeft: '0px'}}
               onClick={(e) => handleReplyClick(e)}
             >
