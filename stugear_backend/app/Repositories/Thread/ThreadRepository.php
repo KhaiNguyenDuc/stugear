@@ -155,4 +155,13 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             ]);
     }
 
+    public function getTotalThreads()
+    {
+        $result = DB::table('threads')
+            ->whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->count();
+        return $result;
+    }
+
 }

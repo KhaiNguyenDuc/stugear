@@ -445,4 +445,19 @@ class ThreadController extends Controller
             ]);
         }
     }
+
+    public function getGeneralInfo(){
+        $threads = $this->threadRepository->getTotalThreads();
+
+        $replies = $this->replyRepository->getTotalReply();
+
+        return response()->json([
+            'status' => 'Thành công',
+            'message' => 'Lấy dữ liệu tổng quan thành công',
+            'data' => [
+                'threads' => $threads,
+                'replies' => $replies
+            ]
+        ]);
+    }
 }

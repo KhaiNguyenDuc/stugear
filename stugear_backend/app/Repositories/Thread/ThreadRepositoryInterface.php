@@ -16,4 +16,6 @@ interface ThreadRepositoryInterface extends RepositoryInterface
 
     public function deletedReplyOfThread($threadId, $userId);
 
+    public function getTotalThreads();
+
 }
