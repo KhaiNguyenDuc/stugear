@@ -337,16 +337,18 @@ class ThreadController extends Controller
                 'deleted_by' => $userId,
                 'deleted_at' => Carbon::now()
             ], $id);
+
+            $this->threadRepository->deletedReplyOfThread($id, $userId);
             // return result
             if ($result) {
                 return response()->json([
                     'status' => 'Thành công',
-                    'message' => 'Xóa reply thành công',
+                    'message' => 'Xóa thread thành công',
                 ]);
             } else {
                 return response()->json([
                     'status' => 'Thất bại',
-                    'message' => 'Xóa reply thất bại',
+                    'message' => 'Xóa thread thất bại',
                 ], 400);
             }
         } else {
