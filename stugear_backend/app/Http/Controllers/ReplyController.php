@@ -187,7 +187,7 @@ class ReplyController extends Controller
             $user = $this->userRepository->getById($request->reply_on);
             $mailData = [
                 'subject' => 'Stugear xin chào',
-                'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' có ai đó đã nhắc đến bạn!',
+                'content' => 'Link: ' . AppConstant::$DOMAIN . 'thread/' . $thread->id . ' có ai đó đã nhắc đến bạn!',
                 'signature' => 'Stugear'
             ];
             try {

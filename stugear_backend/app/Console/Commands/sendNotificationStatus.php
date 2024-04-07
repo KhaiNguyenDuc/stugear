@@ -53,7 +53,7 @@ class sendNotificationStatus extends Command
             if ($countReplies != 0) {
                 DB::table('notifications')->insert([
                     'user_id' => $thread->user_id,
-                    'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' có tổng cộng: ' . $countReplies . ' phản hồi!',
+                    'content' => 'Link: ' . AppConstant::$DOMAIN . 'thread/' . $thread->id . ' có tổng cộng: ' . $countReplies . ' phản hồi!',
                     'target_id' => $thread->id,
                     'type' => 'thread',
                     'created_by' => 3,
@@ -64,7 +64,7 @@ class sendNotificationStatus extends Command
 
                 $mailData = [
                     'subject' => 'Stugear xin chào',
-                    'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' có tổng cộng: ' . $countReplies . ' phản hồi!',
+                    'content' => 'Link: ' . AppConstant::$DOMAIN . 'thread/' . $thread->id . ' có tổng cộng: ' . $countReplies . ' phản hồi!',
                     'signature' => 'Stugear'
                 ];
                 try {

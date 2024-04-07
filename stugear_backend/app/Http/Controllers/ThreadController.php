@@ -524,7 +524,7 @@ class ThreadController extends Controller
 
         $mailData = [
             'subject' => 'Stugear xin chào',
-            'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' ' . $contentForNotification[$status],
+            'content' => 'Link: ' . AppConstant::$DOMAIN . 'thread/' . $thread->id . ' ' . $contentForNotification[$status],
             'signature' => 'Stugear'
         ];
         try {
