@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('dislike')->default(0)->nullable();
             $table->unsignedBigInteger('thread_id')->nullable();
             $table->foreign('thread_id')->references('id')->on('threads');
+            $table->dateTime('view_by_owner')->default(now())->nullable();
+            $table->boolean('unsent_notification')->default(false)->nullable();
             $table->integer('created_by')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();

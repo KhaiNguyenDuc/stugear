@@ -65,9 +65,9 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
 
         if (!empty($status) && array_key_exists($status, AppConstant::$FILTER_STATUS_THREAD)) {
             if ($status == 'new') {
-                $query->orderBy('threads.updated_at', 'desc');
+                $query->orderBy('threads.created_at', 'desc');
             } else if ($status == 'old') {
-                $query->orderBy('threads.updated_at', 'asc');
+                $query->orderBy('threads.created_at', 'asc');
             } else {
                 $query->orderBy('threads.reply', 'desc');
             }

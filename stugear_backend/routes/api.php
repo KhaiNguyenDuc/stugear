@@ -133,7 +133,9 @@ Route::controller(AskController::class)->prefix('asks')->group(function (){
 Route::controller(ThreadController::class)->prefix('threads')->group(function (){
     Route::get('/current', 'getCurrentUserThreads')->middleware('auth_jwt');
     Route::post('/filter','index');
+    Route::get('/general-info','getGeneralInfo');
     Route::get('/{id}', 'getThreadById');
+    Route::patch('/{id}/status', 'updateStatusThread')->middleware('admin_permission');
     Route::patch('/{id}/react', 'reactByThreadAndUser')->middleware('auth_jwt');
     Route::post('/', 'create');
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
@@ -146,7 +148,7 @@ Route::controller(ReplyController::class)->group(function (){
     Route::delete('/replies/{id}', 'delete')->middleware('auth_jwt');
     Route::patch('/replies/{id}/react', 'reactByReplyAndUser')->middleware('auth_jwt');
     Route::get('/thread/{id}/auto/replies', 'getAIByThreadId');
-    
+
 });
 
 

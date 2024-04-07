@@ -9,6 +9,7 @@ use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Util\AppConstant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ValidationRepository extends BaseRepository implements ValidationRepositoryInterface
 {
@@ -57,6 +58,21 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
         $result = DB::table('validations')
             ->where('product_id', '=', $productId)
             ->first();
+        return $result;
+    }
+
+    public function updateStatusThread($threadId, $status)
+    {
+        try {
+            $result = DB::table('validations')
+            ->where('thread_id', '=', $threadId)
+            ->update([
+                'status' => $status
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+
         return $result;
     }
 }

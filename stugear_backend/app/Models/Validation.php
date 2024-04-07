@@ -16,12 +16,13 @@ class Validation extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-    
+
         'thread_id',
         'product_id',
         'status',
         'description',
-
+        'created_at',
+        'updated_at',
     ];
 
 

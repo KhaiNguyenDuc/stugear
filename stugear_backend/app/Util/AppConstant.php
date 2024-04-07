@@ -15,6 +15,7 @@ class AppConstant {
     public static $ROLE_ASSISTANT = "ASSISTANT";
     public static $ERROR_WITH_IMAGE = "There're some errors with image!";
     public static $DOMAIN = 'https://stugear.website/';
+    public static $DOMAIN_FE = $DOMAIN;
     public static $AVATAR_MALE = 'https://hoaminhngoc.vn/wp-content/uploads/2023/01/cute-1-300x300.png';
     public static $AVATAR_FEMALE = 'https://www.studytienganh.vn/upload/2022/05/112273.jpg';
     public static $PRODUCT_THUMBNAIL = 'https://nordicdesign.ca/wp-content/uploads/2020/02/book-thumbnail.jpg';
@@ -49,5 +50,11 @@ class AppConstant {
         'new' => '1',
         'old' => '2',
         'reply' => '3'
+    ];
+
+    public static $STATUS_OF_THREAD = [
+        0, //invalid
+        1, //valid
+        3, //wait for confirming
     ];
 }
