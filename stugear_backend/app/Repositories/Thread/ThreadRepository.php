@@ -54,7 +54,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
     public function getWithCriteria($tag, $key, $status, $categories, $limit)
     {
         $query = DB::table('threads');
-    
+
         if (!empty($key)) {
             $query->where(function ($subQuery) use ($key) {
                 $subQuery->where('threads.title', 'like', '%' . $key . '%')
@@ -62,17 +62,17 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                          ->orWhere('threads.raw_content', 'like', '%' . $key . '%');
             });
         }
-    
+
         if (!empty($status) && array_key_exists($status, AppConstant::$FILTER_STATUS_THREAD)) {
             if ($status == 'new') {
-                $query->orderBy('threads.updated_at', 'desc');
+                $query->orderBy('threads.created_at', 'desc');
             } else if ($status == 'old') {
-                $query->orderBy('threads.updated_at', 'asc');
+                $query->orderBy('threads.created_at', 'asc');
             } else {
                 $query->orderBy('threads.reply', 'desc');
             }
         }
-    
+
         if (!empty($categories)) {
             $query->whereIn('category_id', $categories);
         }
@@ -82,7 +82,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                   ->whereIn('tags.id', $tag);
 
         }
-    
+
         // Join with the validations table
         $query->join('validations', 'threads.id', '=', 'validations.thread_id');
         $allowStatus = 1;
@@ -100,11 +100,11 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             'threads.category_id',
             'threads.updated_at',
         )->distinct();
-    
+
         // Additional conditions
         $query->whereNull('threads.deleted_by');
         $query->whereNull('threads.deleted_at');
-    
+
         return $query->paginate($limit);
     }
 
@@ -143,6 +143,25 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
         $query->orderBy('threads.updated_at', 'desc');
 
         return $query->paginate($limit);
+    }
+
+    public function deletedReplyOfThread($threadId, $userId)
+    {
+        DB::table('replies')
+            ->where('thread_id', '=', $threadId)
+            ->update([
+                'deleted_by' => $userId,
+                'deleted_at' => Carbon::now()
+            ]);
+    }
+
+    public function getTotalThreads()
+    {
+        $result = DB::table('threads')
+            ->whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->count();
+        return $result;
     }
 
 }

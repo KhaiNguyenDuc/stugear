@@ -14,6 +14,9 @@ use App\Util\AuthService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ThreadStatus;
 class ReplyController extends Controller
 {
 
@@ -57,7 +60,7 @@ class ReplyController extends Controller
         }
 
         $data = [];
-        
+
         foreach ($replies as $reply) {
             $memberData = [];
             $memberData['id'] = $reply->id;
@@ -66,8 +69,12 @@ class ReplyController extends Controller
                 if($react){
                     $memberData['is_like'] = $react->like === 1 ? true : false;
                 }
+                if ($userId == $reply->user_id) {
+                    $this->replyRepository->save([
+                        'view_by_owner' => Carbon::now()
+                    ], $reply->id);
+                }
 
-               
             }
             $memberData['user'] =  $this->userRepository->getById($reply->user_id);
             $memberData['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
@@ -108,14 +115,14 @@ class ReplyController extends Controller
             $data['user'] =  $this->userRepository->getById($reply->user_id);
             $data['create_at'] = Carbon::parse($reply->created_at)->diffForHumans(Carbon::now());
             $data['content'] = $reply->content;
-          
+
         }
         return response()->json([
             'status' => 'success',
             'message' => 'Lấy dữ liệu thành công',
             'data' => $data
         ]);
-        
+
 
 
     }
@@ -167,14 +174,28 @@ class ReplyController extends Controller
             'content' => $request->input('content'),
             'raw_content' => $request->input('raw_content'),
             'user_id' => $userId,
-            'parent_id' => $request->input('parent_id'), // id of reply
+            'parent_id' => $request->input('parent_id') ?? 0, // id of reply
             'thread_id' => $threadId,
-            'reply_on' => $request->input('reply_on'), // id of user has parent reply
+            'reply_on' => $request->input('reply_on') ?? 0, // id of user has parent reply
             'created_by' => $userId,
             'updated_by' => $userId,
             'created_at' => Carbon::now(),
             'updated_at'=> Carbon::now()
         ]);
+
+        if (isset($request->reply_on) || !is_null($request->reply_on) || $request->reply_on != 0) {
+            $user = $this->userRepository->getById($request->reply_on);
+            $mailData = [
+                'subject' => 'Stugear xin chào',
+                'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' có ai đó đã nhắc đến bạn!',
+                'signature' => 'Stugear'
+            ];
+            try {
+                Mail::to($user->email)->send(new ThreadStatus($mailData));
+            } catch (\Throwable $th) {
+                Log::error($th);
+            }
+        }
 
         if ($result) {
             return response()->json([
@@ -294,7 +315,7 @@ class ReplyController extends Controller
                 $reply->decrement('dislike');
                 $react->like = true;
             }
-    
+
             if ($request->like == false) {
                 $reply->increment('dislike');
                 $reply->decrement('like');
@@ -309,14 +330,14 @@ class ReplyController extends Controller
                 $reply->increment('like');
                 $react->like = true;
             }
-    
+
             if ($request->like == false) {
                 $reply->increment('dislike');
                 $react->like = false;
             }
         }
 
-       
+
         $result = $this->reactRepository->save([
             'reply_id' => $react->reply_id,
             'user_id' => $react->user_id,

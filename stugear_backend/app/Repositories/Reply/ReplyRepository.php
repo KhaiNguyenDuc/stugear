@@ -22,7 +22,7 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
         return $result;
     }
 
-    
+
     public function getAIReplyByThreadId($threadId){
         $result = DB::table('replies')
         ->select('replies.*', 'users.id', 'replies.content')
@@ -66,6 +66,15 @@ class ReplyRepository extends BaseRepository implements ReplyRepositoryInterface
 
 
         return $query->paginate($limit);
+    }
+
+    public function getTotalReply()
+    {
+        $result = DB::table('replies')
+        ->whereNull('deleted_at')
+        ->whereNull('deleted_by')
+        ->count();
+    return $result;
     }
 
 

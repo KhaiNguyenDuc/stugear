@@ -67,6 +67,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Validation\ValidationRepositoryInterface::class,
             \App\Repositories\Validation\ValidationRepository::class,
         );
+        $this->app->singleton(
+            \App\Repositories\Notification\NotificationRepositoryInterface::class,
+            \App\Repositories\Notification\NotificationRepository::class,
+        );
     }
 
     /**

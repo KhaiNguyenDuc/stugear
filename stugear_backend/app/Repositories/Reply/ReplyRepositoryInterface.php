@@ -10,4 +10,6 @@ interface ReplyRepositoryInterface extends RepositoryInterface
 
     public function getReplyByThreadIdWithFilter($id, $limit, $filter);
     public function getAIReplyByThreadId($threadId);
+
+    public function getTotalReply();
 }

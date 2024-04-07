@@ -5,20 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reply extends Model
+class Notification extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'content',
         'user_id',
-        'parent_id',
-        'reply_on',
-        'like',
-        'dislike',
-        'thread_id',
-        'view_by_owner',
-        'unsent_notification',
+        'content',
+        'target_id',
+        'type',
         'created_at',
         'created_by',
         'updated_at',
@@ -27,7 +21,11 @@ class Reply extends Model
         'deleted_by'
     ];
 
-
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'created_at',
         'created_by',
@@ -36,18 +34,4 @@ class Reply extends Model
         'deleted_at',
         'deleted_by'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function thread()
-    {
-        return $this->belongsTo(Thread::class);
-    }
-    public function reacts()
-    {
-        return $this->hasMany(React::class);
-    }
 }

@@ -26,6 +26,8 @@ class Thread extends Model
         'reply',
         'category_id',
         'user_id',
+        'view_by_owner',
+        'unsent_notification',
         'created_at',
         'created_by',
         'updated_at',

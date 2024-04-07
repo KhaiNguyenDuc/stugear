@@ -35,3 +35,10 @@ services:
     depends_on:
       - backend
     command: php artisan queue:work --tries=3
+  notification-worker:
+    build:
+      context: stugear_backend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    command: php artisan schedule:work

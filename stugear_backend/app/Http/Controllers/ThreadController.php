@@ -10,13 +10,18 @@ use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\Reply\ReplyRepositoryInterface;
 use App\Repositories\Category\CategoryRepositoryInterface;
+use App\Repositories\Notification\NotificationRepositoryInterface;
 use App\Repositories\React\ReactRepositoryInterface;
 use App\Repositories\Validation\ValidationRepositoryInterface;
+use App\Util\AppConstant;
 use App\Util\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\ThreadStatus;
 
 class ThreadController extends Controller
 {
@@ -28,6 +33,7 @@ class ThreadController extends Controller
     protected $reactRepository;
     protected $replyRepository;
     protected $validationRepository;
+    protected $notificationRepository;
 
     public function __construct(
         ThreadRepositoryInterface $threadRepository,
@@ -37,7 +43,7 @@ class ThreadController extends Controller
         CategoryRepositoryInterface $categoryRepository,
         ReactRepositoryInterface $reactRepository,
         ValidationRepositoryInterface $validationRepository,
-
+        NotificationRepositoryInterface $notificationRepository
 
     ) {
         $this->threadRepository = $threadRepository;
@@ -47,6 +53,7 @@ class ThreadController extends Controller
         $this->categoryRepository = $categoryRepository;
         $this->reactRepository = $reactRepository;
         $this->validationRepository = $validationRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function index(Request $request)
@@ -154,12 +161,14 @@ class ThreadController extends Controller
         } else {
             $data = [];
             $token = $request->header();
-            if ($token['authorization'][0] != "Bearer null") {
-                $bareToken = substr($token['authorization'][0], 7);
-                $userId = AuthService::getUserId($bareToken);
-                $react = $this->reactRepository->getByUserAndThread($userId, $thread->id);
-                if ($react) {
-                    $data['is_like'] = $react->like == 1 ? true : false;
+            if (isset($token['authorization'][0])) {
+                if ($token['authorization'][0] != "Bearer null") {
+                    $bareToken = substr($token['authorization'][0], 7);
+                    $userId = AuthService::getUserId($bareToken);
+                    $react = $this->reactRepository->getByUserAndThread($userId, $thread->id);
+                    if ($react) {
+                        $data['is_like'] = $react->like == 1 ? true : false;
+                    }
                 }
             }
             $user = $this->userRepository->getById($thread->user_id);
@@ -206,6 +215,17 @@ class ThreadController extends Controller
             $this->threadRepository->save($view, $id);
         }
 
+        if (isset($token['authorization'][0])) {
+            if ($token['authorization'][0] != "Bearer null") {
+                $bareToken = substr($token['authorization'][0], 7);
+                $userId = AuthService::getUserId($bareToken);
+                if ($userId == $thread->user_id) {
+                    $this->threadRepository->save([
+                        'view_by_owner' => Carbon::now()
+                    ], $thread->id);
+                }
+            }
+        }
 
         return response()->json([
             'status' => 'success',
@@ -337,16 +357,18 @@ class ThreadController extends Controller
                 'deleted_by' => $userId,
                 'deleted_at' => Carbon::now()
             ], $id);
+
+            $this->threadRepository->deletedReplyOfThread($id, $userId);
             // return result
             if ($result) {
                 return response()->json([
                     'status' => 'Thành công',
-                    'message' => 'Xóa reply thành công',
+                    'message' => 'Xóa thread thành công',
                 ]);
             } else {
                 return response()->json([
                     'status' => 'Thất bại',
-                    'message' => 'Xóa reply thất bại',
+                    'message' => 'Xóa thread thất bại',
                 ], 400);
             }
         } else {
@@ -440,7 +462,88 @@ class ThreadController extends Controller
             return response()->json([
                 'status' => 'Thất bại',
                 'message' => 'React thất bại'
+            ], 400);
+        }
+    }
+
+    public function getGeneralInfo(){
+        $threads = $this->threadRepository->getTotalThreads();
+
+        $replies = $this->replyRepository->getTotalReply();
+
+        return response()->json([
+            'status' => 'Thành công',
+            'message' => 'Lấy dữ liệu tổng quan thành công',
+            'data' => [
+                'threads' => $threads,
+                'replies' => $replies
+            ]
+        ]);
+    }
+
+    public function updateStatusThread(Request $request, $threadId)
+    {
+        $status = $request->status ?? '';
+        if ($status == '' || is_null($status) || !in_array($status, AppConstant::$STATUS_OF_THREAD))
+        {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Trạng thái cập nhật không phù hợp!'
+            ], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        $result = $this->validationRepository->save([
+            'status' => $status,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ], $threadId);
+
+        $contentForNotification = [
+            0 => 'thread '. $threadId . ' cập nhật trạng thái sang bị cấm',
+            1 => 'thread '. $threadId . ' cập nhật trạng thái sang hoạt động',
+            3 => 'thread '. $threadId . ' cập nhật trạng thái sang chờ duyệt'
+        ];
+
+        $thread = $this->threadRepository->getById($threadId);
+        // dd($thread->user_id);
+
+        $this->notificationRepository->save([
+            'user_id' => $thread->user_id,
+            'content'=> $contentForNotification[$status],
+            'target_id' => $threadId,
+            'type' => 'thread',
+            'created_at' => Carbon::now(),
+            'created_by' => $userId,
+            'updated_at' => Carbon::now(),
+            'updated_by' => $userId,
+        ]);
+
+        $mailData = [
+            'subject' => 'Stugear xin chào',
+            'content' => 'Link: ' . AppConstant::$DOMAIN_FE . 'thread/' . $thread->id . ' ' . $contentForNotification[$status],
+            'signature' => 'Stugear'
+        ];
+        try {
+            $user = $this->userRepository->getById($thread->user_id);
+            Mail::to($user->email)->send(new ThreadStatus($mailData));
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+
+        if ($result) {
+            return response()->json([
+                'status' => 'Thành công',
+                'message' => 'Cập nhật trạng thái thành công',
             ]);
+        } else {
+            return response()->json([
+                'status' => 'Thất bại',
+                'message' => 'Cập nhật trạng thái thất bại'
+            ], 400);
         }
     }
 }
