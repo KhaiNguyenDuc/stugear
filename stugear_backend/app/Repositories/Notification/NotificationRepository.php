@@ -14,4 +14,9 @@ class NotificationRepository extends BaseRepository implements NotificationRepos
     {
         return Notification::class;
     }
+
+    public function getByCurrentUser($userId, $limit) {
+        $notifications = $this->model->where('user_id', '=', $userId)->paginate($limit);
+        return $notifications;
+    }
 }

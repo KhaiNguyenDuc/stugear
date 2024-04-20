@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AskController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -149,6 +150,11 @@ Route::controller(ReplyController::class)->group(function (){
     Route::patch('/replies/{id}/react', 'reactByReplyAndUser')->middleware('auth_jwt');
     Route::get('/thread/{id}/auto/replies', 'getAIByThreadId');
 
+});
+
+Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
+    Route::get('/', 'getAll')->middleware('admin_permission');
+    Route::get('/current', 'getNotificationByCurrentUser')->middleware('auth_jwt');
 });
 
 
