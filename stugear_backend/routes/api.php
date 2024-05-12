@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AskController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\WishlistController;
@@ -157,6 +158,9 @@ Route::controller(NotificationController::class)->prefix('notifications')->group
     Route::get('/current', 'getNotificationByCurrentUser')->middleware('auth_jwt');
 });
 
+Route::controller(MessageController::class)->prefix('chats')->group(function () {
+    Route::post('/', 'sendMessage');//->middleware('auth_jwt');
+});
 
 
 
