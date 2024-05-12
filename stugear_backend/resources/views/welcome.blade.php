@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -138,4 +138,507 @@
             </div>
         </div>
     </body>
-</html>
+</html> --}}
+
+{{-- ================================================================= --}}
+{{-- <!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('dd3e6d968c33c3a1e157', {
+      cluster: 'ap1'
+    });
+
+    var channel = pusher.subscribe('125');
+    channel.bind('message', function(data) {
+      alert(JSON.stringify(data));
+      if (data.time()) {
+        console.log(111);
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body> --}}
+
+{{-- ================================================================= --}}
+
+<!DOCTYPE html>
+
+<head>
+    <title>Pusher Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    {{-- {{ $id ?? 'a'}} --}}
+    {{-- <div id="app">
+        <ul>
+            <li v-for="message in messages" >
+                <div v-if="message.sender_id == 12" v-text="message.message" style="color: green"></div>
+                <div v-if="message.sender_id != 12" v-text="message.message" style="color: red"></div>
+            </li>
+        </ul>
+    </div>
+
+    <form id="formSend">
+        <input type="hidden" id="authId" value="{{$id}}">
+        <input type="text" name="txtContent" id="txtContent">
+        <button type="submit" id="btnSubmit">Gửi</button>
+    </form> --}}
+
+
+
+
+
+
+
+
+
+
+<style>
+    body {
+        background: #13161A;
+    }
+    .container{max-width:1600px; margin:auto;}
+    img{ max-width:100%;}
+    .inbox_people {
+    background: #363F48 none repeat scroll 0 0;
+    float: left;
+    overflow: hidden;
+    width: 29.947%; border-right:1px solid #c4c4c4;
+    height: 100%;
+    }
+    .inbox_msg {
+    border: 1px solid #c4c4c4;
+    clear: both;
+    overflow: hidden;
+    height: 715px;
+    width: 100%;
+    }
+    .top_spac{ margin: 20px 0 0;}
+
+
+    .recent_heading {float: left; width:40%;}
+    .srch_bar {
+    display: inline-block;
+    text-align: right;
+    width: 60%;
+    }
+    .headind_srch{ padding:10px 29px 10px 20px; overflow:hidden; border-bottom:1px solid #c4c4c4;}
+
+    .recent_heading h4 {
+    color: #55D58B;
+    font-size: 21px;
+    margin: auto;
+    }
+    .srch_bar input{ border:1px solid #cdcdcd; border-width:0 0 1px 0; width:80%; padding:2px 0 4px 6px; background:none;}
+    .srch_bar .input-group-addon button {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+    border: medium none;
+    padding: 0;
+    color: #707070;
+    font-size: 18px;
+    }
+    .srch_bar .input-group-addon { margin: 0 0 0 -27px;}
+
+    .chat_ib h5{ font-size:15px; color:#FFFFFF; margin:0 0 8px 0;}
+    .chat_ib h5 span{ font-size:13px; float:right;}
+    .chat_ib p{ font-size:14px; color:#687681; margin:auto}
+    .chat_img {
+    float: left;
+    width: 11%;
+    }
+    .chat_ib {
+    float: left;
+    padding: 0 0 0 15px;
+    width: 88%;
+    }
+
+    .chat_people{ overflow:hidden; clear:both;}
+    .chat_list {
+    border-bottom: 1px solid #c4c4c4;
+    margin: 0;
+    padding: 18px 16px 10px;
+    }
+    .inbox_chat { height: 93.5%; overflow-y: scroll;}
+
+    .active_chat{ background:#404952;}
+
+    .incoming_msg_img {
+    display: inline-block;
+    width: 6%;
+    }
+    .incoming_msg {
+        margin-top: 15px;
+        margin-left: 10px;
+    }
+    .received_msg {
+    display: inline-block;
+    padding: 0 0 0 10px;
+    vertical-align: top;
+    margin-top: 7px;
+    width: 92%;
+    }
+    .received_withd_msg p {
+    background: #FFFFFF none repeat scroll 0 0;
+    border-radius: 3px;
+    color: #000000
+    font-size: 14px;
+    margin: 0;
+    padding: 5px 10px 5px 12px;
+    width: 100%;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+    }
+    .time_date {
+    color: #747474;
+    display: block;
+    font-size: 12px;
+    margin: 8px 0 0;
+    }
+    .received_withd_msg { width: 57%;}
+    .mesgs {
+    float: left;
+    width: 70%;
+    background: #FFF;
+    }
+
+    .sent_msg p {
+    background: #55D58B none repeat scroll 0 0;
+    border-radius: 3px;
+    font-size: 18px;
+    margin: 0; color:#fff;
+    padding: 5px 10px 5px 12px;
+    width:100%;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+    }
+    .outgoing_msg{ overflow:hidden; margin:26px 10px 26px; }
+    .sent_msg {
+    float: right;
+    width: 46%;
+    }
+    .input_msg_write input {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+    border: medium none;
+    color: #4c4c4c;
+    font-size: 15px;
+    min-height: 48px;
+    width: 100%;
+    }
+
+    .type_msg {border-top: 1px solid #c4c4c4;position: relative; height: 20%;}
+    .msg_send_btn {
+    background: #55D58B none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 17px;
+    height: 33px;
+    position: absolute;
+    right: 15px;
+    top: 11px;
+    width: 33px;
+    }
+
+    .msg_history {
+    height: 664.6px;
+    overflow-y: auto;
+    background: #F3F7F8
+    }
+
+    .write_msg {
+        text-wrap: balance;
+        overflow-wrap: break-word;
+    }
+
+
+</style>
+
+
+<div class="container">
+<div class="messaging">
+      <div class="inbox_msg">
+        <div class="inbox_people">
+          <div class="headind_srch">
+            <div class="recent_heading">
+              <h4>Recent</h4>
+            </div>
+            <div class="srch_bar">
+              <div class="stylish-input-group">
+                <input type="text" class="search-bar"  placeholder="Search" >
+                <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                </span> </div>
+            </div>
+          </div>
+          <div class="inbox_chat">
+            <div class="chat_list active_chat">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mesgs" >
+          <div class="msg_history">
+            {{-- <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test which is a new approach to have all
+                    solutions</p>
+                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Test which is a new approach to have all
+                  solutions</p>
+                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test, which is a new approach to have</p>
+                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Apollo University, Delhi, India Test</p>
+                <span class="time_date"> 11:01 AM    |    Today</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div> --}}
+
+            {{-- <ul>
+                <li v-for="message in messages" > --}}
+            <div id="app">
+            <div v-for="message in messages">
+                    <input type="hidden" name="hid" value="message.sender_id">
+                    <div v-if="message.sender_id == authId">
+                        <div class="outgoing_msg">
+                        <div class="sent_msg">
+                            <p v-text="message.message"></p>
+                            <span class="time_date" v-text="message.time"></span></div>
+                        </div>
+                    </div>
+                    <div v-if="message.sender_id != authId">
+                        <div class="incoming_msg">
+                        <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                        <div class="received_msg">
+                            <div class="received_withd_msg">
+                            <p v-text="message.message"></p>
+                            <span class="time_date" v-text="message.time"></span></div>
+                        </div>
+                        </div>
+                    </div>
+                {{-- </li>
+            </ul> --}}
+            </div>
+            </div>
+
+
+          </div>
+          <div class="type_msg">
+                <form id="formSend">
+                    <input type="hidden" id="authId" value="{{$id}}">
+                    <div class="input_msg_write">
+                    <input type="text" name="txtContent" id="txtContent" class="write_msg" placeholder="Type a message" />
+                    <button class="msg_send_btn" type="submit" id="btnSubmit"><i class="fa-solid fa-play"></i></button>
+                    </div>
+                </form>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('dd3e6d968c33c3a1e157', {
+            cluster: 'ap1'
+        });
+
+        var channel = pusher.subscribe('512');
+        channel.bind('message', function(data) {
+            app.messages.push(data);
+            console.log(app.messages);
+        });
+
+        // Vue application
+        const app = new Vue({
+            el: '#app',
+            data: {
+                messages: [],
+                authId: {{$id}}
+            },
+        });
+
+
+        btnSubmit = document.getElementById('btnSubmit');
+        txtContent = document.getElementById('txtContent');
+        formSend = document.getElementById('formSend');
+        authId = document.getElementById('authId');
+
+        formSend.addEventListener("submit", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            send();
+            // console.log(formSend);
+        });
+        function send() {
+            fetch("http://localhost:8000/api/chats/", {
+            method: "POST",
+            body: JSON.stringify({
+                "sender_id": authId.value,
+                "receiver_id" : 12,
+                "content" : txtContent.value
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+            })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+
+            txtContent.value = "";
+        }
+    </script>
+</body>

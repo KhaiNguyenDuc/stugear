@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/', [MessageController::class, 'show']);
+Route::get('/login-ssr', [MessageController::class, 'loginUISSR']);
+Route::post('/login-ssr', [MessageController::class, 'loginSSR'])->name('login.ssr');
+
+// Route::controller(MessageController::class)->prefix('chats')->group(function () {
+//     Route::post('/', 'sendMessage')->name('send.message'); //->middleware('auth_jwt');
+// });
