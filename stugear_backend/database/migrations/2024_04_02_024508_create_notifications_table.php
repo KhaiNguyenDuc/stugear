@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('title')->nullable();
             $table->string('content')->nullable();
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('target_id')->nullable();
             $table->string('type')->nullable();
+            $table->unsignedBigInteger('interact_user')->nullable();
+            $table->foreign('interact_user')->references('id')->on('users');
+            $table->integer('counts')->nullable();
             $table->integer('created_by')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();

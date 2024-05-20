@@ -1,0 +1,12 @@
+.noti-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.noti-popover-contained {
+    width: fit-content;
+}
+
+.noti-menu li:hover{
+    background-color: rgba(230, 218, 218, 0.97) !important;
+    color: black !important;
+}

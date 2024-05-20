@@ -152,10 +152,14 @@ class UserService {
     .then((response) => response?.data)
     .catch((error) => error?.response);
   }
-
-
-
-  
+  updateUserNotiStatus(value) {
+    return axiosPrivate
+      .patch(USER_URL + "/update-noti-status", {
+        value: value
+      })
+      .then((response) => response?.data)
+      .catch((error) => error?.response);
+  }
 }
 
 export default new UserService();

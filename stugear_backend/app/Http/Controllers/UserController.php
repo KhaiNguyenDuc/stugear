@@ -211,4 +211,23 @@ class UserController extends Controller
             'data' => $users
         ]);
     }
+
+    public function updateHasReadNotification(Request $request)
+    {
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+        
+        $users = DB::table('users')
+        ->where('id', $userId)
+        ->update([
+            'has_unread_notification' => $request->value,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'get data sucesss',
+            'data' => $users
+        ]);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InteractThread;
 use App\Models\React;
 use App\Repositories\React\ReactRepositoryInterface;
 use App\Repositories\Thread\ThreadRepositoryInterface;
@@ -172,7 +173,7 @@ class ReplyController extends Controller
 
         $result = $this->replyRepository->save([
             'content' => $request->input('content'),
-            'raw_content' => $request->input('raw_content'),
+            'raw_content' => $request->raw_content,
             'user_id' => $userId,
             'parent_id' => $request->input('parent_id') ?? 0, // id of reply
             'thread_id' => $threadId,
@@ -196,8 +197,10 @@ class ReplyController extends Controller
                 Log::error($th);
             }
         }
-
         if ($result) {
+            $interactThread = new InteractThread($thread, "REPLY");
+            $interactThread->setReply($result);
+            event($interactThread);
             return response()->json([
                 'status'=> 'Thành công',
                 'message' => 'Reply thread thành công',
