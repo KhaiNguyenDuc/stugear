@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\InteractProduct;
+use App\Events\InteractThread;
 use App\Events\ProductCreated;
 use App\Events\ThreadCreated;
+use App\Listeners\NotificationProductListener;
+use App\Listeners\NotificationThreadListener;
 use App\Listeners\ProductCreatedListener;
 use App\Listeners\ThreadCreatedListener;
 use App\Models\User;
@@ -30,6 +34,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         ProductCreated::class => [
             ProductCreatedListener::class,
+        ],
+        InteractThread::class => [
+            NotificationThreadListener::class,
+        ],
+        InteractProduct::class => [
+            NotificationProductListener::class,
         ],
     ];
 

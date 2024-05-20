@@ -6,6 +6,7 @@ use App\Repositories\Notification\NotificationRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Util\AppConstant;
 use App\Util\AuthService;
+use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
@@ -28,7 +29,7 @@ class NotificationController extends Controller
             $memberData['content'] = $notification->content;
             $memberData['type'] = $notification->type;
             $memberData['updated_at'] = $notification->updated_at;
-            $memberData['link'] = AppConstant::$DOMAIN . $notification->type . '/' . $notification->target_id . '/';
+            $memberData['link'] = $notification->type . '/' . $notification->target_id . '/';
             array_push($data, $memberData);
         }
         return response()->json([
@@ -48,19 +49,24 @@ class NotificationController extends Controller
         $token = $request->header();
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
-
+        Carbon::setLocale('vi');
         $notifications = $this->notificationRepository->getByCurrentUser($userId, $limit);
         $data = [];
         $memberData = [];
         $countNotificationPerPage = 0;
-        foreach ($notifications as $notification) {
+        
+        foreach ($notifications as $notification) {  
             $countNotificationPerPage++;
             $memberData['id'] = $notification->id;
             $memberData['user_id'] = $notification->user_id;
             $memberData['content'] = $notification->content;
+            $memberData['image'] = $notification->image;
+            $memberData['target_id'] = $notification->target_id;
+            $memberData['title'] = $notification->title;
             $memberData['type'] = $notification->type;
-            $memberData['updated_at'] = $notification->updated_at;
-            $memberData['link'] = AppConstant::$DOMAIN . $notification->type . '/' . $notification->target_id . '/';
+            $memberData['updated_at'] = Carbon::parse($notification->updated_at)->diffForHumans(Carbon::now());
+            $memberData['interact_user'] = $notification->interact_user;
+            $memberData['link'] = $notification->type . '/' . $notification->target_id . '/';
             array_push($data, $memberData);
         }
         return response()->json([

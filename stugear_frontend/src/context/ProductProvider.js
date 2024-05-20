@@ -8,6 +8,7 @@ const ProductProvider = ({ children }) => {
     myProduct: localStorage.getItem("product"),
     myOrder: localStorage.getItem("order"),
     thread: localStorage.getItem("thread"),
+    hasUnreadNotification: localStorage.getItem("hasUnreadNotification"),
   })
 
 

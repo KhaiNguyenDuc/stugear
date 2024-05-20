@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAddressCard,
+  faBell,
   faCreditCard,
   faCreditCardAlt,
   faHeart,
@@ -16,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import useProduct from "../../hooks/useProduct";
 import UserService from "../../service/UserService";
 import Loading from "../Loading";
+import BriefNotification from "../Profile/Notification/BriefNotification";
 const UserHeader = () => {
   const { user, setUser } = useAuth();
   const {productCount} = useProduct()
@@ -54,11 +56,13 @@ const UserHeader = () => {
             to={"/member/wishlist"}
             className="me-3"
           >
-            
             <FontAwesomeIcon icon={faHeart} className="member-icon" /> 
             <span className="badge badge-warning" id='lblWishlistCount'>{productCount?.wishlist}</span>
           </Link>
          
+        </div>
+        <div className="member-section me-3">
+          <BriefNotification/>
         </div>
 
         <div className="member-section">
@@ -67,9 +71,7 @@ const UserHeader = () => {
             to={"/member/wallet"}
             className="me-3"
           >
-            
-            <FontAwesomeIcon icon={faCreditCardAlt} className="member-icon" /> 
-            
+            <FontAwesomeIcon icon={faCreditCardAlt} className="member-icon" />  
           </Link>
          
         </div>

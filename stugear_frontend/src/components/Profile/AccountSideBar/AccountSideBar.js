@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import "./AccountSideBar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faProductHunt, faThreads } from "@fortawesome/free-brands-svg-icons";
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -62,6 +62,17 @@ const AccountSideBar = () => {
           >
             <FontAwesomeIcon icon="th" style={{ marginRight: "10px" }} />{" "}
             Thông tin cá nhân
+          </NavLink>
+          <NavLink
+            className="list-group-item with-badge"
+            to={"/member/notification"}
+          >
+            <FontAwesomeIcon icon={faBell} style={{ marginRight: "10px" }} />{" "}
+            Thông báo{" "}
+            {localStorage.getItem("hasUnreadNotification") == 1 && (
+
+<div className="counter">!</div>
+        )}
           </NavLink>
           <NavLink className="list-group-item" to={"/member/my-product"}>
             <FontAwesomeIcon

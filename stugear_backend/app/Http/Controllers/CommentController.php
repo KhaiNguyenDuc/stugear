@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InteractProduct;
 use App\Repositories\Comment\CommentRepositoryInterface;
 use App\Repositories\Rating\RatingRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Vote\VoteRepositoryInterface;
 use App\Models\Vote;
+use App\Repositories\Product\ProductRepositoryInterface;
 use Carbon\Carbon;
 use App\Util\AppConstant;
 use App\Util\AuthService;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 class CommentController extends Controller
 {
     protected $commentRepository;
+    protected $productRepository;
     protected $userRepository;
     protected $ratingRepository;
     protected $voteRepository;
@@ -25,12 +28,14 @@ class CommentController extends Controller
         CommentRepositoryInterface $commentRepository,
         UserRepositoryInterface $userRepository,
         RatingRepositoryInterface $ratingRepository,
-        VoteRepositoryInterface $voteRepository)
+        VoteRepositoryInterface $voteRepository,
+        ProductRepositoryInterface $productRepository)
     {
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
         $this->ratingRepository = $ratingRepository;
         $this->voteRepository = $voteRepository;
+        $this->productRepository = $productRepository;
     }
 
     public function getCommentByProductId(Request $request, $productId)
@@ -177,6 +182,10 @@ class CommentController extends Controller
         ]);
 
         if ($result) {
+            $product = $this->productRepository->getById($request->input("product_id"));
+            $interactThread = new InteractProduct($product, "COMMENT");
+            $interactThread->setComment($result);
+            event($interactThread);
             return response()->json([
                 'status'=> 'Thành công',
                 'message' => 'Comment thành công',
