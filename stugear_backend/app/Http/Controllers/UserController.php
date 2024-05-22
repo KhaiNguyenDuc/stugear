@@ -20,13 +20,17 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userRepository->getAllUserWithContactDetail();
+        $limit = $request->limit ?? 10;
+        $users = $this->userRepository->getAllUserWithContactDetail($limit);
         return response()->json([
             'status' => 'success',
             'message' => 'get data sucesss',
-            'data' => $users
+            'data' => $users,
+            'page' => $request->page ?? 1,
+            'total_pages' => $users->lastPage(),
+            'total_in_all_page' => $users->total()
         ]);
     }
 

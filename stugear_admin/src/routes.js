@@ -55,6 +55,17 @@ import Cube from "examples/Icons/Cube";
 import Orders from "layouts/orders";
 import { People, Report, Today } from "@mui/icons-material";
 import { ListItem, ListItemIcon, Paper } from "@mui/material";
+import useAuth from "hook/useAuth";
+import { Navigate } from "react-router-dom";
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (user?.roles?.includes("ADMIN")) {
+    return children 
+  }
+  // user is not authenticated
+  return <Navigate to="/authentication/sign-in" />;
+}
 
 const routes = [
   {
@@ -72,7 +83,7 @@ const routes = [
     key: "users",
     route: "/users",
     icon: <People size="12px" />,
-    component: <Users />,
+    component: <ProtectedRoute><Users /></ProtectedRoute>,
     noCollapse: true,
   },
   {
@@ -81,7 +92,7 @@ const routes = [
     key: "products",
     route: "/products",
     icon: <Today size="12px" />,
-    component: <Products />,
+    component: <ProtectedRoute><Products /></ProtectedRoute>,
     noCollapse: true,
   },
   {
@@ -90,7 +101,7 @@ const routes = [
     key: "orders",
     route: "/orders",
     icon: <Today size="12px" />,
-    component: <Orders />,
+    component: <ProtectedRoute><Orders /></ProtectedRoute>,
     noCollapse: true,
   },
   {
@@ -99,7 +110,7 @@ const routes = [
     key: "withdraws",
     route: "/withdraws",
     icon: <Office size="12px" />,
-    component: <Withdraws/>,
+    component: <ProtectedRoute><Withdraws/></ProtectedRoute>,
     noCollapse: true,
   },
   {
@@ -108,7 +119,7 @@ const routes = [
     key: "reports",
     route: "/reports",
     icon: <Report size="12px" />,
-    component: <Withdraws/>,
+    component: <ProtectedRoute><Withdraws/></ProtectedRoute>,
     noCollapse: true,
   },
   // {
