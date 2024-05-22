@@ -70,11 +70,13 @@ class ProductController extends Controller
                 array_push($tags, $tagMember);
             }
             $memberData['tags'] = $tags;
+            $memberData['quantity'] = $product->quantity;
             $memberData['description'] = $product->description ?? '';
             $memberData['status'] = $product->status;
             $memberData['brand'] = $product->brand ?? '';
             $memberData['last_updated'] = $product->updated_at ?? '';
-            $memberData['owner_image'] = AppConstant::$DOMAIN . 'api/users/' . $product->user->id . '/images';;
+            $memberData['owner_image'] = AppConstant::$DOMAIN . 'api/users/' . $product->user->id . '/images';
+            $memberData['user_id'] = $product->user_id;
             array_push($data, $memberData);
         }
 

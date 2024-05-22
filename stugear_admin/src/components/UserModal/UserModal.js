@@ -1,22 +1,14 @@
 import { useState } from "react";
 import "./UserModal.css";
-import UserService from "../../../service/UserService.js";
 import Modal from "react-modal";
-import Loading from "../../Loading/index"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AskService from "../../../service/AskService.js";
-import {BASE_API_URL} from "../../../utils/Constant.js"
+import UserService from "services/UserService/UserService";
+import { BASE_URL } from "utils/Constant";
+import zIndex from "@mui/material/styles/zIndex";
 const UserModal = ({ userId }) => {
   const [user, setUser] = useState([]);
-  const [reportContent, setReportContent] = useState("");
-  const [reportShow, setReportShow] = useState();
-  const [reportMessage, setReportMessage] = useState("");
-  const [selectedImageUrl, setSelectedImageUrl] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [isUserLoading, setUserLoading] = useState(false)
-  const handleChange = (e) => {
-    setReportContent(e.target.value);
-  };
+
   const getUserById = async (id) => {
     setUserLoading(true)
     const response = await UserService.getUserById(id);
@@ -35,10 +27,6 @@ const UserModal = ({ userId }) => {
   }
 
   function closeModal() {
-    setReportContent("")
-    setReportMessage("")
-    setSelectedImageUrl("")
-    setSelectedImage()
     setIsOpen(false);
   }
   const customStyles = {
@@ -51,44 +39,12 @@ const UserModal = ({ userId }) => {
       transform: "translate(-50%, -50%)",
     },
   };
-  const handleReport = async (e) => {
-    e.preventDefault();
-    const response = await AskService.reportUser(userId, reportContent);
 
-
-    if (response?.status !== 400) {
-      setReportShow(false);
-      
-      if(selectedImageUrl){
-            const formData = new FormData();
-  
-      formData.append("image", selectedImage);
-  
-        const imageResponse = await AskService.uploadReportImage(response?.ask_id, formData);
-        if(imageResponse?.status === 400){
-          setReportMessage(imageResponse?.data?.message)
-        }
-      }
-      setReportMessage("Báo cáo người dùng này thành công");
-    }
-  };
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImageUrl(imageUrl);
-      setSelectedImage(file)
-    } else {
-      setSelectedImageUrl(null);
-      
-    }
-  };
   return (
     <>
-      <span onClick={openModal}>
+      <span onClick={openModal} >
         <img
-          src={BASE_API_URL + `/users/${userId}/images`}
+          src={BASE_URL + `/users/${userId}/images`}
           className="hover-effect pic rounded-circle"
           style={{ width: "40px", height: "40px" }}
           alt=""
@@ -100,93 +56,17 @@ const UserModal = ({ userId }) => {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        {isUserLoading ? (
-          <><Loading/></>
-        ): (
-          <>
-                  {reportShow ? (
-          <>
-            <div className="row media ">
-              <div className="col">
-                <label className="btn btn-outline-primary">
-                  Chọn hình ảnh minh chứng
-                  <input
-                    type="file"
-                    className=""
-                    style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e)}
-                  />
-                </label>
-                <div className="my-4" style={{ marginLeft: "80px" }}>
-                  {selectedImageUrl ? (
-                    <img
-                      src={selectedImageUrl}
-                      alt=""
-                      className="img-fluid "
-                      style={{ width: "150px", height: "150px" }}
-                    />
-                  ) : (
-                    <div className="empty-image">Chưa có</div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="form-group mb-2" style={{ minWidth: "300px" }}>
-              <label className="form-label">Nội dung báo cáo</label>
-              <textarea
-                className="form-control"
-                rows={5}
-                name="content"
-                onInput={(e) => handleChange(e)}
-                placeholder="Nhập nội dung báo cáo tại đây... "
-              />
-            </div>
-
-            <div className="d-flex justify-content-between">
-              <button className="btn" onClick={(e) => handleReport(e)}>
-                Gửi
-              </button>
-              <button
-                className="btn"
-                style={{ backgroundColor: "red" }}
-                onClick={() => setReportShow(false)}
-              >
-                Quay lại
-              </button>
-            </div>
-          </>
-        ) : (
           <>
             <section className="">
               <div className="row d-flex justify-content-center align-items-center ">
                 <div className="" style={{ borderRadius: 15 }}>
                   <div className="p-2">
-                    {reportMessage ? (
-                      <>
-                        <span className="text-success ">{reportMessage}</span>
-                      </>
-                    ) : (
-                      <></>
-                    )}
+   
                     <div className="d-flex justify-content-between mb-4 mt-2">
-                      {localStorage.getItem("roles")?.includes("ADMIN") ? (
-                        <></>
-                      ) : (
-                        <>
-                          {" "}
-                          <button
-                            className="btn"
-                            onClick={() => setReportShow(!reportShow)}
-                          >
-                            {" "}
-                            <FontAwesomeIcon icon="flag" /> Báo cáo
-                          </button>
-                        </>
-                      )}
-
+                
                       <button
                         onClick={closeModal}
-                        className="btn ms-auto"
+                        className="btn ms-auto text-white"
                         style={{ backgroundColor: "#ce0c23" }}
                       >
                         {" "}
@@ -197,7 +77,7 @@ const UserModal = ({ userId }) => {
                     <div className="d-flex text-black">
                       <div className="flex-shrink-0">
                         <img
-                          src={BASE_API_URL + `/users/${user?.id}/images`}
+                          src={BASE_URL + `/users/${user?.id}/images`}
                           alt=""
                           className="img-fluid"
                           style={{ width: 148, height: 150, borderRadius: 10 }}
@@ -270,10 +150,6 @@ const UserModal = ({ userId }) => {
               </div>
             </section>
           </>
-        )}
-          </>
-        )}
-
       </Modal>
     </>
   );

@@ -36,7 +36,9 @@ import {BASE_URL} from "../../../utils/Constant"
 import AuthService from "services/AuthService/AuthService";
 import SoftAlert from "components/SoftAlert";
 import { useNavigate } from "react-router-dom";
+import useAuth from "hook/useAuth";
 function SignIn() {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(true);
   const [loginData, setLoginData] = useState({});
@@ -67,6 +69,7 @@ function SignIn() {
         "user_image",
         BASE_URL + `/users/${response?.user_id}/images`
       );
+      setUser(response);
       navigate("/dashboard")
     }
     

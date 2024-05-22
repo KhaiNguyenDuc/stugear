@@ -2,7 +2,7 @@
 import { axiosPrivate } from "api/axios";
 import { BASE_URL } from "utils/Constant";
 
-const ASK_URL = BASE_URL + '/api/asks';
+const ASK_URL = BASE_URL + '/asks';
 
 class WithdrawService {
  

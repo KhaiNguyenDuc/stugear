@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Card from "@mui/material/Card";
 
@@ -27,11 +12,16 @@ import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
 
 // Data
+import { useState } from "react";
 import authorsTableData from "layouts/users/data/authorsTableData";
+import CustomPagination from "components/Pagination/Pagination";
+import { CircularProgress } from "@mui/material";
+
 function Users() {
-
-
-  const { columns, rows } = authorsTableData();
+  const [isLoading, setLoading] = useState(false);
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const { columns, rows, pageCount } = authorsTableData(currentPage, itemsPerPage, setLoading);
 
   return (
     <DashboardLayout>
@@ -42,7 +32,11 @@ function Users() {
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <SoftTypography variant="h6">Người dùng</SoftTypography>
             </SoftBox>
-            <SoftBox
+            {isLoading ? (
+              <div className="mx-auto my-4" style={{marginLeft: 'auto', marginRight: 'auto'}}>
+              <CircularProgress /></div>
+            ): (
+              <SoftBox
               sx={{
                 "& .MuiTableRow-root:not(:last-child)": {
                   "& td": {
@@ -53,10 +47,20 @@ function Users() {
               }}
             >
               <Table columns={columns} rows={rows} />
+              <SoftBox display="flex" justifyContent="center" p={2}>
+
+            
+              <CustomPagination 
+          currentPage={currentPage}
+          totalPage={pageCount}
+          setCurrentPage = {setCurrentPage}
+        />
+              </SoftBox>
             </SoftBox>
+            )}
+         
           </Card>
         </SoftBox>
-
       </SoftBox>
       <Footer />
     </DashboardLayout>

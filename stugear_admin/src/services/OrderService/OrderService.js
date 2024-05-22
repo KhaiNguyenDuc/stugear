@@ -2,7 +2,7 @@
 import { axiosPrivate } from "api/axios";
 import { BASE_URL } from "utils/Constant";
 
-const ORDER_URL = BASE_URL + '/api/orders';
+const ORDER_URL = BASE_URL + '/orders';
 
 class OrderService {
  
