@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
-import SoftBadge from "components/SoftBadge";
 import ProductService from "services/ProductService/ProductService";
-import { BASE_URL } from "utils/Constant";
-import { Icon } from "@mui/material";
+import SoftBadge from "components/SoftBadge";
 import UserModal from "components/UserModal/UserModal";
 import SoftButton from "components/SoftButton";
+import { render } from "@testing-library/react";
+import SoftBox from "components/SoftBox";
+import SoftAvatar from "components/SoftAvatar";
+import { BASE_URL } from "utils/Constant";
+import SoftTypography from "components/SoftTypography";
 
 function Product({ id, name }) {
   return (
@@ -29,19 +29,10 @@ function Product({ id, name }) {
   );
 }
 
-function Completion({ value, color }) {
-  return (
-    <SoftBox display="flex" alignItems="center">
-      <SoftTypography variant="caption" color="text" fontWeight="medium">
-        {value}
-      </SoftTypography>
-    </SoftBox>
-  );
-}
-
 const productsTableData = (currentPage, setLoading) => {
   const [products, setProducts] = useState([]);
   const [pageCount, setPageCount] = useState(0);
+
   const updateStatus = async (id, status, statusValue) => {
     try {
       const updatedProducts = products.map((product) => {
@@ -71,106 +62,83 @@ const productsTableData = (currentPage, setLoading) => {
   }, [currentPage]);
 
   const rows = products.map((product) => ({
-    Id: (
-      <SoftTypography variant="button" color="text" fontWeight="medium">
-        {product?.id}
-      </SoftTypography>
-    ),
-    "Tên sản phẩm": <Product id={product?.id} name={product.title} />,
-    "Danh mục": (
-      <SoftTypography variant="button" color="text" fontWeight="medium">
-        {product.price}
-      </SoftTypography>
-    ),
-    "Tình trạng": (
-      <SoftTypography variant="button" color="text" fontWeight="medium">
-        {product?.condition}
-      </SoftTypography>
-    ),
-    Giá: (
-      <SoftTypography variant="button" color="text" fontWeight="medium">
-        {product.price}
-      </SoftTypography>
-    ),
-    "Trạng thái": (
-      <SoftBadge
-        variant="gradient"
-        badgeContent={product?.status}
-        color={product?.status === "Đã duyệt" ? "success" : "secondary"}
-        size="xs"
-        container
-      />
-    ),
-    "Cập nhật": (
-      <>
-             {/* "chặn": "0",
-            "nháp": "1",
-            "chờ duyệt": "2",
-            "đã duyệt": "3",
-            "đã bán": "4",
-            "đã thanh toán": "5" 
-            */}
-        {product?.status === "Chờ duyệt" && (
+    id: product.id,
+    title: {id: product.id, title: product.title},
+    price: product.price,
+    condition: product.condition,
+    status: product.status,
+    quantity: product.quantity,
+    user_id: product.user_id,
+    comment_count: product.comment_count,
+  }));
+
+  const columns = [
+    { field: "id", headerName: "Id", width: 100 },
+    { field: "title", headerName: "Tên sản phẩm", width: 500, renderCell: (params) => (
+      <Product id={params.row.id} name={params.row.title.title} />
+    ) },
+    { field: "price", headerName: "Giá", width: 120 },
+    { field: "condition", headerName: "Tình trạng", width: 150 },
+    {
+      field: "status",
+      headerName: "Trạng thái",
+      width: 150,
+      renderCell: (params) => (
+        <SoftBadge
+          variant="gradient"
+          badgeContent={params.row.status}
+          color={params.row.status === "Đã duyệt" ? "success" : "secondary"}
+          size="xs"
+          container
+        />
+      ),
+    },
+    { 
+      field: "action", 
+      headerName: "Cập nhật", 
+      width: 150,
+      renderCell: (params) => (
+        <>
+        {params.row.status === "Chờ duyệt" && (
           <SoftButton
             ml={2}
             variant="text"
             color={"success"}
-            onClick={() => updateStatus(product?.id, 3, "Đã duyệt")}
+            onClick={() => updateStatus(params.row.id, 3, "Đã duyệt")}
           >
             {"Duyệt"}
           </SoftButton>
         )}
-
-        {((product?.status === "Đã duyệt" ||
-          product?.status === "Chờ duyệt") && (
-            <SoftButton
-              ml={2}
-              variant="text"
-              color={"error"}
-              onClick={() => updateStatus(product?.id, 0, "Chặn")}
-            >
-              {"Chặn"}
-            </SoftButton>
-          ))}
-
-        {product?.status === "Chặn" && (
+        {(params.row.status === "Đã duyệt" || params.row.status === "Chờ duyệt") && (
           <SoftButton
             ml={2}
             variant="text"
             color={"error"}
-            onClick={() => updateStatus(product?.id, 2, "Chờ duyệt")}
+            onClick={() => updateStatus(params.row.id, 0, "Chặn")}
+          >
+            {"Chặn"}
+          </SoftButton>
+        )}
+        {params.row.status === "Chặn" && (
+          <SoftButton
+            ml={2}
+            variant="text"
+            color={"error"}
+            onClick={() => updateStatus(params.row.id, 2, "Chờ duyệt")}
           >
             {"Mở chặn"}
           </SoftButton>
         )}
       </>
-    ),
-    "Số lượng": <Completion value={product?.quantity} color="info" />,
-    "Người bán": (
-      <SoftBox mr={2}>
-        <UserModal userId={product?.user_id} />
-      </SoftBox>
-    ),
-    "Số lượt bình luận": (
-      <SoftTypography variant="button" color="text" fontWeight="medium">
-        {product?.comment_count}
-      </SoftTypography>
-    ),
-  }));
+      ),
+    },
+    { field: "quantity", headerName: "Số lượng", width: 150 },
+    { field: "user_id", headerName: "Người bán", width: 200, renderCell: (params) => <UserModal userId={params.row.user_id} /> },
+    { field: "comment_count", headerName: "Số lượt bình luận", width: 200 },
+  ];
 
   return {
-    columns: [
-      { name: "Id", align: "center" },
-      { name: "Tên sản phẩm", align: "left" },
-      { name: "Danh mục", align: "left" },
-      { name: "Tình trạng", align: "left" },
-      { name: "Giá", align: "left" },
-      { name: "Trạng thái", align: "center" },
-      { name: "Cập nhật", align: "center" },
-      { name: "Số lượng", align: "center" },
-      { name: "Người bán", align: "center" },
-      { name: "Số lượt bình luận", align: "center" },
-    ],
+    columns: columns,
     rows: rows,
     pageCount: pageCount,
   };

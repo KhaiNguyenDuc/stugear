@@ -31,6 +31,8 @@ import Table from "examples/Tables/Table";
 import ordersTableData from "layouts/orders/data/ordersTableData";
 import CustomPagination from "components/Pagination/Pagination";
 import { useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { LOCALE_TEXT } from "utils/Constant";
 
 function Orders() {
   const [isLoading, setLoading] = useState(false);
@@ -38,8 +40,7 @@ function Orders() {
   const { columns, rows, pageCount } = ordersTableData(currentPage, setLoading);
 
   return (
-
-              <DashboardLayout>
+    <DashboardLayout>
       <DashboardNavbar />
       <SoftBox py={3}>
         <SoftBox mb={3}>
@@ -52,38 +53,30 @@ function Orders() {
                 <CircularProgress />
               </div>
             ) : (
-              <SoftBox
-                sx={{
-                  "& .MuiTableRow-root:not(:last-child)": {
-                    "& td": {
-                      borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                        `${borderWidth[1]} solid ${borderColor}`,
-                    },
-                  },
-                }}
-              >
-              
-                  <Table columns={columns} rows={rows} />
-       
-              </SoftBox>
+             <>
+              <div className="mb-3">
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  localeText={LOCALE_TEXT}
+                  hideFooter={true}
+                />
+             
+              </div>
+                 <CustomPagination
+                 currentPage={currentPage}
+                 totalPage={pageCount}
+                 setCurrentPage={setCurrentPage}
+               />
+             </>
             )}
           </Card>
-            
-            <SoftBox justifyContent="center" p={2}>
-                  <CustomPagination
-                    currentPage={currentPage}
-                    totalPage={pageCount}
-                    setCurrentPage={setCurrentPage}
-                  />
-                </SoftBox>
-         
         </SoftBox>
       </SoftBox>
       <Footer />
     </DashboardLayout>
- 
-
   );
 }
+
 
 export default Orders;
