@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
-import Icon from "@mui/material/Icon";
 import CircularProgress from "@mui/material/CircularProgress";
-
-// Soft UI Dashboard React components
+import { DataGrid } from "@mui/x-data-grid";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-
-// Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import Table from "examples/Tables/Table";
-
-// Data
 import productsTableData from "layouts/products/data/productsTableData";
 import CustomPagination from "components/Pagination/Pagination";
+import { LOCALE_TEXT } from "utils/Constant";
 
 function Products() {
   const [isLoading, setLoading] = useState(false);
@@ -36,25 +30,22 @@ function Products() {
                 <CircularProgress />
               </div>
             ) : (
-              <SoftBox
-                sx={{
-                  "& .MuiTableRow-root:not(:last-child)": {
-                    "& td": {
-                      borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                        `${borderWidth[1]} solid ${borderColor}`,
-                    },
-                  },
-                }}
-              >
-                <Table columns={columns} rows={rows} />
-                <SoftBox display="flex" justifyContent="center" p={2}>
-                  <CustomPagination
-                    currentPage={currentPage}
-                    totalPage={pageCount}
-                    setCurrentPage={setCurrentPage}
-                  />
-                </SoftBox>
-              </SoftBox>
+              <>
+              <div className="mb-3">
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  localeText={LOCALE_TEXT}
+                  hideFooter={true}
+                />
+              </div>
+              
+              <CustomPagination
+              currentPage={currentPage}
+              totalPage={pageCount}
+              setCurrentPage={setCurrentPage}
+            />
+              </>
             )}
           </Card>
         </SoftBox>

@@ -19,6 +19,14 @@ class OrderService {
           .then((response) => response?.data)
           .catch((error) => error?.response);
       }
+      updateStatusByAdmin(orderId, status){
+        return axiosPrivate
+        .patch(ORDER_URL + `/${orderId}/admin`, {
+          status: status
+        })
+        .then((response) => response?.data?.data)
+        .catch((error) => error?.response);
+      }
 }
 
 export default new OrderService();

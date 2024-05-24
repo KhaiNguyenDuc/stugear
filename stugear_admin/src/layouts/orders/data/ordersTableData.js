@@ -10,12 +10,13 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "utils/Constant";
 import OrderService from "services/OrderService/OrderService";
 import UserModal from "components/UserModal/UserModal";
+import SoftButton from "components/SoftButton";
 
 function Order({ id, name, email }) {
   return (
     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
       <SoftBox mr={2}>
-      <UserModal userId={id}/>
+        <UserModal userId={id} />
       </SoftBox>
       <SoftBox display="flex" flexDirection="column">
         <SoftTypography variant="button" fontWeight="medium">
@@ -45,78 +46,150 @@ const ordersTableData = (currentPage, setLoading) => {
   useEffect(() => {
     getOrders();
   }, [currentPage]);
+  
+  const updateStatus = async (selectedorder) => {
+    const response = await OrderService.updateStatusByAdmin(
+      selectedorder,
+      7 // hoàn tiền
+    );
 
-  const rows = orders?.map(order => ({
-    "Id": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-      {order?.id}
-    </SoftTypography>
-    ),
-    "Người mua": <Order id={order?.buyer_id} name={order.name} email={order?.email} />,
-    "Người bán": <Order id={order?.seller_id} name={order.name} email={order?.email} />,
-    "Sản phẩm": (
-      <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
-      <SoftBox mr={2}>
-        <SoftAvatar src={order?.product_image} alt={order?.product_name} size="sm" variant="rounded" />
-      </SoftBox>
-      <SoftBox display="flex" flexDirection="column">
-        <SoftTypography variant="button" fontWeight="medium">
-          {order?.product_name}
-        </SoftTypography>
-      </SoftBox>
-    </SoftBox>
-    ),
-    "Giá sản phẩm": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {order?.price}
-      </SoftTypography>
-    ),
-    "Số lượng": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {order?.quantity}
-      </SoftTypography>
-    ),
-    "Tổng tiền": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {order?.total}
-      </SoftTypography>
-    ),
-    "Trạng thái": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {order?.status}
-      </SoftTypography>
-    ),
-    "Ngày tạo": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {order?.created_date}
-      </SoftTypography>
-    ),
-    "Chặn": (
-      <SoftTypography
-        component="a"
-        href="#"
-        variant="caption"
-        color="secondary"
-        fontWeight="medium"
-      >
-        Chặn
-      </SoftTypography>
-    ),
+    if (response?.status !== 400) {
+      setOrders(
+        orders.map((order) => {
+          if (order?.id === selectedorder) {
+           
+            return { ...order, status: "Hoàn tiền" };
+          }
+          return order;
+        })
+      );
+    } 
+  };
+  const rows = orders.map((order) => ({
+    id: order.id,
+    buyer: order.buyer_id,
+    seller: order.seller_id,
+    product: { product_image: order.product_image, product_name: order.product_name },
+    price: order.price,
+    quantity: order.quantity,
+    total: order.total,
+    status: order.status,
+    created_date: order.created_date,
   }));
 
+  const columns = [
+    { field: "id", align: "center", headerName: "ID" },
+    {
+      field: "buyer",
+      align: "left",
+      headerName: "Người mua",
+      renderCell: (params) => (
+        <SoftBox mr={2}>
+          <UserModal userId={params.row.buyer} />
+        </SoftBox>
+      ),
+    },
+    {
+      field: "seller",
+      align: "left",
+      headerName: "Người bán",
+      renderCell: (params) => (
+        <SoftBox mr={2}>
+          <UserModal userId={params.row.seller} />
+        </SoftBox>
+      ),
+    },
+    {
+      field: "product",
+      align: "left",
+      headerName: "Sản phẩm",
+      width: 500,
+      renderCell: (params) => (
+        <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+          <SoftBox mr={2}>
+            <SoftAvatar
+              src={params.row.product.product_image}
+              alt={params.row.product.product_name}
+              size="sm"
+              variant="rounded"
+            />
+          </SoftBox>
+          <SoftBox display="flex" flexDirection="column">
+            <SoftTypography variant="button" fontWeight="medium">
+              {params.row.product.product_name}
+            </SoftTypography>
+          </SoftBox>
+        </SoftBox>
+      ),
+    },
+    {
+      field: "price",
+      align: "left",
+      headerName: "Giá",
+      renderCell: (params) => (
+        <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+          {params.row.price}
+        </SoftTypography>
+      ),
+    },
+    {
+      field: "quantity",
+      align: "center",
+      headerName: "Số lượng",
+      renderCell: (params) => (
+        <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+          {params.row.quantity}
+        </SoftTypography>
+      ),
+    },
+    {
+      field: "total",
+      align: "center",
+      headerName: "Tổng tiền",
+      renderCell: (params) => (
+        <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+          {params.row.total}
+        </SoftTypography>
+      ),
+    },
+    {
+      field: "status",
+      align: "left",
+      width: 280,
+      headerName: "Tình trạng",
+      renderCell: (params) => (
+        <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+          {params.row.status === "Đã nhận được hàng hoàn" ? (
+            <>
+              {params.row.status}
+              <SoftButton
+                ml={2}
+                variant="text"
+                color={"success"}
+                onClick={() => updateStatus(params.row.id)}
+              >
+                {"Hoàn tiền?"}
+              </SoftButton>
+            </>
+          ) : (
+            params.row.status
+          )}
+        </SoftTypography>
+      ),
+    },
+    {
+      field: "created_date",
+      align: "center",
+      headerName: "Ngày tạo",
+      renderCell: (params) => (
+        <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+          {params.row.created_date}
+        </SoftTypography>
+      ),
+    },
+  ];
   return {
-    columns: [
-      { name: "Id", align: "center" },
-      { name: "Người mua", align: "left" },
-      { name: "Người bán", align: "left" },
-      { name: "Sản phẩm", align: "left" },
-      { name: "Giá sản phẩm", align: "left" },
-      { name: "Số lượng", align: "center" },
-      { name: "Tổng tiền", align: "center" },
-      { name: "Trạng thái", align: "left" },
-      { name: "Ngày tạo", align: "center" },
-      { name: "Chặn", align: "center" },
-    ],
+    columns: columns,
     rows: rows,
     pageCount: pageCount,
   };

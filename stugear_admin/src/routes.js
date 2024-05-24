@@ -1,62 +1,20 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
 
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/** 
-  All of the routes for the Soft UI Dashboard React are added here,
-  You can add a new route, customize the routes and delete the routes here.
-
-  Once you add a new route on this file it will be visible automatically on
-  the Sidenav.
-
-  For adding a new route you can follow the existing routes in the routes array.
-  1. The `type` key with the `collapse` value is used for a route.
-  2. The `type` key with the `title` value is used for a title inside the Sidenav. 
-  3. The `type` key with the `divider` value is used for a divider between Sidenav items.
-  4. The `name` key is used for the name of the route on the Sidenav.
-  5. The `key` key is used for the key of the route (It will help you with the key prop inside a loop).
-  6. The `icon` key is used for the icon of the route on the Sidenav, you have to add a node.
-  7. The `collapse` key is used for making a collapsible item on the Sidenav that has other routes
-  inside (nested routes), you need to pass the nested routes inside an array as a value for the `collapse` key.
-  8. The `route` key is used to store the route location which is used for the react router.
-  9. The `href` key is used to store the external links location.
-  10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
-  10. The `component` key is used to store the component of its route.
-*/
-
-// Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
 import Users from "layouts/users";
 import Withdraws from "layouts/withdraws";
 import Products from "layouts/products";
-import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
 import Document from "examples/Icons/Document";
-import CustomerSupport from "examples/Icons/CustomerSupport";
-import CreditCard from "examples/Icons/CreditCard";
-import Cube from "examples/Icons/Cube";
 import Orders from "layouts/orders";
-import { People, Report, Today } from "@mui/icons-material";
-import { ListItem, ListItemIcon, Paper } from "@mui/material";
+import { People, Report, Today, PanoramaPhotosphere } from "@mui/icons-material";
 import useAuth from "hook/useAuth";
 import { Navigate } from "react-router-dom";
+import Reports from "layouts/report";
+import Category from "layouts/categories";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -70,7 +28,7 @@ const ProtectedRoute = ({ children }) => {
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
+    name: "Trang chủ",
     key: "dashboard",
     route: "/dashboard",
     icon: <Shop size="12px" />,
@@ -88,19 +46,10 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Sản phẩm",
-    key: "products",
-    route: "/products",
-    icon: <Today size="12px" />,
-    component: <ProtectedRoute><Products /></ProtectedRoute>,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
     name: "Đơn hàng",
     key: "orders",
     route: "/orders",
-    icon: <Today size="12px" />,
+    icon: <PanoramaPhotosphere size="12px" />,
     component: <ProtectedRoute><Orders /></ProtectedRoute>,
     noCollapse: true,
   },
@@ -119,39 +68,10 @@ const routes = [
     key: "reports",
     route: "/reports",
     icon: <Report size="12px" />,
-    component: <ProtectedRoute><Withdraws/></ProtectedRoute>,
-    noCollapse: true,
-  },
-  // {
-  //   type: "collapse",
-  //   name: "Billing",
-  //   key: "billing",
-  //   route: "/billing",
-  //   icon: <CreditCard size="12px" />,
-  //   component: <Billing />,
-  //   noCollapse: true,
-  // },
-  {
-    type: "collapse",
-    name: "Virtual Reality",
-    key: "virtual-reality",
-    route: "/virtual-reality",
-    icon: <Cube size="12px" />,
-    component: <VirtualReality />,
-    noCollapse: true,
-  },
-  { type: "title", title: "Account Pages", key: "account-pages" },
-  {
-    type: "collapse",
-    name: "Thông tin cá nhân",
-    key: "profile",
-    route: "/profile",
-    icon: <CustomerSupport size="12px" />,
-    component: <Profile />,
+    component: <ProtectedRoute><Reports/></ProtectedRoute>,
     noCollapse: true,
   },
   {
-    type: "collapse",
     name: "Đăng nhập",
     key: "sign-in",
     route: "/authentication/sign-in",
