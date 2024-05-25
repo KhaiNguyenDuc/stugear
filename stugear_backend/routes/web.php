@@ -14,11 +14,8 @@ use App\Http\Controllers\MessageController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/', [MessageController::class, 'show']);
+Route::get('/chats/{id}', [MessageController::class, 'show']);
 Route::get('/login-ssr', [MessageController::class, 'loginUISSR']);
 Route::post('/login-ssr', [MessageController::class, 'loginSSR'])->name('login.ssr');
 

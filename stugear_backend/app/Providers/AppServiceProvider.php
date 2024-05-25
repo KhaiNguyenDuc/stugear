@@ -71,6 +71,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Notification\NotificationRepositoryInterface::class,
             \App\Repositories\Notification\NotificationRepository::class,
         );
+        $this->app->singleton(
+            \App\Repositories\Message\MessageRepositoryInterface::class,
+            \App\Repositories\Message\MessageRepository::class,
+        );
     }
 
     /**

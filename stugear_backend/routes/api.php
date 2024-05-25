@@ -159,7 +159,7 @@ Route::controller(NotificationController::class)->prefix('notifications')->group
 });
 
 Route::controller(MessageController::class)->prefix('chats')->group(function () {
-    Route::post('/', 'sendMessage');//->middleware('auth_jwt');
+    Route::post('/{id}', 'sendMessage');//->middleware('auth_jwt');
 });
 
 

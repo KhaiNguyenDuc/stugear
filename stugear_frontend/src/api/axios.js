@@ -2,7 +2,7 @@ import axios from "axios";
 import useRefreshToken from "../hooks/useRefreshToken";
 import { useNavigate } from "react-router-dom";
 import Constant from "../utils/Constant.js"
-import {BASE_API_URL} from "../utils/Constant.js"
+import { BASE_API_URL } from "../utils/Constant.js"
 const BASE_URL = BASE_API_URL;
 const axiosPrivate = axios.create({
   baseURL: BASE_URL,
@@ -36,17 +36,16 @@ axiosPrivate.interceptors.response.use(
       !prevRequest?.sent
     ) {
       prevRequest.sent = true;
-      
+
       console.log("Refresh access Token")
       const refresh = await useRefreshToken();
       if (refresh?.refresh_token) {
-        
+
         localStorage.setItem("access_token", refresh?.access_token);
         localStorage.setItem("refresh_token", refresh?.refresh_token);
         localStorage.setItem("user_id", refresh?.user_id);
         localStorage.setItem("roles", refresh?.roles);
         localStorage.setItem("username", refresh?.username);
-
         return axiosPrivate(prevRequest);
       } else {
         console.log("Hết cứu")
@@ -57,14 +56,14 @@ axiosPrivate.interceptors.response.use(
         localStorage.removeItem("access_token")
         // window.location.href = "/login"
       }
-    } else if (error.response.status === 500){
+    } else if (error.response.status === 500) {
       console.log("500 rui")
       console.log(error)
       // window.location.href = "/internal-error" 
-    } else if (error.response.status === 401){
+    } else if (error.response.status === 401) {
       console.log("Need login")
       // window.location.href = "/login"
-    } else if (error.response.status === 400){
+    } else if (error.response.status === 400) {
       return Promise.reject(error)
     }
   }
