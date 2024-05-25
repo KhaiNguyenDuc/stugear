@@ -1,24 +1,16 @@
-/* eslint-disable react/prop-types */
-// Soft UI Dashboard React components
+import { useEffect, useState } from "react";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
 import SoftBadge from "components/SoftBadge";
-
-// Images
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
-import { useEffect, useState } from "react";
+import UserModal from "components/UserModal/UserModal";
+import SoftButton from "components/SoftButton";
 import UserService from "services/UserService/UserService";
-import { BASE_URL } from "utils/Constant";
 
 function Author({ id, name, email }) {
-
   return (
     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
       <SoftBox mr={2}>
-        <SoftAvatar src={`${BASE_URL}/api/users/${id}/images`} alt={name} size="sm" variant="rounded" />
+        <UserModal userId={id} />
       </SoftBox>
       <SoftBox display="flex" flexDirection="column">
         <SoftTypography variant="button" fontWeight="medium">
@@ -32,92 +24,101 @@ function Author({ id, name, email }) {
   );
 }
 
-const authorsTableData = () => {
-  const [users,setUsers] = useState([]);
-  useEffect(() => {
-    const getUsers = async() => {
-      const response = await UserService.getAllUsers();
-      if(response?.status != 400){
-        setUsers(response)
+const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
+  const [users, setUsers] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+
+  const updateStatus = async (selectedUserId, selectedStatus) => {
+    const updatedUsers = users.map((user) => {
+      if (user.id === selectedUserId) {
+        return { ...user, is_enable: selectedStatus };
       }
-    }
-    getUsers()
-  }, [])
-  
-  const rows = users.map(user => ({
-    "Tên": <Author id={user?.id} name={user.name} email={user?.email} />,
-    "Vai trò": (
-      <SoftTypography variant="caption" fontWeight="medium" color="text">
-        {user?.role}
-      </SoftTypography>
-    ),
-    "Trạng thái": (
-      <SoftBadge variant="gradient" badgeContent={user?.status === "online" ? "online" : "offline"} color={user?.status === "online" ? "success" : "secondary"} size="xs" container />
-    ),
-    "Ngày tạo": (
-      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {user?.createdAt}
-      </SoftTypography>
-    ),
-    "Chặn": (
-      <SoftTypography
-        component="a"
-        href="#"
-        variant="caption"
-        color="secondary"
-        fontWeight="medium"
+      return user;
+    });
+    setUsers(updatedUsers);
+    await UserService.updateUserStatus(selectedUserId, selectedStatus);
+  };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      setLoading(true);
+      const response = await UserService.getAllUsers(currentPage);
+      if (response?.status !== 400) {
+        const allUsers = response?.data?.data;
+        setUsers(allUsers);
+        setPageCount(response?.total_pages);
+      }
+      setLoading(false);
+    };
+    getUsers();
+  }, [currentPage, itemsPerPage]);
+
+  const columns = [
+    { field: "id", align: "center", headerName: "ID", with: 100},
+    { field: "name", align: "left", headerName: "Tên", width: 400, renderCell: (params) => (
+      <Author id={params.row.id} name={params.row.name.name} email={params.row.name.email} />
+    )},
+    { field: "role_name", align: "left", headerName: "Vai trò", with: 100},
+    { field: "is_enable", align: "center", headerName: "Trạng thái", with: 300, renderCell: (params) => (
+      <SoftBadge
+        variant="gradient"
+        badgeContent={params.row.is_enable == "1" ? "Hoạt động" : "Chặn"}
+        color={params.row.is_enable == "1" ? "success" : "secondary"}
+        size="xs"
+        container
+      />
+    )},
+    { field: "status", align: "center", headerName: "Cập nhật", renderCell: (params) => (
+      <SoftButton
+        onClick={() => {
+          updateStatus(params.row.id, params.row.is_enable == 1 ? 0 : 1);
+        }}
+        ml={2}
+        variant="text"
+        color={params.row.is_enable == "1" ? "success" : "error"}
       >
-        Chặn
+        {params.row.is_enable == "1" ? "Chặn" : "Mở chặn"}
+      </SoftButton>
+    )},
+    { field: "gender", align: "left", headerName: "Giới tính", renderCell: (params) => (
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {params.row.gender === 0 ? "Nam" : "Nữ"}
       </SoftTypography>
-    ),
+    )},
+    { field: "phone_number", align: "left", headerName: "Số điện thoại", renderCell: (params) => (
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {params.row.phone_number}
+      </SoftTypography>
+    )},
+    { field: "birthdate", align: "left", headerName: "Ngày sinh", renderCell: (params) => (
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {params.row.birthdate}
+      </SoftTypography>
+    )},
+    { field: "created_at", align: "center", headerName: "Ngày tạo", renderCell: (params) => (
+      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+        {params.row.created_at}
+      </SoftTypography>
+    )},
+  ];
+
+  const rows = users.map((user) => ({
+    id: user.id,
+    name: {name: user.name, email: user.email, id: user.id},
+    role_name: user.role_name,
+    is_enable: user.is_enable,
+    gender: user.gender === 0 ? "Nam" : "Nữ",
+    phone_number: user.phone_number,
+    birthdate: user.birthdate,
+    created_at: user.created_at,
   }));
 
-
-  return (
-    {
-      columns: [
-        { name: "Tên", align: "left" },
-        { name: "Vai trò", align: "left" },
-        { name: "Trạng thái", align: "center" },
-        { name: "Ngày tạo", align: "center" },
-        { name: "Chặn", align: "center" },
-      ],
-      rows: rows,
-      // rows: [
-      //   {
-      //     "Tên": <Author image={team2} name="John Michael" email="john@creative-tim.com" />,
-      //     "Vai trò":      
-      //     <SoftTypography variant="caption" fontWeight="medium" color="text">
-      //     123
-      //   </SoftTypography>,
-      //     "Trạng thái": (
-      //       <SoftBadge variant="gradient" badgeContent="online" color="success" size="xs" container />
-      //       // <SoftBadge variant="gradient" badgeContent="offline" color="secondary" size="xs" container />
-      //     ),
-      //     "Ngày tạo": (
-      //       <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-      //         23/04/18
-      //       </SoftTypography>
-      //     ),
-      //     "Chặn": (
-      //       <SoftTypography
-      //         component="a"
-      //         href="#"
-      //         variant="caption"
-      //         color="secondary"
-      //         fontWeight="medium"
-      //       >
-      //         Chặn
-      //       </SoftTypography>
-      //     ),
-      //   }
-      // ],
-    }
-  )
-}
-
-
-
-
+  
+  return {
+    columns: columns,
+    rows: rows,
+    pageCount: pageCount,
+  };
+};
 
 export default authorsTableData;

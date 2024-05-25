@@ -82,7 +82,8 @@ class AuthController extends Controller
                         ->pluck('roles.role_name')
                         ->toArray(),
                     'user_id' => $user->id,
-                    'username' => $user->name
+                    'username' => $user->name,
+                    'hasUnreadNotification' => $user->has_unread_notification
                 ],
             ]);
 

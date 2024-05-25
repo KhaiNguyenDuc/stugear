@@ -2,7 +2,7 @@
 import { axiosPrivate } from "api/axios";
 import { BASE_URL } from "utils/Constant";
 
-const PRODUCT_URL = BASE_URL + '/api/products';
+const PRODUCT_URL = BASE_URL + '/products';
 
 class ProductService {
  
@@ -17,6 +17,12 @@ class ProductService {
         .get(url)
         .then((response) => response?.data)
         .catch((error) => error?.response);
+      }
+      updateStatus(id, statusId){
+        axiosPrivate
+        .patch(PRODUCT_URL + `/status/${id}`, {
+            status: statusId
+        })
       }
 }
 

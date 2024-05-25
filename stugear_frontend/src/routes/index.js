@@ -32,6 +32,7 @@ import ThreadDetailPage from "../pages/Main/ThreadDetailPage/index.js";
 import CreateThread from "../components/Thread/CreateThread.js";
 import ThreadCreatePage from "../pages/Main/ThreadCreatePage/index.js";
 import MyThread from "../components/Profile/MyThread/MyThread.js";
+import Notification from "../components/Profile/Notification/Notification.js";
 function useRouteElements() {
   const RejectRoute = ({ children }) => {
     const { user } = useAuth();
@@ -92,6 +93,10 @@ function useRouteElements() {
         {
           path: "/member/wishlist",
           element: <Wishlist />,
+        },
+        {
+          path: "/member/notification",
+          element: <Notification />,
         },
         {
           path: "/member/general",

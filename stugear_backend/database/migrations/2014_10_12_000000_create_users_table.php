@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('image_id')->nullable();
             $table->foreign('image_id')->references('id')->on('images');
             $table->unsignedBigInteger('wallet')->default(0);
+            $table->boolean('has_unread_notification')->default(0);
             $table->integer('created_by')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { axiosPrivate } from "../api/axios";
-import {BASE_API_URL} from "../utils/Constant.js"
+import { BASE_API_URL } from "../utils/Constant.js";
 
-const USER_URL = BASE_API_URL + '/users';
+const USER_URL = BASE_API_URL + "/users";
 
 class UserService {
   getCurrentUserWishlist() {
@@ -13,7 +13,6 @@ class UserService {
   }
 
   removeCurrentUserWishListByProductId(id) {
-
     return axiosPrivate
       .post(BASE_API_URL + "/wishlists/remove", {
         product_id: id,
@@ -49,23 +48,19 @@ class UserService {
     let url = BASE_API_URL + `/products/current`;
     if (currentPage !== undefined) {
       url += `?page=${currentPage}&limit=6`;
-    }else{
+    } else {
       url += `?page=1&limit=100`;
     }
 
     return axiosPrivate
-      .get(
-        url
-      )
+      .get(url)
       .then((response) => response?.data)
       .catch((error) => error?.response);
   }
 
   sendVerifyEmail(email) {
     return axiosPrivate
-      .get(
-        BASE_API_URL + `/products/send-verify-email?email=${email}`
-      )
+      .get(BASE_API_URL + `/products/send-verify-email?email=${email}`)
       .then((response) => response?.data)
       .catch((error) => error?.response);
   }
@@ -76,7 +71,6 @@ class UserService {
       .catch((error) => error?.response);
   }
   uploadImage(userId, file) {
-
     return axiosPrivate
       .post(
         USER_URL + `/${userId}/upload-image`,
@@ -93,8 +87,8 @@ class UserService {
       .catch((error) => error?.response);
   }
   updateUserProfile(userInfo) {
-    if(userInfo?.gender === ""){
-      userInfo.gender = 0
+    if (userInfo?.gender === "") {
+      userInfo.gender = 0;
     }
     return axiosPrivate
       .patch(USER_URL + "/info", {
@@ -104,7 +98,7 @@ class UserService {
         social_link: userInfo?.social_link,
         birthdate: userInfo?.birthdate,
         address: userInfo?.full_address,
-        gender: userInfo?.gender
+        gender: userInfo?.gender,
       })
       .then((response) => response?.data)
       .catch((error) => error?.response);
@@ -126,36 +120,40 @@ class UserService {
       .catch((error) => error?.response);
   }
 
-  getUserById(userId){
+  getUserById(userId) {
     return axiosPrivate
-    .get(USER_URL + `/${userId}`)
-    .then((response) => response?.data?.data)
-    .catch((error) => error?.response);
-}
-  getCurrentUserBalance(){
+      .get(USER_URL + `/${userId}`)
+      .then((response) => response?.data?.data)
+      .catch((error) => error?.response);
+  }
+  getCurrentUserBalance() {
     return axiosPrivate
-    .get(USER_URL + '/balance')
-    .then((response) => response?.data)
-    .catch((error) => error?.response);
+      .get(USER_URL + "/balance")
+      .then((response) => response?.data)
+      .catch((error) => error?.response);
   }
 
-  getCurrentUserOrdersHistory(){
+  getCurrentUserOrdersHistory() {
     return axiosPrivate
-    .get(USER_URL + '/buy/orders?page=1&limit=10')
-    .then((response) => response?.data)
-    .catch((error) => error?.response);
-  }
-  
-  getCurrentUserOrders(){
-    return axiosPrivate
-    .get(USER_URL + '/sell/orders?page=1&limit=10')
-    .then((response) => response?.data)
-    .catch((error) => error?.response);
+      .get(USER_URL + "/buy/orders?page=1&limit=10")
+      .then((response) => response?.data)
+      .catch((error) => error?.response);
   }
 
-
-
-  
+  getCurrentUserOrders() {
+    return axiosPrivate
+      .get(USER_URL + "/sell/orders?page=1&limit=10")
+      .then((response) => response?.data)
+      .catch((error) => error?.response);
+  }
+  updateUserNotiStatus(value) {
+    return axiosPrivate
+      .patch(USER_URL + "/update-noti-status", {
+        value: value,
+      })
+      .then((response) => response?.data)
+      .catch((error) => error?.response);
+  }
 }
 
 export default new UserService();

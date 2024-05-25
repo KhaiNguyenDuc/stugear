@@ -2,7 +2,7 @@
 import { axiosPrivate } from "api/axios";
 import { BASE_URL } from "utils/Constant";
 
-const ORDER_URL = BASE_URL + '/api/orders';
+const ORDER_URL = BASE_URL + '/orders';
 
 class OrderService {
  
@@ -18,6 +18,14 @@ class OrderService {
           .get(url)
           .then((response) => response?.data)
           .catch((error) => error?.response);
+      }
+      updateStatusByAdmin(orderId, status){
+        return axiosPrivate
+        .patch(ORDER_URL + `/${orderId}/admin`, {
+          status: status
+        })
+        .then((response) => response?.data?.data)
+        .catch((error) => error?.response);
       }
 }
 

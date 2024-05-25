@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
+import zIndex from "@mui/material/styles/zIndex";
 
 export default styled(Badge)(({ theme, ownerState }) => {
   const { palette, typography, borders, functions } = theme;
@@ -118,6 +119,7 @@ export default styled(Badge)(({ theme, ownerState }) => {
   return {
     "& .MuiBadge-badge": {
       height: "auto",
+      zIndex: 0,
       padding: paddings[size] || paddings.xs,
       fontSize: fontSizeValue,
       fontWeight: fontWeightBold,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InteractThread;
 use App\Events\ThreadCreated;
 use App\Jobs\ValidateThreadJob;
 use App\Models\React;
@@ -454,6 +455,14 @@ class ThreadController extends Controller
         ], $react->id);
         logger()->info('React retrieved:', [$react]);
         if ($result) {
+            $interactThread = new InteractThread($thread, "REACT");
+            $react = new React([
+                'thread_id' => $react->thread_id,
+                'user_id' => $react->user_id,
+                'like' => $react->like
+            ]);
+            $interactThread->setReact($react);
+            event($interactThread);
             return response()->json([
                 'status' => 'Thành công',
                 'message' => 'React thành công',
@@ -466,7 +475,8 @@ class ThreadController extends Controller
         }
     }
 
-    public function getGeneralInfo(){
+    public function getGeneralInfo()
+    {
         $threads = $this->threadRepository->getTotalThreads();
 
         $replies = $this->replyRepository->getTotalReply();
@@ -484,8 +494,7 @@ class ThreadController extends Controller
     public function updateStatusThread(Request $request, $threadId)
     {
         $status = $request->status ?? '';
-        if ($status == '' || is_null($status) || !in_array($status, AppConstant::$STATUS_OF_THREAD))
-        {
+        if ($status == '' || is_null($status) || !in_array($status, AppConstant::$STATUS_OF_THREAD)) {
             return response()->json([
                 'status' => 'Lỗi',
                 'message' => 'Trạng thái cập nhật không phù hợp!'
@@ -503,9 +512,9 @@ class ThreadController extends Controller
         ], $threadId);
 
         $contentForNotification = [
-            0 => 'thread '. $threadId . ' cập nhật trạng thái sang bị cấm',
-            1 => 'thread '. $threadId . ' cập nhật trạng thái sang hoạt động',
-            3 => 'thread '. $threadId . ' cập nhật trạng thái sang chờ duyệt'
+            0 => 'thread ' . $threadId . ' cập nhật trạng thái sang bị cấm',
+            1 => 'thread ' . $threadId . ' cập nhật trạng thái sang hoạt động',
+            3 => 'thread ' . $threadId . ' cập nhật trạng thái sang chờ duyệt'
         ];
 
         $thread = $this->threadRepository->getById($threadId);
@@ -513,7 +522,7 @@ class ThreadController extends Controller
 
         $this->notificationRepository->save([
             'user_id' => $thread->user_id,
-            'content'=> $contentForNotification[$status],
+            'content' => $contentForNotification[$status],
             'target_id' => $threadId,
             'type' => 'thread',
             'created_at' => Carbon::now(),

@@ -1,20 +1,7 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
+import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
+import { DataGrid } from "@mui/x-data-grid";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -24,14 +11,107 @@ import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import Table from "examples/Tables/Table";
 
 // Data
-import withdrawsTableData from "layouts/withdraws/data/withdrawsTableData";
-function withdraws() {
+import AskService from "services/AskService/AskService";
+import { BASE_URL } from "utils/Constant";
+import SoftBadge from "components/SoftBadge";
+import UserModal from "components/UserModal/UserModal";
+import { LOCALE_TEXT } from "utils/Constant";
+import CustomPagination from "components/Pagination/Pagination";
+import SoftButton from "components/SoftButton";
 
+function Withdraws() {
+  const [isLoading, setLoading] = useState(false);
+  const [withdraws, setWithdraws] = useState([]);
+  const [pageCount, setPageCount] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    const fetchWithdraws = async () => {
+      setLoading(true);
+      const response = await AskService.getListWithdraws(currentPage);
+      if (response?.status !== 400) {
+        setPageCount(response?.data?.total_page)
+        setWithdraws(response.data);
+      }
+      setLoading(false);
+    };
+    fetchWithdraws();
+  }, [currentPage]);
 
-  const { columns, rows } = withdrawsTableData();
+  const updateStatus = async (selectedWithdraw, selectedStatus) => {
+    const response = await AskService.updateWithdrawStatus(
+      selectedWithdraw,
+      parseInt(selectedStatus)
+    );
+  
+    if (response?.status !== 400) {
+      setWithdraws(withdraws.map(withdraw => {
+        if (withdraw?.id === selectedWithdraw) {
+          let statusString;
+          switch (selectedStatus) {
+            case "3":
+              statusString = "Đã hủy";
+              break;
+            case "2":
+              statusString = "Đã xử lý hoàn tất";
+              break;
+            default:
+              statusString = "Mới tạo"; // Default status
+              break;
+          }
+      
+          return { ...withdraw, status: statusString };
+        }
+        return withdraw;
+      }));
+    } else {
+      setError(response?.data?.message);
+    }
+  };
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'owner_id', headerName: 'Người yêu cầu', width: 150, renderCell: (params) => <Author id={params.row.owner_id} /> },
+    { field: 'amount', headerName: 'Số tiền', width: 110 },
+    { field: 'description', headerName: 'Nội dung', width: 400 },
+    { field: 'status', headerName: 'Trạng thái', width: 300, 
+    renderCell: (params) => (
+      <>
+       <StatusBadge status={params.row.status} />
+      {params.row.status == "Mới tạo" && params.row.status !== "Đã hủy" && (
+          <> 
+          <SoftButton
+          ml={2}
+          variant="text"
+          color={"success"}
+          onClick={() => updateStatus(params.row.id, "2")}
+        >
+          {"Đã xử lý?"}
+        </SoftButton>
+     
+        </>
+        )}
+        {params.row.status !== "Đã xử lý hoàn tất" && params.row.status !== "Đã hủy" && (
+             <SoftButton
+             ml={2}
+             variant="text"
+             color={"error"}
+             onClick={() => updateStatus(params.row.id, "3")}
+           >
+             {"Hủy?"}
+           </SoftButton>
+        )}
+      </>
+   ) },
+  ];
+
+  const rows = withdraws.map((withdraw) => ({
+    id: withdraw.id,
+    owner_id: withdraw.owner_id,
+    amount: withdraw.amount,
+    description: withdraw.description,
+    status: withdraw.status,
+  }));
 
   return (
     <DashboardLayout>
@@ -42,25 +122,53 @@ function withdraws() {
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <SoftTypography variant="h6">Người dùng</SoftTypography>
             </SoftBox>
-            <SoftBox
-              sx={{
-                "& .MuiTableRow-root:not(:last-child)": {
-                  "& td": {
-                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                      `${borderWidth[1]} solid ${borderColor}`,
-                  },
-                },
-              }}
-            >
-              <Table columns={columns} rows={rows} />
-            </SoftBox>
+            {isLoading ? (
+              <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+                <CircularProgress />
+              </div>
+            ) : (
+              <div>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  localeText={LOCALE_TEXT}
+                  hideFooter={true}
+                />
+                 <CustomPagination
+                  currentPage={currentPage}
+                  totalPage={pageCount}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            )}
           </Card>
         </SoftBox>
-
       </SoftBox>
       <Footer />
     </DashboardLayout>
   );
 }
 
-export default withdraws;
+function Author({ id }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox mr={2}>
+        <UserModal userId={id} />
+      </SoftBox>
+    </SoftBox>
+  );
+}
+
+function StatusBadge({ status }) {
+  return (
+    <SoftBadge
+      variant="gradient"
+      badgeContent={status}
+      color={status === "Mới tạo" ? "success" : "secondary"}
+      size="xs"
+      container
+    />
+  );
+}
+
+export default Withdraws;

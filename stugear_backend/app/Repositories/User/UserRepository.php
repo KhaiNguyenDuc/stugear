@@ -27,30 +27,36 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
 
-    public function getAllUserWithContactDetail()
+    public function getAllUserWithContactDetail($limit)
     {
-        $usersWithContactDetails = DB::table('users')
+        $query = DB::table('users')
             ->join('contact_details', 'users.id', '=', 'contact_details.user_id')
+            ->join('user_roles', 'users.id', '=', 'user_roles.user_id')
+            ->join('roles', 'roles.id', '=', 'user_roles.role_id')
             ->select(
                 'users.id',
+                'roles.role_name',
                 'users.name',
                 'users.email',
                 'users.first_name',
+                'users.is_enable',
                 'last_name',
                 'is_enable',
+                'users.created_at',
                 'contact_details.phone_number',
                 'contact_details.gender',
-                'contact_details.birthdate',
+                DB::raw("DATE_FORMAT(contact_details.birthdate, '%d-%m-%Y') as birthdate"),
                 'contact_details.full_address',
                 'contact_details.province',
                 'contact_details.ward',
                 'contact_details.district',
                 'contact_details.city',
-                'contact_details.social_link',
-            )
-            ->get();
-        return $usersWithContactDetails;
+                'contact_details.social_link'
+            );
+    
+        return $query->paginate($limit);
     }
+    
 
     public function getUserWithContactDetailById($id)
     {

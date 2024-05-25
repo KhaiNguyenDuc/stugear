@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 
 // Custom styles for the SoftBadge
 import SoftBadgeRoot from "components/SoftBadge/SoftBadgeRoot";
+import zIndex from "@mui/material/styles/zIndex";
 
 const SoftBadge = forwardRef(
   ({ color, variant, size, circular, indicator, border, container, children, ...rest }, ref) => (

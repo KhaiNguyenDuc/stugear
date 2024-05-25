@@ -554,6 +554,28 @@
             if (link.id === roomId) {
                 hasId = true;
                 return; // Thoát khỏi vòng lặp nếu đã tìm thấy thẻ a có id = 612
+
+        btnSubmit = document.getElementById('btnSubmit');
+        txtContent = document.getElementById('txtContent');
+        formSend = document.getElementById('formSend');
+        authId = document.getElementById('authId');
+
+        formSend.addEventListener("submit", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            send();
+            // console.log(formSend);
+        });
+        function send() {
+            fetch("https://stugear.website/api/chats/", {
+            method: "POST",
+            body: JSON.stringify({
+                "sender_id": authId.value,
+                "receiver_id" : 12,
+                "content" : txtContent.value
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
             }
         });
 

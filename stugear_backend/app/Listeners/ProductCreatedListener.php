@@ -33,7 +33,6 @@ class ProductCreatedListener
         $waitingApprovedStatus = 3;
         $this->createProductValidation($event->getProduct(), $waitingApprovedStatus);
         dispatch(new ValidateProductJob($event->getProduct(), $this->validationRepository, $this->productRepository));
-   
     }
 
     private function createProductValidation(Product $product, $status){

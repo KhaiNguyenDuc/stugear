@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./UserModal.css";
-import UserService from "../../../service/UserService";
+import UserService from "../../../service/UserService.js";
 import Modal from "react-modal";
 import Loading from "../../Loading/index"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AskService from "../../../service/AskService";
+import AskService from "../../../service/AskService.js";
 import {BASE_API_URL} from "../../../utils/Constant.js"
 const UserModal = ({ userId }) => {
   const [user, setUser] = useState([]);
@@ -26,9 +26,6 @@ const UserModal = ({ userId }) => {
     }
     setUserLoading(false)
   };
-  // useEffect(() => {
-  //   getUserById(userId)
-  // }, [])
 
   const [modalIsOpen, setIsOpen] = useState(false);
 

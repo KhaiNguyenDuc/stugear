@@ -8,11 +8,11 @@ import useAuth from "../../hooks/useAuth";
 import Loading from "../Loading";
 import UserService from "../../service/UserService";
 import useProduct from "../../hooks/useProduct";
-import {BASE_API_URL} from "../../utils/Constant.js"
+import { BASE_API_URL } from "../../utils/Constant.js";
 import ThreadService from "../../service/ThreadService.js";
 const LoginForm = () => {
   const { setUser } = useAuth();
-  const { setProductCount } = useProduct();
+  const { productCount, setProductCount } = useProduct();
   const [credentials, setCredentials] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
@@ -31,19 +31,18 @@ const LoginForm = () => {
       setLoading(false);
       setMessage("Mật khẩu không đúng ");
       setError(true);
-      return
+      return;
     } else if (response.status === 500) {
       setLoading(false);
       setMessage("Email chưa được đăng ký");
       setError(true);
-      return
-    } else if(response.status === 403){
+      return;
+    } else if (response.status === 403) {
       setLoading(false);
       setMessage("Tài khoản bị chặn");
       setError(true);
-      return
-    }
-    else {
+      return;
+    } else {
       const accessToken = response.access_token;
       const refreshToken = response.refresh_token;
       const userId = response.user_id;
@@ -55,13 +54,14 @@ const LoginForm = () => {
       localStorage.setItem("user_id", userId);
       localStorage.setItem("username", username);
       localStorage.setItem("roles", roles);
+
       const balanceResponse = await UserService.getCurrentUserBalance();
       if (balanceResponse.status !== 400) {
         localStorage.setItem("balance", balanceResponse.balance);
       }
       response = { ...response, balance: balanceResponse.balance };
       setUser(response);
-      await getUserInfo()
+      await getUserInfo(response);
       localStorage.setItem(
         "user_image",
         BASE_API_URL + `/users/${response?.user_id}/images`
@@ -74,43 +74,46 @@ const LoginForm = () => {
     }
   };
 
-  
-
-  const getUserInfo = async () => {
+  const getUserInfo = async (user) => {
     let wishlistCount = 0;
     let orderCount = 0;
-    let productCount = 0;
+    let productTempCount = 0;
     let threadCount = 0;
     const wishlistResponse = await UserService.getCurrentUserWishlist();
     if (wishlistResponse?.status != 400) {
       wishlistCount = wishlistResponse?.length;
-      localStorage.setItem("wishlist", wishlistCount)
+      localStorage.setItem("wishlist", wishlistCount);
     }
 
     const orderResponse = await UserService.getCurrentUserOrders();
     if (orderResponse?.status != 400) {
       orderCount = orderResponse?.total_items;
-      localStorage.setItem("order", orderCount)
+      localStorage.setItem("order", orderCount);
     }
 
     const productResponse = await UserService.getCurrentUserProducts();
     if (productResponse?.status != 400) {
-      productCount = productResponse?.total_items;
-      localStorage.setItem("product", productCount)
+      productTempCount = productResponse?.total_items;
+      localStorage.setItem("product", productTempCount);
     }
 
     const threadResponse = await ThreadService.getCurrentUserThreads();
     if (threadResponse?.status != 400) {
       threadCount = threadResponse?.total_items;
-      localStorage.setItem("thread", threadCount)
+      localStorage.setItem("thread", threadCount);
     }
+    localStorage.setItem(
+      "hasUnreadNotification",
+      user.hasUnreadNotification
+    );
 
     setProductCount({
       ...productCount,
       wishlist: wishlistCount,
-      myProduct: productCount,
+      myProduct: productTempCount,
       myOrder: orderCount,
       thread: threadCount,
+      hasUnreadNotification: user.hasUnreadNotification,
     });
   };
 
@@ -121,9 +124,8 @@ const LoginForm = () => {
   return (
     <div className="row my-3 justify-content-center w-100">
       <div className="col col-lg-4 box-shadow px-5">
-
         <OauthSection text="Đăng nhập với: " />
-       
+
         <Divider />
 
         <form onSubmit={(e) => handleSubmit(e)}>
@@ -183,15 +185,18 @@ const LoginForm = () => {
           </div>
 
           <div className="my-4">
-            
             {loading ? (
-              <><Loading /></>
+              <>
+                <Loading />
+              </>
             ) : (
-              <><button className="btn btn-dark text-white w-100 ">
-              Đăng nhập
-            </button></>
+              <>
+                <button className="btn btn-dark text-white w-100 ">
+                  Đăng nhập
+                </button>
+              </>
             )}
-        {error && <div className="mt-4 alert alert-danger">{message}</div>}
+            {error && <div className="mt-4 alert alert-danger">{message}</div>}
             <p className="small fw-bold mt-2 pt-1 mb-0">
               Chưa có tài khoản?
               <a href="/register" className="link-danger">

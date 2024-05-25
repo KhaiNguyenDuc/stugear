@@ -20,13 +20,17 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userRepository->getAllUserWithContactDetail();
+        $limit = $request->limit ?? 10;
+        $users = $this->userRepository->getAllUserWithContactDetail($limit);
         return response()->json([
             'status' => 'success',
             'message' => 'get data sucesss',
-            'data' => $users
+            'data' => $users,
+            'page' => $request->page ?? 1,
+            'total_pages' => $users->lastPage(),
+            'total_in_all_page' => $users->total()
         ]);
     }
 
@@ -205,6 +209,25 @@ class UserController extends Controller
     public function getTopContributor(Request $request)
     {
         $users = $this->userRepository->getTopContributor($request->limit ?? 3);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'get data sucesss',
+            'data' => $users
+        ]);
+    }
+
+    public function updateHasReadNotification(Request $request)
+    {
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+        
+        $users = DB::table('users')
+        ->where('id', $userId)
+        ->update([
+            'has_unread_notification' => $request->value,
+        ]);
+
         return response()->json([
             'status' => 'success',
             'message' => 'get data sucesss',

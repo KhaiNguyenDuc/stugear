@@ -131,10 +131,11 @@ function Table({ columns, rows }) {
 
   return useMemo(
     () => (
-      <TableContainer>
-        <MuiTable>
+      
+      <TableContainer >
+        <MuiTable style={{ overflowX: "auto",  width: '130%'}}>
           <SoftBox component="thead">
-            <TableRow>{renderColumns}</TableRow>
+            <TableRow>{renderColumns}</TableRow>    
           </SoftBox>
           <TableBody>{renderRows}</TableBody>
         </MuiTable>
