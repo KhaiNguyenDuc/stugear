@@ -205,12 +205,14 @@ class AskController extends Controller
     public function getListWithdraw(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $withdraws = $this->askRepository->getListAskByType(1, $limit);
+        $withdraws = $this->askRepository->getListWithdraw($limit);
         $data = [];
         $memberData = [];
         foreach ($withdraws as $withdraw) {
             $memberData['id'] = $withdraw->id;
             $memberData['owner_id'] = $withdraw->owner_id;
+            $memberData['name'] = $withdraw->owner_name;
+            $memberData['email'] = $withdraw->owner_email;
             $memberData['amount'] = $withdraw->amount;
             $memberData['status'] = $this->getStatusAsk($withdraw->status);
             $memberData['description'] = $withdraw->description;
@@ -232,13 +234,17 @@ class AskController extends Controller
     public function getListReport(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $reports = $this->askRepository->getListAskByType(2, $limit);
+        $reports = $this->askRepository->getListReport($limit);
         $data = [];
         $memberData = [];
 
         foreach ($reports as $report) {
             $memberData['id'] = $report->id;
             $memberData['owner_id'] = $report->owner_id;
+            $memberData['owner_name'] = $report->owner_name;
+            $memberData['owner_email'] = $report->owner_email;
+            $memberData['denounced_name'] = $report->denounced_name;
+            $memberData['denounced_email'] = $report->denounced_email;
             $memberData['denounced_id'] = $report->denounced_id;
             $memberData['description'] = $report->description;
             $memberData['status'] = $this->getStatusAsk($report->status);

@@ -24,7 +24,7 @@ function Author({ id, name, email }) {
   );
 }
 
-const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
+const authorsTableData = (setLoading) => {
   const [users, setUsers] = useState([]);
   const [pageCount, setPageCount] = useState(0);
 
@@ -42,7 +42,7 @@ const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
   useEffect(() => {
     const getUsers = async () => {
       setLoading(true);
-      const response = await UserService.getAllUsers(currentPage);
+      const response = await UserService.getAllUsers();
       if (response?.status !== 400) {
         const allUsers = response?.data?.data;
         setUsers(allUsers);
@@ -51,13 +51,15 @@ const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
       setLoading(false);
     };
     getUsers();
-  }, [currentPage, itemsPerPage]);
+  }, []);
 
   const columns = [
     { field: "id", align: "center", headerName: "ID", with: 100},
     { field: "name", align: "left", headerName: "Tên", width: 400, renderCell: (params) => (
       <Author id={params.row.id} name={params.row.name.name} email={params.row.name.email} />
-    )},
+    ),
+    valueGetter: (params) => (
+      `${params.email || ""} ${params.name || ""}`),},
     { field: "role_name", align: "left", headerName: "Vai trò", with: 100},
     { field: "is_enable", align: "center", headerName: "Trạng thái", with: 300, renderCell: (params) => (
       <SoftBadge

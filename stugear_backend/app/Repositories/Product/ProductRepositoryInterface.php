@@ -7,12 +7,14 @@ use App\Repositories\RepositoryInterface;
 interface ProductRepositoryInterface extends RepositoryInterface
 {
     public function getProductById($id);
+    public function getAllProductInfo($limit);
 
     public function searchByName($q);
 
     public function attachTag($id, $tags, $userId);
 
     public function getProductByCategoryId($id, $limit);
+    
     // public function getProductByTagId($id, $limit);
 
     public function getProductTagsByProductId($id);

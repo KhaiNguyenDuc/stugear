@@ -13,8 +13,7 @@ import { LOCALE_TEXT } from "utils/Constant";
 
 function Products() {
   const [isLoading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const { columns, rows, pageCount } = productsTableData(currentPage, setLoading);
+  const { columns, rows } = productsTableData(setLoading);
 
   return (
     <DashboardLayout>
@@ -26,25 +25,30 @@ function Products() {
               <SoftTypography variant="h6">Sản phẩm</SoftTypography>
             </SoftBox>
             {isLoading ? (
-              <div className="mx-auto my-4" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+              <div className="mx-auto my-4" style={{ marginLeft: "auto", marginRight: "auto" }}>
                 <CircularProgress />
               </div>
             ) : (
               <>
-              <div className="mb-3">
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  localeText={LOCALE_TEXT}
-                  hideFooter={true}
-                />
-              </div>
-              
-              <CustomPagination
-              currentPage={currentPage}
-              totalPage={pageCount}
-              setCurrentPage={setCurrentPage}
-            />
+                <div className="mb-3">
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    localeText={LOCALE_TEXT}
+                    initialState={{
+                      pagination: { paginationModel: { pageSize: 5 } },
+                    }}
+                    pageSizeOptions={[5, 10, 25]}
+                    slotProps={{
+                      pagination: {
+                        labelRowsPerPage: "Số dòng 1 trang",
+                        labelDisplayedRows: (page) =>
+                          `${page.from}-
+                        ${page.to} trên ${page.count}`,
+                      },
+                    }}
+                  />
+                </div>
               </>
             )}
           </Card>

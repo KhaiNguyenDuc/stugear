@@ -9,6 +9,24 @@ import SoftAvatar from "components/SoftAvatar";
 import { BASE_URL } from "utils/Constant";
 import SoftTypography from "components/SoftTypography";
 
+function Author({ id, name, email }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox mr={2}>
+        <UserModal userId={id} />
+      </SoftBox>
+      <SoftBox display="flex" flexDirection="column">
+        <SoftTypography variant="button" fontWeight="medium">
+          {name}
+        </SoftTypography>
+        <SoftTypography variant="caption" color="secondary">
+          {email}
+        </SoftTypography>
+      </SoftBox>
+    </SoftBox>
+  );
+}
+
 function Product({ id, name }) {
   return (
     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
@@ -29,9 +47,8 @@ function Product({ id, name }) {
   );
 }
 
-const productsTableData = (currentPage, setLoading) => {
+const productsTableData = (setLoading) => {
   const [products, setProducts] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
 
   const updateStatus = async (id, status, statusValue) => {
     try {
@@ -50,33 +67,35 @@ const productsTableData = (currentPage, setLoading) => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await ProductService.getAllProducts(currentPage);
+      const response = await ProductService.getAllProducts();
       if (response?.status !== 400) {
         const allProducts = response?.data;
         setProducts(allProducts);
-        setPageCount(response?.total_page);
       }
       setLoading(false);
     };
     getProducts();
-  }, [currentPage]);
+  }, []);
 
   const rows = products.map((product) => ({
     id: product.id,
-    title: {id: product.id, title: product.title},
+    title: { id: product.id, title: product.title },
     price: product.price,
     condition: product.condition,
     status: product.status,
     quantity: product.quantity,
-    user_id: product.user_id,
+    user: { id: product.user_id, name: product.owner_name, email: product.owner_email },
     comment_count: product.comment_count,
   }));
 
   const columns = [
     { field: "id", headerName: "Id", width: 100 },
-    { field: "title", headerName: "Tên sản phẩm", width: 500, renderCell: (params) => (
-      <Product id={params.row.id} name={params.row.title.title} />
-    ) },
+    {
+      field: "title",
+      headerName: "Tên sản phẩm",
+      width: 500,
+      renderCell: (params) => <Product id={params.row.id} name={params.row.title.title} />,
+    },
     { field: "price", headerName: "Giá", width: 120 },
     { field: "condition", headerName: "Tình trạng", width: 150 },
     {
@@ -93,54 +112,62 @@ const productsTableData = (currentPage, setLoading) => {
         />
       ),
     },
-    { 
-      field: "action", 
-      headerName: "Cập nhật", 
+    {
+      field: "action",
+      headerName: "Cập nhật",
       width: 150,
       renderCell: (params) => (
         <>
-        {params.row.status === "Chờ duyệt" && (
-          <SoftButton
-            ml={2}
-            variant="text"
-            color={"success"}
-            onClick={() => updateStatus(params.row.id, 3, "Đã duyệt")}
-          >
-            {"Duyệt"}
-          </SoftButton>
-        )}
-        {(params.row.status === "Đã duyệt" || params.row.status === "Chờ duyệt") && (
-          <SoftButton
-            ml={2}
-            variant="text"
-            color={"error"}
-            onClick={() => updateStatus(params.row.id, 0, "Chặn")}
-          >
-            {"Chặn"}
-          </SoftButton>
-        )}
-        {params.row.status === "Chặn" && (
-          <SoftButton
-            ml={2}
-            variant="text"
-            color={"error"}
-            onClick={() => updateStatus(params.row.id, 2, "Chờ duyệt")}
-          >
-            {"Mở chặn"}
-          </SoftButton>
-        )}
-      </>
+          {params.row.status === "Chờ duyệt" && (
+            <SoftButton
+              ml={2}
+              variant="text"
+              color={"success"}
+              onClick={() => updateStatus(params.row.id, 3, "Đã duyệt")}
+            >
+              {"Duyệt"}
+            </SoftButton>
+          )}
+          {(params.row.status === "Đã duyệt" || params.row.status === "Chờ duyệt") && (
+            <SoftButton
+              ml={2}
+              variant="text"
+              color={"error"}
+              onClick={() => updateStatus(params.row.id, 0, "Chặn")}
+            >
+              {"Chặn"}
+            </SoftButton>
+          )}
+          {params.row.status === "Chặn" && (
+            <SoftButton
+              ml={2}
+              variant="text"
+              color={"error"}
+              onClick={() => updateStatus(params.row.id, 2, "Chờ duyệt")}
+            >
+              {"Mở chặn"}
+            </SoftButton>
+          )}
+        </>
       ),
     },
     { field: "quantity", headerName: "Số lượng", width: 150 },
-    { field: "user_id", headerName: "Người bán", width: 200, renderCell: (params) => <UserModal userId={params.row.user_id} /> },
+    {
+      field: "user",
+      align: "left",
+      headerName: "Tên",
+      width: 400,
+      renderCell: (params) => (
+        <Author id={params.row.user.id} name={params.row.user.name} email={params.row.user.email} />
+      ),
+      valueGetter: (params) => `${params.name || ""} ${params.email || ""}`,
+    },
     { field: "comment_count", headerName: "Số lượt bình luận", width: 200 },
   ];
 
   return {
     columns: columns,
     rows: rows,
-    pageCount: pageCount,
   };
 };
 

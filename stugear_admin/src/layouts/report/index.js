@@ -22,24 +22,39 @@ import SoftAvatar from "components/SoftAvatar";
 import { Link } from "react-router-dom";
 import SoftBadge from "components/SoftBadge";
 
+function Author({ id, name, email }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox mr={2}>
+        <UserModal userId={id} />
+      </SoftBox>
+      <SoftBox display="flex" flexDirection="column">
+        <SoftTypography variant="button" fontWeight="medium">
+          {name}
+        </SoftTypography>
+        <SoftTypography variant="caption" color="secondary">
+          {email}
+        </SoftTypography>
+      </SoftBox>
+    </SoftBox>
+  );
+}
+
 function Reports() {
   const [isLoading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
-  const [pageCount, setPageCount] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchReports = async () => {
       setLoading(true);
-      const response = await AskService.getListReports(currentPage);
+      const response = await AskService.getListReports();
       if (response?.status !== 400) {
-        setPageCount(response?.data?.total_page);
         setReports(response.data);
       }
       setLoading(false);
     };
     fetchReports();
-  }, [currentPage]);
+  }, []);
 
   const updateStatus = async (selectedReport, selectedStatus) => {
     const response = await AskService.updateReportStatus(selectedReport, parseInt(selectedStatus));
@@ -75,14 +90,28 @@ function Reports() {
     {
       field: "owner",
       headerName: "Người báo cáo",
-      width: 150,
-      renderCell: (params) => <UserModal userId={params.row.owner} />,
+      width: 300,
+      renderCell: (params) => (
+        <Author
+          id={params.row.owner.id}
+          name={params.row.owner.name}
+          email={params.row.owner.email}
+        />
+      ),
+      valueGetter: (params) => `${params.email || ""} ${params.name || ""}`,
     },
     {
       field: "denounced",
       headerName: "Đối tượng",
-      width: 150,
-      renderCell: (params) => <UserModal userId={params.row.denounced} />,
+      width: 300,
+      renderCell: (params) => (
+        <Author
+          id={params.row.denounced.id}
+          name={params.row.denounced.name}
+          email={params.row.denounced.email}
+        />
+      ),
+      valueGetter: (params) => `${params.email || ""} ${params.name || ""}`,
     },
     { field: "description", headerName: "Nội dung", width: 400 },
     {
@@ -140,8 +169,12 @@ function Reports() {
 
   const rows = reports.map((report) => ({
     id: report.id,
-    owner: report.owner_id,
-    denounced: report.denounced_id,
+    owner: { id: report.owner_id, name: report.owner_name, email: report.owner_email },
+    denounced: {
+      id: report.denounced_id,
+      name: report.denounced_name,
+      email: report.denounced_email,
+    },
     description: report.description,
     image: report.image,
     status: report.status,
@@ -173,12 +206,18 @@ function Reports() {
                   rows={rows}
                   columns={columns}
                   localeText={LOCALE_TEXT}
-                  hideFooter={true}
-                />
-                <CustomPagination
-                  currentPage={currentPage}
-                  totalPage={pageCount}
-                  setCurrentPage={setCurrentPage}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 5 } },
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  slotProps={{
+                    pagination: {
+                      labelRowsPerPage: "Số dòng 1 trang",
+                      labelDisplayedRows: (page) =>
+                        `${page.from}-
+                      ${page.to} trên ${page.count}`,
+                    },
+                  }}
                 />
               </div>
             )}

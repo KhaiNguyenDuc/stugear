@@ -21,93 +21,125 @@ import { LOCALE_TEXT } from "utils/Constant";
 import CustomPagination from "components/Pagination/Pagination";
 import SoftButton from "components/SoftButton";
 
+function Author({ id, name, email }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox mr={2}>
+        <UserModal userId={id} />
+      </SoftBox>
+      <SoftBox display="flex" flexDirection="column">
+        <SoftTypography variant="button" fontWeight="medium">
+          {name}
+        </SoftTypography>
+        <SoftTypography variant="caption" color="secondary">
+          {email}
+        </SoftTypography>
+      </SoftBox>
+    </SoftBox>
+  );
+}
+
 function Withdraws() {
   const [isLoading, setLoading] = useState(false);
   const [withdraws, setWithdraws] = useState([]);
-  const [pageCount, setPageCount] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
     const fetchWithdraws = async () => {
       setLoading(true);
-      const response = await AskService.getListWithdraws(currentPage);
+      const response = await AskService.getListWithdraws();
       if (response?.status !== 400) {
-        setPageCount(response?.data?.total_page)
         setWithdraws(response.data);
       }
       setLoading(false);
     };
     fetchWithdraws();
-  }, [currentPage]);
+  }, []);
 
   const updateStatus = async (selectedWithdraw, selectedStatus) => {
     const response = await AskService.updateWithdrawStatus(
       selectedWithdraw,
       parseInt(selectedStatus)
     );
-  
+
     if (response?.status !== 400) {
-      setWithdraws(withdraws.map(withdraw => {
-        if (withdraw?.id === selectedWithdraw) {
-          let statusString;
-          switch (selectedStatus) {
-            case "3":
-              statusString = "Đã hủy";
-              break;
-            case "2":
-              statusString = "Đã xử lý hoàn tất";
-              break;
-            default:
-              statusString = "Mới tạo"; // Default status
-              break;
+      setWithdraws(
+        withdraws.map((withdraw) => {
+          if (withdraw?.id === selectedWithdraw) {
+            let statusString;
+            switch (selectedStatus) {
+              case "3":
+                statusString = "Đã hủy";
+                break;
+              case "2":
+                statusString = "Đã xử lý hoàn tất";
+                break;
+              default:
+                statusString = "Mới tạo"; // Default status
+                break;
+            }
+
+            return { ...withdraw, status: statusString };
           }
-      
-          return { ...withdraw, status: statusString };
-        }
-        return withdraw;
-      }));
+          return withdraw;
+        })
+      );
     } else {
       setError(response?.data?.message);
     }
   };
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'owner_id', headerName: 'Người yêu cầu', width: 150, renderCell: (params) => <Author id={params.row.owner_id} /> },
-    { field: 'amount', headerName: 'Số tiền', width: 110 },
-    { field: 'description', headerName: 'Nội dung', width: 400 },
-    { field: 'status', headerName: 'Trạng thái', width: 300, 
-    renderCell: (params) => (
-      <>
-       <StatusBadge status={params.row.status} />
-      {params.row.status == "Mới tạo" && params.row.status !== "Đã hủy" && (
-          <> 
-          <SoftButton
-          ml={2}
-          variant="text"
-          color={"success"}
-          onClick={() => updateStatus(params.row.id, "2")}
-        >
-          {"Đã xử lý?"}
-        </SoftButton>
-     
+    { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "owner",
+      headerName: "Người yêu cầu",
+      width: 300,
+      renderCell: (params) => (
+        <Author
+          id={params.row.owner.id}
+          name={params.row.owner.name}
+          email={params.row.owner.email}
+        />
+      ),
+      valueGetter: (params) => `${params.email || ""} ${params.name || ""}`,
+    },
+    { field: "amount", headerName: "Số tiền", width: 110 },
+    { field: "description", headerName: "Nội dung", width: 400 },
+    {
+      field: "status",
+      headerName: "Trạng thái",
+      width: 300,
+      renderCell: (params) => (
+        <>
+          <StatusBadge status={params.row.status} />
+          {params.row.status == "Mới tạo" && params.row.status !== "Đã hủy" && (
+            <>
+              <SoftButton
+                ml={2}
+                variant="text"
+                color={"success"}
+                onClick={() => updateStatus(params.row.id, "2")}
+              >
+                {"Đã xử lý?"}
+              </SoftButton>
+            </>
+          )}
+          {params.row.status !== "Đã xử lý hoàn tất" && params.row.status !== "Đã hủy" && (
+            <SoftButton
+              ml={2}
+              variant="text"
+              color={"error"}
+              onClick={() => updateStatus(params.row.id, "3")}
+            >
+              {"Hủy?"}
+            </SoftButton>
+          )}
         </>
-        )}
-        {params.row.status !== "Đã xử lý hoàn tất" && params.row.status !== "Đã hủy" && (
-             <SoftButton
-             ml={2}
-             variant="text"
-             color={"error"}
-             onClick={() => updateStatus(params.row.id, "3")}
-           >
-             {"Hủy?"}
-           </SoftButton>
-        )}
-      </>
-   ) },
+      ),
+    },
   ];
 
   const rows = withdraws.map((withdraw) => ({
     id: withdraw.id,
-    owner_id: withdraw.owner_id,
+    owner: { id: withdraw.owner_id, email: withdraw.email, name: withdraw.name },
     amount: withdraw.amount,
     description: withdraw.description,
     status: withdraw.status,
@@ -123,7 +155,7 @@ function Withdraws() {
               <SoftTypography variant="h6">Người dùng</SoftTypography>
             </SoftBox>
             {isLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+              <div style={{ display: "flex", justifyContent: "center", margin: "20px 0" }}>
                 <CircularProgress />
               </div>
             ) : (
@@ -132,12 +164,18 @@ function Withdraws() {
                   rows={rows}
                   columns={columns}
                   localeText={LOCALE_TEXT}
-                  hideFooter={true}
-                />
-                 <CustomPagination
-                  currentPage={currentPage}
-                  totalPage={pageCount}
-                  setCurrentPage={setCurrentPage}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 5 } },
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  slotProps={{
+                    pagination: {
+                      labelRowsPerPage: "Số dòng 1 trang",
+                      labelDisplayedRows: (page) =>
+                        `${page.from}-
+                      ${page.to} trên ${page.count}`,
+                    },
+                  }}
                 />
               </div>
             )}
@@ -146,16 +184,6 @@ function Withdraws() {
       </SoftBox>
       <Footer />
     </DashboardLayout>
-  );
-}
-
-function Author({ id }) {
-  return (
-    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
-      <SoftBox mr={2}>
-        <UserModal userId={id} />
-      </SoftBox>
-    </SoftBox>
   );
 }
 

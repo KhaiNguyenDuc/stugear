@@ -12,10 +12,34 @@ class AskRepository extends BaseRepository implements AskRepositoryInterface
         return Ask::class;
     }
 
-    public function getListAskByType($type, $limit)
+    public function getListReport($limit)
     {
-        $asks = Ask::where('type', $type)->paginate($limit);
-        return $asks;
+        return $asks = 
+        Ask::where('type', 2)
+        ->join('users as owner', 'asks.owner_id', '=', 'owner.id')
+        ->join('users as denounced', 'asks.denounced_id', '=', 'denounced.id')
+        ->select(
+            'asks.*',
+            'owner.name as owner_name',
+            'owner.email as owner_email',
+            'denounced.name as denounced_name',
+            'denounced.email as denounced_email'
+        )
+        ->paginate($limit);
+    }
+
+    
+    public function getListWithdraw($limit)
+    {
+        return $asks = 
+        Ask::where('type', 1)
+        ->join('users as owner', 'asks.owner_id', '=', 'owner.id')
+        ->select(
+            'asks.*',
+            'owner.name as owner_name',
+            'owner.email as owner_email',
+        )
+        ->paginate($limit);
     }
 
     public function getListAskByCurrentUser($type, $limit, $userId)
