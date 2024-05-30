@@ -47,6 +47,7 @@ Route::controller(VerifyController::class)->prefix('products')->group(function (
 Route::controller(ProductController::class)->prefix('products')->group(function (){
     Route::get('/', 'index');
     Route::get('/all-status', 'getAllStatusProduct');
+    Route::get('/general-status', 'getAdminGeneralStatus');
     Route::get('/all-transaction', 'getAllTransactionMethod');
     Route::get('/current', 'getProductByCurrentUser');
     Route::get('/search','searchByName');
@@ -64,6 +65,7 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::post('/{id}/upload-image', 'uploadImage')->middleware('auth_jwt');
     Route::get('/{id}/images', 'getImage');
     Route::delete('/{id}', 'delete')->middleware('auth_jwt');
+    
 });
 
 

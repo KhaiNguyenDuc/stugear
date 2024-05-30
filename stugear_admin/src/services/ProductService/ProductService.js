@@ -24,6 +24,13 @@ class ProductService {
             status: statusId
         })
       }
+
+      getGeneralStatus(){
+        return axiosPrivate
+        .get(PRODUCT_URL + "/general-status")
+        .then((response) => response?.data?.data)
+        .catch((error) => error?.response);
+      }
 }
 
 export default new ProductService();

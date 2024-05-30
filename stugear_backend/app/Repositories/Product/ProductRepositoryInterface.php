@@ -24,4 +24,6 @@ interface ProductRepositoryInterface extends RepositoryInterface
     public function searchWithCriteria($request, $limit);
 
     public function getFullProductById($id);
+    public function getAdminGeneralStatus();
+    
 }

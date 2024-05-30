@@ -41,18 +41,58 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import { useEffect, useState } from "react";
+import ThreadService from "services/ThreadService/ThreadService";
+import ProductService from "services/ProductService/ProductService";
 
 function Dashboard() {
   const { size } = typography;
+  const [mostReplyThread, setMostReplyThread] = useState({});
+  const [mostRecentThread, setMostRecentThread] = useState({});
+  const [generalStatus, setGeneralStatus] = useState({});
   const { chart, items } = reportsBarChartData;
-  const statistics = 
-    {
-      id: 1,
-      total_product: "1249",
-      total_user: "145",
-      total_thread: "4000",
-      total_transaction: "200"
+  const statistics = {
+    id: 1,
+    total_product: "1249",
+    total_user: "145",
+    total_thread: "4000",
+    total_transaction: "200",
+  };
+  const getMostReplyThread = async () => {
+    const response = await ThreadService.getAllThreads(1, {
+      status: "reply",
+      tags: [],
+      key: "",
+      categories: [],
+    });
+    if(response?.status != 400){
+      setMostReplyThread(response?.data[0]);
     }
+  };
+  const getMostRecentThread = async () => {
+    const response = await ThreadService.getAllThreads(1, {
+      status: "new",
+      tags: [],
+      key: "",
+      categories: [],
+    });
+    if(response?.status != 400){
+      setMostRecentThread(response?.data[0]);
+    }
+  };
+
+  const getGeneralStatus = async () => {
+    const response = await ProductService.getGeneralStatus();
+    if(response?.status != 400){
+      setGeneralStatus(response);
+    }
+  };
+  
+  useEffect(() => {
+    getMostRecentThread();
+    getMostReplyThread();
+    getGeneralStatus();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -63,7 +103,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Tổng sản phẩm" }}
-                count={statistics.total_product}
+                count={generalStatus?.total_products}
                 // percentage={{ color: "success", text: "+55%" }}
                 icon={{ color: "info", component: "book" }}
               />
@@ -71,7 +111,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Tổng người dùng" }}
-                count={statistics.total_user}
+                count={generalStatus?.total_users}
                 // percentage={{ color: "success", text: "+3%" }}
                 icon={{ color: "info", component: "people" }}
               />
@@ -79,7 +119,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Tổng bài đăng" }}
-                count={statistics.total_thread}
+                count={generalStatus?.total_threads}
                 // percentage={{ color: "error", text: "-2%" }}
                 icon={{ color: "info", component: "emoji_events" }}
               />
@@ -87,7 +127,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Tổng giao dịch" }}
-                count={statistics.total_transaction}
+                count={generalStatus?.total_orders}
                 // percentage={{ color: "success", text: "+5%" }}
                 icon={{
                   color: "info",
@@ -100,38 +140,21 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={7}>
-              <BuildByDevelopers />
+              <BuildByDevelopers mostReplyThread={mostReplyThread}/>
             </Grid>
             <Grid item xs={12} lg={5}>
-              <WorkWithTheRockets />
+              <WorkWithTheRockets mostRecentThread={mostRecentThread}/>
             </Grid>
           </Grid>
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={5}>
-              <ReportsBarChart
-                title="Thống kê bài đăng"
-                chart={chart}
-                items={items}
-              />
+              <ReportsBarChart title="Thống kê bài đăng" chart={chart} items={items} />
             </Grid>
             <Grid item xs={12} lg={7}>
               <GradientLineChart
                 title="Số sản phẩm được đăng"
-                // description={
-                //   <SoftBox display="flex" alignItems="center">
-                //     <SoftBox fontSize={size.lg} color="success" mb={0.3} mr={0.5} lineHeight={0}>
-                //       <Icon className="font-bold">arrow_upward</Icon>
-                //     </SoftBox>
-                //     <SoftTypography variant="button" color="text" fontWeight="medium">
-                //       4% more{" "}
-                //       <SoftTypography variant="button" color="text" fontWeight="regular">
-                //         in 2021
-                //       </SoftTypography>
-                //     </SoftTypography>
-                //   </SoftBox>
-                // }
                 height="20.25rem"
                 chart={gradientLineChartData}
               />

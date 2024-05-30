@@ -1059,4 +1059,16 @@ class ProductController extends Controller
             'total_in_all_page' => $products->total()
         ]);
     }
+
+    public function getAdminGeneralStatus()
+    {
+  
+        $status = $this->productRepository->getAdminGeneralStatus();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $status
+        ]);
+    }
+
 }
