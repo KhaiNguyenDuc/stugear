@@ -25,6 +25,17 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $category;
 
     }
+    public function getAllProductInfo($limit)
+    {
+        
+        return $this->model->join('users', 'products.user_id', '=', 'users.id')
+        ->select('products.*',
+        'users.name as owner_name',
+        'users.email as owner_email')
+        ->paginate($limit);
+
+    }
+    
 
     public function getFullProductById($id)
     {

@@ -25,19 +25,16 @@ import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import Table from "examples/Tables/Table";
 
 // Data
 import ordersTableData from "layouts/orders/data/ordersTableData";
-import CustomPagination from "components/Pagination/Pagination";
 import { useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { LOCALE_TEXT } from "utils/Constant";
 
 function Orders() {
   const [isLoading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const { columns, rows, pageCount } = ordersTableData(currentPage, setLoading);
+  const { columns, rows } = ordersTableData(setLoading);
 
   return (
     <DashboardLayout>
@@ -49,26 +46,31 @@ function Orders() {
               <SoftTypography variant="h6">Đơn hàng</SoftTypography>
             </SoftBox>
             {isLoading ? (
-              <div className="mx-auto my-4" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+              <div className="mx-auto my-4" style={{ marginLeft: "auto", marginRight: "auto" }}>
                 <CircularProgress />
               </div>
             ) : (
-             <>
-              <div className="mb-3">
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  localeText={LOCALE_TEXT}
-                  hideFooter={true}
-                />
-             
-              </div>
-                 <CustomPagination
-                 currentPage={currentPage}
-                 totalPage={pageCount}
-                 setCurrentPage={setCurrentPage}
-               />
-             </>
+              <>
+                <div className="mb-3">
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    localeText={LOCALE_TEXT}
+                    initialState={{
+                      pagination: { paginationModel: { pageSize: 5 } },
+                    }}
+                    pageSizeOptions={[5, 10, 25]}
+                    slotProps={{
+                      pagination: {
+                        labelRowsPerPage: "Số dòng 1 trang",
+                        labelDisplayedRows: (page) =>
+                          `${page.from}-
+                    ${page.to} trên ${page.count}`,
+                      },
+                    }}
+                  />
+                </div>
+              </>
             )}
           </Card>
         </SoftBox>
@@ -77,6 +79,5 @@ function Orders() {
     </DashboardLayout>
   );
 }
-
 
 export default Orders;

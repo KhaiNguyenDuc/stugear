@@ -44,4 +44,17 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         return $orders;
     }
 
+    public function getAllOrderWithVenderInfo($limit){
+        return $orders = DB::table('orders')
+        ->join('users as buyers', 'orders.user_id', '=', 'buyers.id')
+        ->join('users as sellers', 'orders.seller_id', '=', 'sellers.id')
+        ->select(
+            'orders.*',
+            'buyers.name as buyer_name',
+            'buyers.email as buyer_email',
+            'sellers.name as seller_name',
+            'sellers.email as seller_email'
+        )
+        ->paginate($limit);
+    }
 }

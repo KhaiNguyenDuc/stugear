@@ -594,24 +594,31 @@ class OrderController extends Controller
     public function getAllOrders(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $orders = $this->orderRepository->getAll($limit);
+        $orders = $this->orderRepository->getAllOrderWithVenderInfo($limit);
         $data = [];
         $memberData = [];
+    
         foreach ($orders as $order) {
             $product = $this->productRepository->getFullProductById($order->product_id);
+            
             $memberData['id'] = $order->id;
-            $memberData['created_date'] = Carbon::parse( $order->created_at)->format('d/m/Y');
+            $memberData['created_date'] = Carbon::parse($order->created_at)->format('d/m/Y');
             $memberData['buyer_id'] = $order->user_id;
+            $memberData['buyer_name'] = $order->buyer_name; // Add buyer name
+            $memberData['buyer_email'] = $order->buyer_email; // Add buyer email
             $memberData['seller_id'] = $order->seller_id;
+            $memberData['seller_name'] = $order->seller_name; // Add seller name
+            $memberData['seller_email'] = $order->seller_email; // Add seller email
             $memberData['product_name'] = $product->name;
             $memberData['product_image'] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/images';
             $memberData['price'] = number_format($order->price) . ' VNĐ';
             $memberData['quantity'] = $order->quantity;
-            $memberData['total'] = number_format($order->total) . 'VNĐ';
+            $memberData['total'] = number_format($order->total) . ' VNĐ';
             $memberData['status'] = $this->getStatus($order->status);
+            
             array_push($data, $memberData);
         }
-
+    
         return response()->json([
             'status' => 'Thành công',
             'message' => 'Lấy dữ liệu thành công',
@@ -622,4 +629,5 @@ class OrderController extends Controller
             'total_in_all_page' => $orders->total()
         ]);
     }
+    
 }

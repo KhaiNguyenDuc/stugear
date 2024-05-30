@@ -1,95 +1,152 @@
 import React, { useState, useEffect } from "react";
+import Card from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
+import { DataGrid, GridEditCellPropsParams } from "@mui/x-data-grid";
+import SoftBox from "components/SoftBox";
+import SoftTypography from "components/SoftTypography";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
+import CategoryService from "services/CategoryService/CategoryService";
+import { LOCALE_TEXT } from "utils/Constant";
+import SoftAvatar from "components/SoftAvatar";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DataGrid } from '@mui/x-data-grid';
+import { Description } from "@mui/icons-material";
 
-const Category = () => {
+function Categories() {
+  const [isLoading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [isLoading, setLoading] = useState(true);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-        const response = []
-    //   const response = await CategoryService.getAllCategories();
-      if (response?.status === 500) {
-        console.log("Something went wrong");
-      } else {
-        setCategories(response);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
+  const [editingCell, setEditingCell] = useState(null);
+
+  const handleFileChange = (event, id) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    const imageURL = URL.createObjectURL(file);
+
+    setCategories(prevCategories => {
+      return prevCategories.map(category => {
+        if (category.id === id) {
+          return {
+            ...category,
+            image: imageURL
+          };
+        }
+        return category;
+      });
+    });
+    formData.append("image", file);
+    CategoryService.uploadImage(id, formData);
   };
 
   useEffect(() => {
-    loadData();
+    const fetchCategories = async () => {
+      setLoading(true);
+      const response = await CategoryService.getAllCategories();
+      if (response?.status !== 400) {
+        setCategories(response.data);
+      }
+      setLoading(false);
+    };
+    fetchCategories();
   }, []);
-
+  const rows = categories.map((category) => ({
+    id: category.id,
+    name: category.name,
+    description: category.description,
+    image: category.image,
+  }));
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'name', headerName: 'Tên danh mục', width: 200 },
-    { field: 'description', headerName: 'Mô tả', width: 300 },
+    { field: "id", headerName: "ID", width: 90 },
+    { field: "name", headerName: "Tên", width: 200, editable: true },
+    { field: "description", headerName: "Mô tả", width: 400, editable: true,},
     {
-      field: 'image',
-      headerName: 'Hình ảnh',
-      width: 200,
+      field: "image",
+      headerName: "Ảnh",
+      width: 100,
       renderCell: (params) => (
-        <Link to={"/home-page/category/" + params.row.id}>
-          <img
-            src={params.value}
-            alt=""
-            className="hover-effect admin-small-img"
-            style={{ width: "90%", height: "100px" }}
-          />
+        <Link to={params.value} target="_blank" rel="noopener noreferrer">
+          <SoftAvatar src={params.value} alt={"category"} size="lg" variant="rounded" />
         </Link>
       ),
     },
     {
-      field: 'edit',
-      headerName: 'Cập nhật',
-      width: 150,
+      field: "upload",
+      headerName: "Đổi ảnh",
       renderCell: (params) => (
-        <Link
-          to={"/home-page/category/edit/" + params.row.id}
-          className="btn"
-        >
-          <FontAwesomeIcon icon="pencil" />
-          Chỉnh sửa
-        </Link>
+        <>
+          <label htmlFor={`file-input-${params.row.upload}`} className="text-success">
+            Đổi ảnh
+          </label>
+          <input
+            id={`file-input-${params.row.upload}`}
+            type="file"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e, params.row.upload)}
+          />
+        </>
       ),
     },
   ];
 
-  return (
-    <>
-      <div className="admin-product">
-        <div className="d-flex justify-content-between my-3">
-          <Link
-            to="/home-page/category/create"
-            className="btn"
-            style={{ backgroundColor: "red" }}
-          >
-            + Tạo mới
-          </Link>
-        </div>
-        <div style={{ height: 400, width: '100%' }}>
-          {isLoading ? (
-            <></>
-            // <Loading />
-          ) : (
-            <DataGrid
-              rows={categories}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10, 20]}
-            />
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
 
-export default Category;
+  const handleEditCellChange = (editCellProps) => {
+    try {
+      console.log(editCellProps)
+ 
+      CategoryService.updateById(editCellProps.id, {
+        id: editCellProps.id,
+        name: editCellProps.name,
+        description: editCellProps.description
+      });
+      
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+    return editCellProps
+  };
+  
+
+  return (
+    <DashboardLayout>
+      <DashboardNavbar />
+      <SoftBox py={3}>
+        <SoftBox mb={3}>
+          <Card>
+            <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+              <SoftTypography variant="h6">Danh mục</SoftTypography>
+            </SoftBox>
+            {isLoading ? (
+              <div style={{ display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                <CircularProgress />
+              </div>
+            ) : (
+              <div>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  localeText={LOCALE_TEXT}
+                  pageSizeOptions={[5, 10, 25]}
+                  slotProps={{
+                    pagination: {
+                      labelRowsPerPage: "Số dòng 1 trang",
+                      labelDisplayedRows: (page) => `${page.from}-${page.to} trên ${page.count}`,
+                    },
+                  }}
+                  editMode="row"
+                  processRowUpdate={(newRow) =>
+                    handleEditCellChange(newRow, categories.find((row) => row.id === newRow.id))
+                  }
+                  onProcessRowUpdateError={(error) => console.log(error)}
+                />
+              </div>
+            )}
+          </Card>
+        </SoftBox>
+      </SoftBox>
+      <Footer />
+    </DashboardLayout>
+  );
+}
+
+export default Categories;

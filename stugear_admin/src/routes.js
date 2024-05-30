@@ -10,7 +10,7 @@ import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
 import Document from "examples/Icons/Document";
 import Orders from "layouts/orders";
-import { People, Report, Today, PanoramaPhotosphere } from "@mui/icons-material";
+import { People, Report, PanoramaPhotosphere, Book, Menu } from "@mui/icons-material";
 import useAuth from "hook/useAuth";
 import { Navigate } from "react-router-dom";
 import Reports from "layouts/report";
@@ -32,7 +32,7 @@ const routes = [
     key: "dashboard",
     route: "/dashboard",
     icon: <Shop size="12px" />,
-    component: <Dashboard />,
+    component:  <ProtectedRoute><Dashboard /></ProtectedRoute>,
     noCollapse: true,
   },
   {
@@ -42,6 +42,24 @@ const routes = [
     route: "/users",
     icon: <People size="12px" />,
     component: <ProtectedRoute><Users /></ProtectedRoute>,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Danh mục",
+    key: "categories",
+    route: "/categories",
+    icon: <Book size="12px" />,
+    component: <ProtectedRoute><Category /></ProtectedRoute>,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Sản phẩm",
+    key: "products",
+    route: "/products",
+    icon: <Menu size="12px" />,
+    component: <ProtectedRoute><Products /></ProtectedRoute>,
     noCollapse: true,
   },
   {

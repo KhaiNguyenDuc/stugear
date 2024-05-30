@@ -34,7 +34,6 @@ import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
 
 // Soft UI Dashboard React examples
-import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
 
 // Custom styles for DashboardNavbar
@@ -145,21 +144,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox pr={1}>
-              <SoftInput
-                placeholder="Tìm kiếm..."
-                icon={{ component: "search", direction: "left" }}
-              />
+            
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
               {localStorage.getItem("user_id") ? (
-                <Link to={"/profile"}>
+                
                 <IconButton>
-                <SoftAvatar  shadow={"sm"} src={BASE_URL + `/api/users/${localStorage.getItem("user_id")}/images`} alt="avatar" />     
+                <SoftAvatar  shadow={"sm"} src={BASE_URL + `/users/${localStorage.getItem("user_id")}/images`} alt="avatar" />     
                  <SoftTypography
                       variant="button"
                       fontWeight="medium"
@@ -169,7 +164,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     </SoftTypography>
                 </IconButton>
                 
-                </Link>
+                
                    ) : (
               <Link to="/authentication/sign-in">
                   <IconButton sx={navbarIconButton} size="small">

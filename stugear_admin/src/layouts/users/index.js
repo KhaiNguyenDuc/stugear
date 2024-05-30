@@ -23,11 +23,8 @@ import { LOCALE_TEXT } from "utils/Constant";
 
 function Users() {
   const [isLoading, setLoading] = useState(false);
-  
-  const [pageSize, setPageSize] = useState(10);
-  const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
-  const { columns, rows, pageCount } = authorsTableData(currentPage, itemsPerPage, setLoading);
+  const { columns, rows, pageCount } = authorsTableData(setLoading);
 
   return (
     <DashboardLayout>
@@ -44,18 +41,24 @@ function Users() {
               </SoftBox>
             ) : (
               <div>
-              <DataGrid
-                rows={rows}
-                columns={columns}
-                localeText={LOCALE_TEXT}
-                hideFooter={true}
-              />
-              <CustomPagination
-                  currentPage={currentPage}
-                  totalPage={pageCount}
-                  setCurrentPage={setCurrentPage}
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  localeText={LOCALE_TEXT}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 5 } },
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  slotProps={{
+                    pagination: {
+                      labelRowsPerPage: "Số dòng 1 trang",
+                      labelDisplayedRows: (page) =>
+                        `${page.from}-
+                    ${page.to} trên ${page.count}`,
+                    },
+                  }}
                 />
-            </div>
+              </div>
             )}
           </Card>
         </SoftBox>
