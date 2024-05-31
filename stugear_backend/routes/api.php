@@ -12,6 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\QueueStatusController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
@@ -170,11 +171,6 @@ Route::controller(MessageController::class)->prefix('chats')->group(function () 
     Route::post('/', 'sendMessage');//->middleware('auth_jwt');
 });
 
-
-
-
-
-
-
-
-
+Route::controller(QueueStatusController::class)->prefix('queue')->group(function () {
+    Route::get('/status',  'checkQueueStatus');
+});
