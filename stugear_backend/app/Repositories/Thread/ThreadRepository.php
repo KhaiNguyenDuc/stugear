@@ -86,24 +86,29 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
 
         // Join with the validations table
         $query->join('validations', 'threads.id', '=', 'validations.thread_id');
+        $role = [];
          // Additional conditions
-         if($request){
-            $token = $request->header();
-            $bareToken = substr($token['authorization'][0], 7);
-            $userId = AuthService::getUserId($bareToken);
-    
-    
-            $role = DB::table('user_roles')
-                ->where('user_id', $userId)
-                ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-                ->pluck('roles.role_name')
-                ->toArray();
-    
-            if (!in_array('ADMIN', $role)) {
-                $allowStatus = 1;
-                $query->where('validations.status', $allowStatus);
-            }
+         if ($request) {
+            $token = $request->header('authorization');
+            
+            // Check if the authorization header is present
+            if ($token) {
+                $bareToken = substr($token, 7);
+                $userId = AuthService::getUserId($bareToken);
+        
+                $role = DB::table('user_roles')
+                    ->where('user_id', $userId)
+                    ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+                    ->pluck('roles.role_name')
+                    ->toArray();
+        
+                if (!in_array('ADMIN', $role)) {
+                    $allowStatus = 1;
+                    $query->where('validations.status', $allowStatus);
+                }
+            } 
         }
+        
         
         $query->select( 
             'threads.id',
