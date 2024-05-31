@@ -49,15 +49,9 @@ function Dashboard() {
   const { size } = typography;
   const [mostReplyThread, setMostReplyThread] = useState({});
   const [mostRecentThread, setMostRecentThread] = useState({});
+  const [topRecentThread, setTopRecentThread] = useState();
   const [generalStatus, setGeneralStatus] = useState({});
   const { chart, items } = reportsBarChartData;
-  const statistics = {
-    id: 1,
-    total_product: "1249",
-    total_user: "145",
-    total_thread: "4000",
-    total_transaction: "200",
-  };
   const getMostReplyThread = async () => {
     const response = await ThreadService.getAllThreads(1, {
       status: "reply",
@@ -78,6 +72,7 @@ function Dashboard() {
     });
     if(response?.status != 400){
       setMostRecentThread(response?.data[0]);
+      setTopRecentThread(response?.data);
     }
   };
 

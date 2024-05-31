@@ -94,7 +94,7 @@ const productsTableData = (setLoading) => {
       field: "title",
       headerName: "Tên sản phẩm",
       width: 500,
-      renderCell: (params) => <Product id={params.row.id} name={params.row.title.title} />,
+      renderCell: (params) => <Product id={params.row.product.id} name={params.row.title.title} />,
     },
     { field: "price", headerName: "Giá", width: 120 },
     { field: "condition", headerName: "Tình trạng", width: 150 },

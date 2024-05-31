@@ -10,11 +10,13 @@ import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
 import Document from "examples/Icons/Document";
 import Orders from "layouts/orders";
-import { People, Report, PanoramaPhotosphere, Book, Menu } from "@mui/icons-material";
+import { People, Report, PanoramaPhotosphere, Book, Menu, PostAdd, Code } from "@mui/icons-material";
 import useAuth from "hook/useAuth";
 import { Navigate } from "react-router-dom";
 import Reports from "layouts/report";
 import Category from "layouts/categories";
+import Threads from "layouts/threads";
+import BotAI from "layouts/botAI";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -73,11 +75,29 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Bài đăng",
+    key: "threads",
+    route: "/threads",
+    icon: <PostAdd size="12px" />,
+    component: <ProtectedRoute><Threads /></ProtectedRoute>,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
     name: "Yêu cầu rút tiền",
     key: "withdraws",
     route: "/withdraws",
     icon: <Office size="12px" />,
     component: <ProtectedRoute><Withdraws/></ProtectedRoute>,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Trợ lý ảo",
+    key: "Bot-AI",
+    route: "/Bot-AI",
+    icon: <Code size="12px" />,
+    component: <ProtectedRoute><BotAI/></ProtectedRoute>,
     noCollapse: true,
   },
   {

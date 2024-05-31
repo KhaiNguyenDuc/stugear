@@ -6,6 +6,7 @@ use App\Models\Thread;
 use App\Repositories\BaseRepository;
 use App\Repositories\Thread\ThreadRepositoryInterface;
 use App\Util\AppConstant;
+use App\Util\AuthService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -51,7 +52,7 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
         DB::table('product_tags')->insert($insertData);
     }
 
-    public function getWithCriteria($tag, $key, $status, $categories, $limit)
+    public function getWithCriteria($tag, $key, $status, $categories, $limit, $request = null)
     {
         $query = DB::table('threads');
 
@@ -85,9 +86,26 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
 
         // Join with the validations table
         $query->join('validations', 'threads.id', '=', 'validations.thread_id');
-        $allowStatus = 1;
-        $query->where('validations.status', $allowStatus);
-        $query->select(
+         // Additional conditions
+         if($request){
+            $token = $request->header();
+            $bareToken = substr($token['authorization'][0], 7);
+            $userId = AuthService::getUserId($bareToken);
+    
+    
+            $role = DB::table('user_roles')
+                ->where('user_id', $userId)
+                ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+                ->pluck('roles.role_name')
+                ->toArray();
+    
+            if (!in_array('ADMIN', $role)) {
+                $allowStatus = 1;
+                $query->where('validations.status', $allowStatus);
+            }
+        }
+        
+        $query->select( 
             'threads.id',
             'threads.title',
             'threads.description',
@@ -101,10 +119,13 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             'threads.updated_at',
         )->distinct();
 
-        // Additional conditions
+       
+        if (in_array('ADMIN', $role)) {
+            return $query->paginate($limit);
+        }
+
         $query->whereNull('threads.deleted_by');
         $query->whereNull('threads.deleted_at');
-
         return $query->paginate($limit);
     }
 
@@ -163,5 +184,6 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
             ->count();
         return $result;
     }
+
 
 }

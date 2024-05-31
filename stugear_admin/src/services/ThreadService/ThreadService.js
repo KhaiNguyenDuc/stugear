@@ -9,7 +9,7 @@ class ThreadService {
    
     let url = THREAD_URL + "/filter";
     if (currentPage !== undefined) {
-      url += `?page=${currentPage}&limit=8`;
+      url += `?page=${currentPage}&limit=6`;
     }else{
       url += `?page=1&limit=100`;
     }
@@ -18,6 +18,13 @@ class ThreadService {
       .then(response => response?.data)
       .catch(error => error?.response)
   }
+
+  updateStatus(id, statusId) {
+    axiosPrivate.patch(THREAD_URL + `/${id}/status`, {
+      status: statusId,
+    });
+  }
+
 
 }
 

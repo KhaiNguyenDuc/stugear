@@ -65,14 +65,36 @@ class ValidationRepository extends BaseRepository implements ValidationRepositor
     {
         try {
             $result = DB::table('validations')
-            ->where('thread_id', '=', $threadId)
-            ->update([
-                'status' => $status
-            ]);
+                ->where('thread_id', '=', $threadId)
+                ->update([
+                    'status' => $status
+                ]);
         } catch (\Throwable $th) {
             Log::error($th);
         }
 
         return $result;
     }
+
+    
+    public function updateStatusProduct($productId, $status) {
+        try {
+            $result = DB::table('validations')
+                ->where('product_id', '=', $productId)
+                ->update([
+                    'status' => $status
+                ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+
+        return $result;
+    }
+
+    public function getAllValidations($limit)
+    {
+        return DB::table('validations')
+            ->get();
+    }
+
 }

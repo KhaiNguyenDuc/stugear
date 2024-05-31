@@ -60,8 +60,8 @@ const authorsTableData = (setLoading) => {
     ),
     valueGetter: (params) => (
       `${params.email || ""} ${params.name || ""}`),},
-    { field: "role_name", align: "left", headerName: "Vai trò", with: 100},
-    { field: "is_enable", align: "center", headerName: "Trạng thái", with: 300, renderCell: (params) => (
+    { field: "role_name", align: "left", headerName: "Vai trò"},
+    { field: "is_enable", align: "center", headerName: "Trạng thái", renderCell: (params) => (
       <SoftBadge
         variant="gradient"
         badgeContent={params.row.is_enable == "1" ? "Hoạt động" : "Chặn"}
@@ -70,7 +70,7 @@ const authorsTableData = (setLoading) => {
         container
       />
     )},
-    { field: "status", align: "center", headerName: "Cập nhật", renderCell: (params) => (
+    { field: "status", align: "left", headerName: "Cập nhật", width: 120, renderCell: (params) => (
       <SoftButton
         onClick={() => {
           updateStatus(params.row.id, params.row.is_enable == 1 ? 0 : 1);

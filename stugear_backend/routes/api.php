@@ -17,6 +17,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\ValidationController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::post('/register', 'register');
@@ -26,7 +27,9 @@ Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::post('/reset-password', 'resetPassword');
 });
 
-
+Route::controller(ValidationController::class)->prefix('validations')->group(function (){
+    Route::get('/', 'getAllValidations')->middleware('admin_permission');;
+});
 
 Route::controller(CategoryController::class)->prefix('categories')->group(function (){
     Route::get('/', 'index');
@@ -61,6 +64,8 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::post('/draft', 'createDraft')->middleware('auth_jwt');
     Route::patch('/{id}/update','updateProduct')->middleware('auth_jwt');
     Route::patch('/status/{id}','updateStatus')->middleware('auth_jwt');
+    Route::patch('/admin/status/{id}','updateStatusProduct')->middleware('admin_permission');
+    
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
     Route::post('/{id}/upload-image', 'uploadImage')->middleware('auth_jwt');
     Route::get('/{id}/images', 'getImage');

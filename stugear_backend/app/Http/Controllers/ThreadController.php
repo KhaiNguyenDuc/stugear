@@ -65,10 +65,14 @@ class ThreadController extends Controller
         $status = $request->status ?? '';
         $key = $request->key ?? '';
         $categories = $request->categories ?? [];
-        $threads = $this->threadRepository->getWithCriteria($tag, $key, $status, $categories, $limit);
+        $threads = $this->threadRepository->getWithCriteria($tag, $key, $status, $categories, $limit, $request);
         $data = [];
         $memberData = [];
         foreach ($threads as $thread) {
+            $status = DB::table('validations')
+            ->where('thread_id', $thread->id)
+            ->select('status')
+            ->first();
             $memberData['id'] = $thread->id;
             $memberData['title'] = $thread->title;
             $memberData['description'] = $thread->description;
@@ -80,6 +84,7 @@ class ThreadController extends Controller
             $memberData['category'] = $this->categoryRepository->getCategoryById($thread->category_id);
             $memberData['user_id'] = $thread->user_id;
             $memberData['user'] = $this->userRepository->getById($thread->user_id);
+            $memberData['status'] = $status;
             $threadTags = $this->threadRepository->getThreadTagsByThreadId($thread->id);
             $tags = [];
             foreach ($threadTags as $threadTag) {
@@ -505,11 +510,7 @@ class ThreadController extends Controller
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
 
-        $result = $this->validationRepository->save([
-            'status' => $status,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ], $threadId);
+        $result = $this->validationRepository->updateStatusThread($threadId, $status);
 
         $contentForNotification = [
             0 => 'thread ' . $threadId . ' cập nhật trạng thái sang bị cấm',

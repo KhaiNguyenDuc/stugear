@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Events\ProductCreated;
+use App\Mail\ProductStatus;
+use App\Mail\ThreadStatus;
 use App\Models\Product;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\Comment\CommentRepositoryInterface;
+use App\Repositories\Notification\NotificationRepositoryInterface;
 use App\Repositories\Order\OrderRepositoryInterface;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Repositories\Wishlist\WishlistRepositoryInterface;
 use App\Util\AuthService;
 use App\Util\ImageService;
@@ -17,6 +21,8 @@ use Illuminate\Http\Request;
 use App\Util\AppConstant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
@@ -29,6 +35,8 @@ class ProductController extends Controller
     protected $commentRepository;
     protected $orderRepository;
     protected $wishlistRepository;
+    protected $validationRepository;
+    protected $notificationRepository;
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
@@ -37,7 +45,9 @@ class ProductController extends Controller
         UserRepositoryInterface $userRepository,
         CommentRepositoryInterface $commentRepository,
         OrderRepositoryInterface $orderRepository,
-        WishlistRepositoryInterface $wishlistRepository
+        WishlistRepositoryInterface $wishlistRepository,
+        ValidationRepositoryInterface $validationRepository,
+        NotificationRepositoryInterface $notificationRepository
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
@@ -46,6 +56,8 @@ class ProductController extends Controller
         $this->commentRepository = $commentRepository;
         $this->orderRepository = $orderRepository;
         $this->wishlistRepository = $wishlistRepository;
+        $this->validationRepository = $validationRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function index(Request $request)
@@ -1069,6 +1081,67 @@ class ProductController extends Controller
             'message' => 'Lấy dữ liệu thành công',
             'data' => $status
         ]);
+    }
+
+    public function updateStatusProduct(Request $request, $productId)
+    {
+        $status = $request->status ?? '';
+        if ($status == '' || is_null($status) || !in_array($status, AppConstant::$STATUS_OF_PRODUCT)) {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Trạng thái cập nhật không phù hợp!'
+            ], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        $result = $this->validationRepository->updateStatusProduct($productId, $status);
+        $this->productRepository->save(['status' => strval($request->status)], $productId);
+        $contentForNotification = [
+            0 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang bị cấm',
+            1 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang hoạt động',
+            3 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang chờ duyệt'
+        ];
+
+        $product = $this->productRepository->getById($productId);
+
+
+        $this->notificationRepository->save([
+            'user_id' => $product->user_id,
+            'content' => $contentForNotification[$status],
+            'target_id' => $productId,
+            'type' => 'product',
+            'created_at' => Carbon::now(),
+            'created_by' => $userId,
+            'updated_at' => Carbon::now(),
+            'updated_by' => $userId,
+        ]);
+
+        $mailData = [
+            'subject' => 'Stugear xin chào',
+            'content' => 'Link: ' . AppConstant::$DOMAIN . 'product-detail/' . $product->id . ' ' . $contentForNotification[$status],
+            'signature' => 'Stugear'
+        ];
+        try {
+            $user = $this->userRepository->getById($product->user_id);
+            Mail::to($user->email)->send(new ProductStatus($mailData));
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+
+        if ($result) {
+            return response()->json([
+                'status' => 'Thành công',
+                'message' => 'Cập nhật trạng thái thành công',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'Thất bại',
+                'message' => 'Cập nhật trạng thái thất bại'
+            ], 400);
+        }
     }
 
 }
