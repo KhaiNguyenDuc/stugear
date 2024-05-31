@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -30,13 +30,32 @@ import Table from "examples/Tables/Table";
 
 // Data
 import data from "layouts/dashboard/components/Projects/data";
+import ThreadService from "services/ThreadService/ThreadService";
 
 function Projects() {
-  const { columns, rows } = data();
+  
   const [menu, setMenu] = useState(null);
-
+  const [threads, setThreads] = useState();
+  const [threadFilter, setThreadFilter] = useState("mới nhất");
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
+  const { columns, rows } = data(threads);
+  const getThreads = async (criteria) => {
+    const response = await ThreadService.getAllThreads(1, criteria);
+    if(response?.status != 400){
+      setThreads(response?.data);
+    }
+  };
+
+  useEffect(() => {
+      getThreads({
+        status: "new",
+        tags: [],
+        key: "",
+        categories: [],
+      });
+      setThreadFilter("mới nhất")
+  }, [])
 
   const renderMenu = (
     <Menu
@@ -53,9 +72,35 @@ function Projects() {
       open={Boolean(menu)}
       onClose={closeMenu}
     >
-      <MenuItem onClick={closeMenu}>Mới nhất</MenuItem>
-      <MenuItem onClick={closeMenu}>Nhiều lượt phản hồi</MenuItem>
-      <MenuItem onClick={closeMenu}>Nhiều lượt thích</MenuItem>
+      <MenuItem onClick={() => {
+        getThreads({
+          status: "new",
+          tags: [],
+          key: "",
+          categories: [],
+        })
+        closeMenu();
+      }}>Mới nhất</MenuItem>
+      <MenuItem onClick={() => {
+        getThreads({
+          status: "reply",
+          tags: [],
+          key: "",
+          categories: [],
+        })
+        setThreadFilter("nhiều lượt phản hổi nhất")
+        closeMenu();
+      }}>Nhiều lượt phản hồi</MenuItem>
+      <MenuItem onClick={() => {
+        getThreads({
+          status: "like",
+          tags: [],
+          key: "",
+          categories: [],
+        })
+        setThreadFilter("nhiều lượt thích nhất")
+        closeMenu();
+      }}>Nhiều lượt thích</MenuItem>
     </Menu>
   );
 
@@ -64,22 +109,8 @@ function Projects() {
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
         <SoftBox>
           <SoftTypography variant="h6" gutterBottom>
-            Bài đăng
+            Bài đăng {threadFilter}
           </SoftTypography>
-          {/* <SoftBox display="flex" alignItems="center" lineHeight={0}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
-              }}
-            >
-              done
-            </Icon>
-            <SoftTypography variant="button" fontWeight="regular" color="text">
-              &nbsp;<strong>30 done</strong> this month
-            </SoftTypography>
-          </SoftBox> */}
         </SoftBox>
         <SoftBox color="text" px={2}>
           <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>

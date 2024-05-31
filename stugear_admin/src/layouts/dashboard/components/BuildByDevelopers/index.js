@@ -25,17 +25,9 @@ import SoftTypography from "components/SoftTypography";
 // Images
 import wavesWhite from "assets/images/shapes/waves-white.svg";
 import rocketWhite from "assets/images/illustrations/rocket-white.png";
-import { BASE_URL } from "utils/Constant";
+import { FRONTEND_URL } from "utils/Constant";
 
-function BuildByDevelopers() {
-
-  const mostRepyThread = 
-    {
-      thread_id: 1,
-      criteria: "Nhiều lượt phản hồi nhất",
-      name: "Trang đẹp quá ta",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut."
-    }
+function BuildByDevelopers({mostReplyThread}) {
 
   return (
     <Card>
@@ -45,20 +37,20 @@ function BuildByDevelopers() {
             <SoftBox display="flex" flexDirection="column" height="100%">
               <SoftBox pt={1} mb={0.5}>
                 <SoftTypography variant="body2" color="text" fontWeight="medium">
-                  {mostRepyThread.criteria}
+                Nhiều lượt phản hồi nhất
                 </SoftTypography>
               </SoftBox>
               <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
-              {mostRepyThread.name}
+              {mostReplyThread.title}
               </SoftTypography>
               <SoftBox mb={6}>
                 <SoftTypography variant="body2" color="text">
-                {mostRepyThread.description}
+                {mostReplyThread.description}
                 </SoftTypography>
               </SoftBox>
               <SoftTypography
                 component="a"
-                href={BASE_URL + `/thread/${mostRepyThread.thread_id}`}
+                href={FRONTEND_URL + `/thread/${mostReplyThread.id}`}
                 target="_blank"
                 variant="button"
                 color="text"

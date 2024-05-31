@@ -19,3 +19,5 @@ export const LOCALE_TEXT = {
     noRowsLabel: "This is a custom message",
     // Add more translations as needed
   };
+
+export const FRONTEND_URL = "https://stugear.website"

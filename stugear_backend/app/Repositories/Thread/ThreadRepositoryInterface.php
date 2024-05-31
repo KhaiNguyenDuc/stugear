@@ -8,7 +8,7 @@ interface ThreadRepositoryInterface extends RepositoryInterface
 {
     public function attachTag($id, $tags, $userId);
 
-    public function getWithCriteria($tag, $key, $status, $categories, $limit);
+    public function getWithCriteria($tag, $key, $status, $categories, $limit, $request = null);
 
     public function getThreadTagsByThreadId($threadId);
 
@@ -17,5 +17,7 @@ interface ThreadRepositoryInterface extends RepositoryInterface
     public function deletedReplyOfThread($threadId, $userId);
 
     public function getTotalThreads();
+
+
 
 }

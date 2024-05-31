@@ -14,4 +14,8 @@ interface ValidationRepositoryInterface extends RepositoryInterface
     public function getByProductId($productId);
 
     public function updateStatusThread($threadId, $status);
+    public function updateStatusProduct($productId, $status);
+    public function getAllValidations($limit);
+
+    
 }
