@@ -18,6 +18,7 @@ use App\Repositories\Validation\ValidationRepository;
 use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Util\AppConstant;
 use App\Util\PromptConstant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

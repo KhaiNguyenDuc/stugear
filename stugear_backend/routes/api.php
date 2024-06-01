@@ -9,6 +9,7 @@ use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -173,4 +174,9 @@ Route::controller(MessageController::class)->prefix('chats')->group(function () 
 
 Route::controller(QueueStatusController::class)->prefix('queue')->group(function () {
     Route::get('/status',  'checkQueueStatus');
+});
+
+Route::controller(ConfigurationController::class)->prefix('config')->group(function () {
+    Route::get('/status',  'getStatus');
+    Route::patch('/status',  'updateStatus');
 });

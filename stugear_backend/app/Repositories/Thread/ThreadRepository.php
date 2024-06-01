@@ -101,12 +101,13 @@ class ThreadRepository extends BaseRepository implements ThreadRepositoryInterfa
                     ->join('roles', 'user_roles.role_id', '=', 'roles.id')
                     ->pluck('roles.role_name')
                     ->toArray();
-        
-                if (!in_array('ADMIN', $role)) {
-                    $allowStatus = 1;
-                    $query->where('validations.status', $allowStatus);
-                }
+      
             } 
+        }
+                      
+        if (!in_array('ADMIN', $role)) {
+            $allowStatus = 1;
+            $query->where('validations.status', $allowStatus);
         }
         
         
