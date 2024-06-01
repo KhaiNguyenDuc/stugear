@@ -26,6 +26,7 @@ class Message implements ShouldBroadcast
      */
     public function __construct($sender_id, $receiver_id, $message, $time)
     {
+        Carbon::setLocale('vi');
         $this->sender_id = $sender_id;
         $this->receiver_id = $receiver_id;
         $this->message = $message;
