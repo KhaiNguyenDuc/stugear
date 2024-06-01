@@ -11,8 +11,10 @@ use App\Util\PromptConstant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Log\Logger;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class ReplyAIJob implements ShouldQueue
 {
@@ -38,12 +40,16 @@ class ReplyAIJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $result = DB::table("configurations")->where('id',1)->select("is_auto_reply_thread")->first();
+        logger()->info("statusReplyAI: ", [$result]);
+        if ($result->is_auto_reply_thread == 0) {
+            return;
+        }
         $response = $this->sendToGPT($this->thread);
         if($response){
             $assistant = $this->userRepository->getAssistant();
             $this->publishReply($assistant, $response);
         }
-
     }
 
     private function getAssistant(){
@@ -73,7 +79,6 @@ class ReplyAIJob implements ShouldQueue
     }
 
     private function getThreadReplyPrompt(Thread $thread){
-
         return sprintf(PromptConstant::$THREAD_REPLY_PROMPT, $thread->toString());
     }
 }

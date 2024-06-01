@@ -1,30 +1,19 @@
-// @mui material components
+// layouts/threads/index.js
+import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
-
-// Soft UI Dashboard React components
+import { DataGrid } from "@mui/x-data-grid";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
-import SoftBadge from "components/SoftBadge";
-
-// Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import Table from "examples/Tables/Table";
-import CustomPagination from "components/Pagination/Pagination";
-
-// Data
-import { useState } from "react";
-import authorsTableData from "layouts/users/data/authorsTableData";
-import { DataGrid } from "@mui/x-data-grid";
+import threadsTableData from "./data/threadsTableData";
 import { LOCALE_TEXT } from "utils/Constant";
 
-function Users() {
+function Threads() {
   const [isLoading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const { columns, rows, pageCount } = authorsTableData(setLoading);
+  const { columns, rows } = threadsTableData(setLoading);
 
   return (
     <DashboardLayout>
@@ -33,14 +22,14 @@ function Users() {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">Người dùng</SoftTypography>
+              <SoftTypography variant="h6">Bài đăng</SoftTypography>
             </SoftBox>
             {isLoading ? (
-              <SoftBox display="flex" justifyContent="center" alignItems="center" my={4}>
+              <div className="mx-auto my-4" style={{ marginLeft: "auto", marginRight: "auto" }}>
                 <CircularProgress />
-              </SoftBox>
+              </div>
             ) : (
-              <div>
+              <div className="mb-3">
                 <DataGrid
                   rows={rows}
                   columns={columns}
@@ -52,9 +41,8 @@ function Users() {
                   slotProps={{
                     pagination: {
                       labelRowsPerPage: "Số dòng 1 trang",
-                      labelDisplayedRows: (page) =>
-                        `${page.from}-
-                    ${page.to} trên ${page.count}`,
+                      labelDisplayedRows: ({ from, to, count }) =>
+                        `${from}-${to} trên ${count}`,
                     },
                   }}
                 />
@@ -68,4 +56,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Threads;

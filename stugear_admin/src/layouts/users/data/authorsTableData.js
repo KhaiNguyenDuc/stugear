@@ -24,7 +24,7 @@ function Author({ id, name, email }) {
   );
 }
 
-const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
+const authorsTableData = (setLoading) => {
   const [users, setUsers] = useState([]);
   const [pageCount, setPageCount] = useState(0);
 
@@ -42,7 +42,7 @@ const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
   useEffect(() => {
     const getUsers = async () => {
       setLoading(true);
-      const response = await UserService.getAllUsers(currentPage);
+      const response = await UserService.getAllUsers();
       if (response?.status !== 400) {
         const allUsers = response?.data?.data;
         setUsers(allUsers);
@@ -51,15 +51,17 @@ const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
       setLoading(false);
     };
     getUsers();
-  }, [currentPage, itemsPerPage]);
+  }, []);
 
   const columns = [
     { field: "id", align: "center", headerName: "ID", with: 100},
     { field: "name", align: "left", headerName: "Tên", width: 400, renderCell: (params) => (
       <Author id={params.row.id} name={params.row.name.name} email={params.row.name.email} />
-    )},
-    { field: "role_name", align: "left", headerName: "Vai trò", with: 100},
-    { field: "is_enable", align: "center", headerName: "Trạng thái", with: 300, renderCell: (params) => (
+    ),
+    valueGetter: (params) => (
+      `${params.email || ""} ${params.name || ""}`),},
+    { field: "role_name", align: "left", headerName: "Vai trò"},
+    { field: "is_enable", align: "center", headerName: "Trạng thái", renderCell: (params) => (
       <SoftBadge
         variant="gradient"
         badgeContent={params.row.is_enable == "1" ? "Hoạt động" : "Chặn"}
@@ -68,7 +70,7 @@ const authorsTableData = (currentPage, itemsPerPage, setLoading) => {
         container
       />
     )},
-    { field: "status", align: "center", headerName: "Cập nhật", renderCell: (params) => (
+    { field: "status", align: "left", headerName: "Cập nhật", width: 120, renderCell: (params) => (
       <SoftButton
         onClick={() => {
           updateStatus(params.row.id, params.row.is_enable == 1 ? 0 : 1);

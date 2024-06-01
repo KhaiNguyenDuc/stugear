@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Events\ProductCreated;
+use App\Mail\ProductStatus;
+use App\Mail\ThreadStatus;
 use App\Models\Product;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\Comment\CommentRepositoryInterface;
+use App\Repositories\Notification\NotificationRepositoryInterface;
 use App\Repositories\Order\OrderRepositoryInterface;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Tag\TagRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Validation\ValidationRepositoryInterface;
 use App\Repositories\Wishlist\WishlistRepositoryInterface;
 use App\Util\AuthService;
 use App\Util\ImageService;
@@ -17,6 +21,8 @@ use Illuminate\Http\Request;
 use App\Util\AppConstant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
@@ -29,15 +35,20 @@ class ProductController extends Controller
     protected $commentRepository;
     protected $orderRepository;
     protected $wishlistRepository;
+    protected $validationRepository;
+    protected $notificationRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository,
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
         CategoryRepositoryInterface $categoryRepository,
         TagRepositoryInterface $tagRepository,
         UserRepositoryInterface $userRepository,
         CommentRepositoryInterface $commentRepository,
         OrderRepositoryInterface $orderRepository,
-        WishlistRepositoryInterface $wishlistRepository)
-    {
+        WishlistRepositoryInterface $wishlistRepository,
+        ValidationRepositoryInterface $validationRepository,
+        NotificationRepositoryInterface $notificationRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
         $this->tagRepository = $tagRepository;
@@ -45,12 +56,14 @@ class ProductController extends Controller
         $this->commentRepository = $commentRepository;
         $this->orderRepository = $orderRepository;
         $this->wishlistRepository = $wishlistRepository;
+        $this->validationRepository = $validationRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $products = $this->productRepository->getAll($limit);
+        $products = $this->productRepository->getAllProductInfo($limit);
         $data = [];
         $memberData = [];
         foreach ($products as $product) {
@@ -76,14 +89,16 @@ class ProductController extends Controller
             $memberData['brand'] = $product->brand ?? '';
             $memberData['last_updated'] = $product->updated_at ?? '';
             $memberData['owner_image'] = AppConstant::$DOMAIN . 'api/users/' . $product->user->id . '/images';
+            $memberData['owner_name'] = $product->owner_name;
+            $memberData['owner_email'] = $product->owner_email;
             $memberData['user_id'] = $product->user_id;
             array_push($data, $memberData);
         }
 
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Lấy dữ liệu thành công',
-            'data'=> $data,
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data,
             'page' => $request->page,
             'total_page' => $products->lastPage(),
             'total_items' => count($products)
@@ -92,10 +107,9 @@ class ProductController extends Controller
     public function view($id)
     {
         $product = $this->productRepository->getById($id);
-        if (!$product)
-        {
+        if (!$product) {
             return response()->json([
-            'status' => 'error',
+                'status' => 'error',
                 'message' => 'not found product'
             ], 404);
         } else {
@@ -130,14 +144,15 @@ class ProductController extends Controller
             $data['quantity'] = $product->quantity;
             $data['transaction_method'] = $product->transaction_id == 1 ? 'Trực tiếp' : 'Trên trang web';
             return response()->json([
-                'status'=> 'success',
-                'message'=> 'Lấy dữ liệu thành công',
-                'data'=> $data
+                'status' => 'success',
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $data
             ]);
         }
     }
 
-    public function uploadImage(Request $request, $id){
+    public function uploadImage(Request $request, $id)
+    {
         $message = ImageService::uploadImage($request, $id, AppConstant::$UPLOAD_DIRECTORY_PRODUCT_IMAGE, 'products');
 
         if ($message == AppConstant::$UPLOAD_FAILURE) {
@@ -152,7 +167,8 @@ class ProductController extends Controller
             'message' => $message
         ], $statusCode);
     }
-    public function getImage($id) {
+    public function getImage($id)
+    {
         $product = $this->productRepository->getFullProductById($id);
         if ($product->image_id == null) {
             $imageData = file_get_contents(AppConstant::$PRODUCT_THUMBNAIL);
@@ -160,7 +176,7 @@ class ProductController extends Controller
             echo $imageData;
         } else {
             $path = ImageService::getPathImage($id, 'products');
-            if (str_contains($path, 'uploads')){
+            if (str_contains($path, 'uploads')) {
                 header('Content-Type: image/jpeg');
                 readfile($path);
             } else {
@@ -171,7 +187,8 @@ class ProductController extends Controller
         }
     }
 
-    public function searchByName(Request $request) {
+    public function searchByName(Request $request)
+    {
         $products = $this->productRepository->searchByName($request->q);
         return response()->json([
             'status' => 'success',
@@ -179,10 +196,10 @@ class ProductController extends Controller
             'data' => $products,
             'count' => count($products)
         ]);
-
     }
 
-    public function getProductByCategoryId(Request $request, $id) {
+    public function getProductByCategoryId(Request $request, $id)
+    {
         $limit = $request->limit ?? 10;
         $products = $this->productRepository->getProductByCategoryId($id, $limit);
         $data = [];
@@ -195,7 +212,7 @@ class ProductController extends Controller
             $memberData['condition'] = $product->condition == 1 ? 'Cũ' : 'Mới';
             $memberData['origin_price'] =  number_format($product->origin_price) . ' VNĐ';
             $memberData['comment_count'] = count($this->commentRepository->getCommentByProductId($product->id, 100000000));
-            $productTags = $this->productRepository->getProductTagsByProductId( $product->id );
+            $productTags = $this->productRepository->getProductTagsByProductId($product->id);
             $tags = [];
             $count = 0;
             foreach ($productTags as $productTag) {
@@ -237,9 +254,9 @@ class ProductController extends Controller
             array_push($data, $memberData);
         }
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Lấy dữ liệu thành công',
-            'data'=> $data,
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data,
             'page' => $request->page,
             'total_page' => $products->lastPage(),
             'total_items' => count($products)
@@ -249,12 +266,12 @@ class ProductController extends Controller
     public function getProductByTagId(Request $request, $id)
     {
         $limit = $request->limit ?? 10;
-        $productTags = $this->tagRepository->getProductTagsByTagId( $id, $limit );
+        $productTags = $this->tagRepository->getProductTagsByTagId($id, $limit);
         $total_page = $productTags->lastPage();
         $total_items = count($productTags);
         $products = [];
         foreach ($productTags as $productTag) {
-            $product = $this->productRepository->getById( $productTag->product_id );
+            $product = $this->productRepository->getById($productTag->product_id);
             if ($product->status == 1 || $product->status == 0 || $product->status == 5) {
                 continue;
             }
@@ -312,9 +329,9 @@ class ProductController extends Controller
             array_push($data, $memberData);
         }
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Lấy dữ liệu thành công',
-            'data'=> $data,
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data,
             'page' => $request->page,
             'total_page' => $total_page,
             'total_items' => $total_items
@@ -323,32 +340,27 @@ class ProductController extends Controller
 
     public function getByCriteria(Request $request)
     {
-        if ($request->transaction_method == 'cash')
-        {
+        if ($request->transaction_method == 'cash') {
             $transaction_method = [1];
         } else if ($request->transaction_method == 'online') {
             $transaction_method = [2];
         } else {
-            $transaction_method = [1,2];
+            $transaction_method = [1, 2];
         }
         $sort = [];
-        if ($request->field == 'lastUpdate' && $request->sort == 'increase')
-        {
+        if ($request->field == 'lastUpdate' && $request->sort == 'increase') {
             $filter = ['field' => 'updated_at', 'sort' => 'ASC'];
         }
-        if ($request->field == 'lastUpdate' && $request->sort == 'decrease')
-        {
+        if ($request->field == 'lastUpdate' && $request->sort == 'decrease') {
             $filter = ['field' => 'updated_at', 'sort' => 'DESC'];
         }
-        if ($request->field == 'price' && $request->sort == 'increase')
-        {
+        if ($request->field == 'price' && $request->sort == 'increase') {
             $filter = ['field' => 'price', 'sort' => 'ASC'];
         }
-        if ($request->field == 'price' && $request->sort == 'decrease')
-        {
+        if ($request->field == 'price' && $request->sort == 'decrease') {
             $filter = ['field' => 'price', 'sort' => 'DESC'];
         }
-        $products = Product::whereIn('transaction_id', $transaction_method)->orderBy($filter['field'],$filter['sort'])->get();
+        $products = Product::whereIn('transaction_id', $transaction_method)->orderBy($filter['field'], $filter['sort'])->get();
         return response()->json([
             'status' => 'success',
             'message' => 'Lấy dữ liệu thành công',
@@ -363,51 +375,57 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-             return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
         $query = Product::query();
-        if ($request->transaction_method == 'cash')
-        {
+        if ($request->transaction_method == 'cash') {
             $transaction_method = [1];
         } else if ($request->transaction_method == 'online') {
             $transaction_method = [2];
         } else {
-            $transaction_method = [1,2];
+            $transaction_method = [1, 2];
         }
         $sort = [];
-        if ($request->field == 'lastUpdate' && $request->sort == 'increase')
-        {
+        if ($request->field == 'lastUpdate' && $request->sort == 'increase') {
             $filter = ['field' => 'updated_at', 'sort' => 'ASC'];
         }
-        if ($request->field == 'lastUpdate' && $request->sort == 'decrease')
-        {
+        if ($request->field == 'lastUpdate' && $request->sort == 'decrease') {
             $filter = ['field' => 'updated_at', 'sort' => 'DESC'];
         }
-        if ($request->field == 'price' && $request->sort == 'increase')
-        {
+        if ($request->field == 'price' && $request->sort == 'increase') {
             $filter = ['field' => 'price', 'sort' => 'ASC'];
         }
-        if ($request->field == 'price' && $request->sort == 'decrease')
-        {
+        if ($request->field == 'price' && $request->sort == 'decrease') {
             $filter = ['field' => 'price', 'sort' => 'DESC'];
         }
-        $query->join('users','users.id','=','products.user_id');
-            $query->whereIn('products.transaction_id', $transaction_method);
+        $query->join('users', 'users.id', '=', 'products.user_id');
+        $query->whereIn('products.transaction_id', $transaction_method);
         if (isset($filter['field']) && isset($filter['sort'])) {
-            $query->orderBy($filter['field'],$filter['sort']);
+            $query->orderBy($filter['field'], $filter['sort']);
         }
 
-            $query->whereNotIn('products.status', [0, 1, 2, 5]);
-            $query->select('products.id', 'products.price', 'products.image_id',
-                'products.status', 'products.description', 'products.brand',
-                'products.transaction_id','products.updated_at', 'products.condition',
-                'products.user_id', 'products.quantity', 'products.name','products.category_id');
-            $query->where('products.category_id', $request->category_id);
-            $query->where(function($q) use ($request) {
-                $q->where('products.name', 'LIKE', '%' . $request->q . '%')
-                    ->orWhere('users.name', 'LIKE', '%' . $request->q . '%');
-            });
+        $query->whereNotIn('products.status', [0, 1, 2, 5]);
+        $query->select(
+            'products.id',
+            'products.price',
+            'products.image_id',
+            'products.status',
+            'products.description',
+            'products.brand',
+            'products.transaction_id',
+            'products.updated_at',
+            'products.condition',
+            'products.user_id',
+            'products.quantity',
+            'products.name',
+            'products.category_id'
+        );
+        $query->where('products.category_id', $request->category_id);
+        $query->where(function ($q) use ($request) {
+            $q->where('products.name', 'LIKE', '%' . $request->q . '%')
+                ->orWhere('users.name', 'LIKE', '%' . $request->q . '%');
+        });
         $query->whereNull('products.deleted_by');
         $query->whereNull('products.deleted_at');
         $limit = $request->limit ?? 10;
@@ -425,7 +443,7 @@ class ProductController extends Controller
             $memberData['condition'] = $product->condition == 1 ? 'Cũ' : 'Mới';
             $memberData['origin_price'] =  number_format($product->origin_price) . ' VNĐ';
             $memberData['comment_count'] = count($this->commentRepository->getCommentByProductId($product->id, 100000000));
-            $productTags = $this->productRepository->getProductTagsByProductId( $product->id );
+            $productTags = $this->productRepository->getProductTagsByProductId($product->id);
             $tags = [];
             $count = 0;
             foreach ($productTags as $productTag) {
@@ -472,7 +490,7 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-             return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
         $token = $request->header();
@@ -484,20 +502,20 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'Lỗi',
                 'message' => 'Không cho phép tạo sản phẩm vì uy tín thấp!'
-            ],400);
+            ], 400);
         }
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         if (in_array('USER', $role) && ($request->status == 0 || $request->status == 3 || $request->status == 5)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Không cho phép người dùng tạo sản phẩm trong các trạng thái này'
-            ],400);
+            ], 400);
         }
 
         $data = [
@@ -520,9 +538,9 @@ class ProductController extends Controller
         ];
         $product = $this->productRepository->save($data);
 
-        for ($i = 1; $i<=5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             DB::table('rating_products')->insert([
-                'product_id'=> $product->id,
+                'product_id' => $product->id,
                 'rating_id' => $i,
                 'quantity' => 0,
                 'created_at' => Carbon::now(),
@@ -554,44 +572,44 @@ class ProductController extends Controller
         $userId = AuthService::getUserId($bareToken);
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
-        if ($request->price < 0 && $request->price!=null) {
+        if ($request->price < 0 && $request->price != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Lỗi price nhỏ hơn 0'
+                'status' => 'Lỗi',
+                'message' => 'Lỗi price nhỏ hơn 0'
             ], 400);
         }
 
-        if (!in_array($request->condition, [1,2]) && $request->condition != null) {
+        if (!in_array($request->condition, [1, 2]) && $request->condition != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Condition không đúng định dạng'
+                'status' => 'Lỗi',
+                'message' => 'Condition không đúng định dạng'
             ], 400);
         }
 
-        if ($request->origin_price < 0 && $request->price!=null) {
+        if ($request->origin_price < 0 && $request->price != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Lỗi origin_price nhỏ hơn 0'
+                'status' => 'Lỗi',
+                'message' => 'Lỗi origin_price nhỏ hơn 0'
             ], 400);
         }
 
-        if ($request->category_id < 0 && $request->category_id!=null) {
+        if ($request->category_id < 0 && $request->category_id != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Lỗi category_id nhỏ hơn 0'
+                'status' => 'Lỗi',
+                'message' => 'Lỗi category_id nhỏ hơn 0'
             ], 400);
         }
 
 
-        if ($request->transaction_id < 0 && $request->transaction_id!=null) {
+        if ($request->transaction_id < 0 && $request->transaction_id != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Lỗi transaction_id nhỏ hơn 0'
+                'status' => 'Lỗi',
+                'message' => 'Lỗi transaction_id nhỏ hơn 0'
             ], 400);
         }
 
@@ -615,9 +633,9 @@ class ProductController extends Controller
         ];
         $product = $this->productRepository->save($data);
 
-        for ($i = 1; $i<=5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             DB::table('rating_products')->insert([
-                'product_id'=> $product->id,
+                'product_id' => $product->id,
                 'rating_id' => $i,
                 'quantity' => 0,
                 'created_at' => Carbon::now(),
@@ -652,13 +670,13 @@ class ProductController extends Controller
         $userId = AuthService::getUserId($bareToken);
 
         if ($validator->fails()) {
-             return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         if (in_array('USER', $role) && ($request->status == 0 || $request->status == 3 || $request->status == 5)) {
             return response()->json([
@@ -694,7 +712,7 @@ class ProductController extends Controller
             $memberData['condition'] = $product->condition == 1 ? 'Cũ' : 'Mới';
             $memberData['origin_price'] =  number_format($product->origin_price) . ' VNĐ';
             $memberData['comment_count'] = count($this->commentRepository->getCommentByProductId($product->id, 100000000));
-            $productTags = $this->productRepository->getProductTagsByProductId( $product->id );
+            $productTags = $this->productRepository->getProductTagsByProductId($product->id);
             $tags = [];
             $count = 0;
             foreach ($productTags as $productTag) {
@@ -737,9 +755,9 @@ class ProductController extends Controller
         }
 
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Lấy dữ liệu thành công',
-            'data'=> $data,
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data,
             'page' => $request->page ?? 1,
             'total_page' => $products->lastPage(),
             'total_items' => count($products)
@@ -755,34 +773,34 @@ class ProductController extends Controller
         $product = $this->productRepository->getById($id);
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         $tags = $request->tags;
 
         foreach ($tags as $tag) {
             if (!is_int($tag) || $tag < 1) {
                 return response()->json([
-                    'status'=> 'Lỗi',
-                    'message'=> 'Mã tag không đúng'
+                    'status' => 'Lỗi',
+                    'message' => 'Mã tag không đúng'
                 ], 400);
             }
         }
 
         if (in_array('USER', $role) && $userId != $product->user_id) {
             return response()->json([
-                'status'=> 'error',
-                'message'=> 'Không được phép đính tag cho sản phẩm của user khác, hãy là chủ sở hữu hoặc admin!',
+                'status' => 'error',
+                'message' => 'Không được phép đính tag cho sản phẩm của user khác, hãy là chủ sở hữu hoặc admin!',
             ], 400);
         }
 
         $result = $this->productRepository->attachTag($id, $request->tags, $userId);
 
         return response()->json([
-            'status'=> 'success',
-            'message'=> 'Gắn tag thành công',
+            'status' => 'success',
+            'message' => 'Gắn tag thành công',
         ]);
     }
 
@@ -800,9 +818,8 @@ class ProductController extends Controller
         return response()->json([
             'status' => 'Thành công',
             'message' => 'Lấy dữ liệu thành công',
-            'data'=> AppConstant::$TRANSACTION_METHOD
+            'data' => AppConstant::$TRANSACTION_METHOD
         ]);
-
     }
 
     public function updateProduct(Request $request, $id)
@@ -814,8 +831,8 @@ class ProductController extends Controller
         $product = $this->productRepository->getById($id);
         if ($product->user_id != $userId) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Không thể chỉnh sửa sản phẩm của người dùng khác',
+                'status' => 'Lỗi',
+                'message' => 'Không thể chỉnh sửa sản phẩm của người dùng khác',
             ]);
         }
 
@@ -832,7 +849,7 @@ class ProductController extends Controller
             ]);
 
             if ($validator->fails()) {
-                 return response()->json(['error' => $validator->errors()], 400);
+                return response()->json(['error' => $validator->errors()], 400);
             }
         }
 
@@ -841,10 +858,10 @@ class ProductController extends Controller
         $userId = AuthService::getUserId($bareToken);
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         if (in_array('USER', $role) && ($request->status == 0 || $request->status == 3 || $request->status == 5)) {
             return response()->json([
@@ -890,23 +907,23 @@ class ProductController extends Controller
         $userId = AuthService::getUserId($bareToken);
 
         $role = DB::table('user_roles')
-        ->where('user_id', $userId)
-        ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-        ->pluck('roles.role_name')
-        ->toArray();
+            ->where('user_id', $userId)
+            ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
 
         $product = $this->productRepository->getById($id);
         if (!$product || $product->deleted_at != null || $product->deleted_by != null) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Không tìm thấy sản phẩm này để xóa!',
+                'status' => 'Lỗi',
+                'message' => 'Không tìm thấy sản phẩm này để xóa!',
             ], 400);
         }
 
         if ($product->user_id != $userId && in_array('USER', $role)) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Không thể xóa sản phẩm của người khác trừ khi là Admin!',
+                'status' => 'Lỗi',
+                'message' => 'Không thể xóa sản phẩm của người khác trừ khi là Admin!',
             ]);
         }
 
@@ -916,8 +933,8 @@ class ProductController extends Controller
 
         if (count($orders) != 0) {
             return response()->json([
-                'status'=> 'Lỗi',
-                'message'=> 'Sản phẩm đang trong giao dịch, không thể xóa'
+                'status' => 'Lỗi',
+                'message' => 'Sản phẩm đang trong giao dịch, không thể xóa'
             ], 400);
         }
 
@@ -927,8 +944,8 @@ class ProductController extends Controller
         ], $id);
 
         return response()->json([
-            'status'=> 'Thành công',
-            'message'=> 'Xóa sản phẩm thành công'
+            'status' => 'Thành công',
+            'message' => 'Xóa sản phẩm thành công'
         ]);
     }
 
@@ -1023,7 +1040,7 @@ class ProductController extends Controller
             $memberData['condition'] = $product->condition == 1 ? 'Cũ' : 'Mới';
             $memberData['origin_price'] =  number_format($product->origin_price) . ' VNĐ';
             $memberData['comment_count'] = count($this->commentRepository->getCommentByProductId($product->id, 100000000));
-            $productTags = $this->productRepository->getProductTagsByProductId( $product->id );
+            $productTags = $this->productRepository->getProductTagsByProductId($product->id);
             $tags = [];
             $count = 0;
             foreach ($productTags as $productTag) {
@@ -1054,4 +1071,77 @@ class ProductController extends Controller
             'total_in_all_page' => $products->total()
         ]);
     }
+
+    public function getAdminGeneralStatus()
+    {
+  
+        $status = $this->productRepository->getAdminGeneralStatus();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $status
+        ]);
+    }
+
+    public function updateStatusProduct(Request $request, $productId)
+    {
+        $status = $request->status ?? '';
+        if ($status == '' || is_null($status) || !in_array($status, AppConstant::$STATUS_OF_PRODUCT)) {
+            return response()->json([
+                'status' => 'Lỗi',
+                'message' => 'Trạng thái cập nhật không phù hợp!'
+            ], 400);
+        }
+
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+
+        $result = $this->validationRepository->updateStatusProduct($productId, $status);
+        $this->productRepository->save(['status' => strval($request->status)], $productId);
+        $contentForNotification = [
+            0 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang bị cấm',
+            1 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang hoạt động',
+            3 => 'Sản phẩm ' . $productId . ' cập nhật trạng thái sang chờ duyệt'
+        ];
+
+        $product = $this->productRepository->getById($productId);
+
+
+        $this->notificationRepository->save([
+            'user_id' => $product->user_id,
+            'content' => $contentForNotification[$status],
+            'target_id' => $productId,
+            'type' => 'product',
+            'created_at' => Carbon::now(),
+            'created_by' => $userId,
+            'updated_at' => Carbon::now(),
+            'updated_by' => $userId,
+        ]);
+
+        $mailData = [
+            'subject' => 'Stugear xin chào',
+            'content' => 'Link: ' . AppConstant::$DOMAIN . 'product-detail/' . $product->id . ' ' . $contentForNotification[$status],
+            'signature' => 'Stugear'
+        ];
+        try {
+            $user = $this->userRepository->getById($product->user_id);
+            Mail::to($user->email)->send(new ProductStatus($mailData));
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+
+        if ($result) {
+            return response()->json([
+                'status' => 'Thành công',
+                'message' => 'Cập nhật trạng thái thành công',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'Thất bại',
+                'message' => 'Cập nhật trạng thái thất bại'
+            ], 400);
+        }
+    }
+
 }

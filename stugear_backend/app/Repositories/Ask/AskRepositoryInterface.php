@@ -6,6 +6,7 @@ use App\Repositories\RepositoryInterface;
 
 interface AskRepositoryInterface extends RepositoryInterface
 {
-    public function getListAskByType($type, $limit);
+    public function getListReport($limit);
+    public function getListWithdraw($limit);
     public function getListAskByCurrentUser($type, $limit, $userId);
 }

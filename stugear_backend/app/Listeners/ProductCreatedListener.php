@@ -8,6 +8,7 @@ use App\Jobs\ValidateProductJob;
 use App\Models\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Validation\ValidationRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ProductCreatedListener
 {
@@ -30,8 +31,15 @@ class ProductCreatedListener
      */
     public function handle(ProductCreated $event): void
     {
+
         $waitingApprovedStatus = 3;
         $this->createProductValidation($event->getProduct(), $waitingApprovedStatus);
+
+        $result = DB::table("configurations")->where('id',1)->select("is_auto_reviewed")->first();
+        logger()->error("statusAI: ", [$result]);
+        if($result->is_auto_reviewed == 0){
+            return;
+        }
         dispatch(new ValidateProductJob($event->getProduct(), $this->validationRepository, $this->productRepository));
     }
 
@@ -42,7 +50,4 @@ class ProductCreatedListener
         $validation->setDescription("Đang chờ duyệt");
         $this->validationRepository->createProductValidation($product->id, $validation);
     }
-
-
-
 }

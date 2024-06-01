@@ -56,4 +56,10 @@ class AppConstant {
         1, //valid
         3, //wait for confirming
     ];
+
+    public static $STATUS_OF_PRODUCT = [
+        0, //invalid
+        1, //valid
+        3, //wait for confirming
+    ];
 }

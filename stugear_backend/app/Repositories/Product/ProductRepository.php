@@ -25,6 +25,17 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $category;
 
     }
+    public function getAllProductInfo($limit)
+    {
+        
+        return $this->model->join('users', 'products.user_id', '=', 'users.id')
+        ->select('products.*',
+        'users.name as owner_name',
+        'users.email as owner_email')
+        ->paginate($limit);
+
+    }
+    
 
     public function getFullProductById($id)
     {
@@ -256,4 +267,19 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         // return $query;
     }
 
+    
+    public function getAdminGeneralStatus() {
+        // Count the total number of rows in each table
+        $productCount = DB::table('products')->count();
+        $userCount = DB::table('users')->count();
+        $orderCount = DB::table('orders')->count();
+        $threadCount = DB::table('threads')->count();
+        // Return the results as an array
+        return [
+            'total_products' => $productCount,
+            'total_users' => $userCount,
+            'total_orders' => $orderCount,
+            'total_threads' => $threadCount,
+        ];
+    }
 }

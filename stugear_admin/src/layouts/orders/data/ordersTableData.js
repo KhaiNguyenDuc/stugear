@@ -12,6 +12,24 @@ import OrderService from "services/OrderService/OrderService";
 import UserModal from "components/UserModal/UserModal";
 import SoftButton from "components/SoftButton";
 
+function Author({ id, name, email }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox mr={2}>
+        <UserModal userId={id} />
+      </SoftBox>
+      <SoftBox display="flex" flexDirection="column">
+        <SoftTypography variant="button" fontWeight="medium">
+          {name}
+        </SoftTypography>
+        <SoftTypography variant="caption" color="secondary">
+          {email}
+        </SoftTypography>
+      </SoftBox>
+    </SoftBox>
+  );
+}
+
 function Order({ id, name, email }) {
   return (
     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
@@ -30,12 +48,12 @@ function Order({ id, name, email }) {
   );
 }
 
-const ordersTableData = (currentPage, setLoading) => {
+const ordersTableData = (setLoading) => {
   const [orders, setOrders] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const getOrders = async () => {
     setLoading(true);
-    const response = await OrderService.getAllOrders(currentPage);
+    const response = await OrderService.getAllOrders();
     if (response?.status !== 400) {
       setPageCount(response?.total_page);
       setOrders(response?.data);
@@ -45,7 +63,7 @@ const ordersTableData = (currentPage, setLoading) => {
 
   useEffect(() => {
     getOrders();
-  }, [currentPage]);
+  }, []);
   
   const updateStatus = async (selectedorder) => {
     const response = await OrderService.updateStatusByAdmin(
@@ -67,8 +85,8 @@ const ordersTableData = (currentPage, setLoading) => {
   };
   const rows = orders.map((order) => ({
     id: order.id,
-    buyer: order.buyer_id,
-    seller: order.seller_id,
+    buyer: {id: order.buyer_id, email: order.buyer_email, name: order.buyer_name},
+    seller: {id: order.seller_id, email: order.seller_email, name: order.seller_name},
     product: { product_image: order.product_image, product_name: order.product_name },
     price: order.price,
     quantity: order.quantity,
@@ -82,22 +100,24 @@ const ordersTableData = (currentPage, setLoading) => {
     {
       field: "buyer",
       align: "left",
+      width: 300,
       headerName: "Người mua",
       renderCell: (params) => (
-        <SoftBox mr={2}>
-          <UserModal userId={params.row.buyer} />
-        </SoftBox>
+        <Author id={params.row.buyer.id} email={params.row.buyer.email} name={params.row.buyer.name}/>
       ),
+      valueGetter: (params) => (
+        `${params.email || ""} ${params.name || ""}`),
     },
     {
       field: "seller",
       align: "left",
+      width: 300,
       headerName: "Người bán",
       renderCell: (params) => (
-        <SoftBox mr={2}>
-          <UserModal userId={params.row.seller} />
-        </SoftBox>
+        <Author id={params.row.seller.id} email={params.row.seller.email} name={params.row.seller.name}/>
       ),
+      valueGetter: (params) => (
+        `${params.email || ""} ${params.name || ""}`),
     },
     {
       field: "product",
@@ -120,7 +140,8 @@ const ordersTableData = (currentPage, setLoading) => {
             </SoftTypography>
           </SoftBox>
         </SoftBox>
-      ),
+      ),valueGetter: (params) => (
+        `${params.product_name || ""}`),
     },
     {
       field: "price",

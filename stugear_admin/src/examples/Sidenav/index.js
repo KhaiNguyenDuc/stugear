@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -52,7 +52,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const collapseName = pathname.split("/").slice(1)[0];
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
-
+  let navigate = useNavigate();
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
@@ -172,8 +172,25 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           >
             Trang người dùng
           </SoftButton>
+          
+        </SoftBox>
+        <SoftBox mt={2}>
+          <SoftButton
+            variant="gradient"
+            color={color}
+            fullWidth
+            onClick={() => {
+             
+                localStorage.clear(); 
+                navigate("/authentication/sign-in");
+            }}
+          >
+            Đăng xuất
+          </SoftButton>
+          
         </SoftBox>
       </SoftBox>
+      
     </SidenavRoot>
   );
 }

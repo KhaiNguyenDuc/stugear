@@ -9,14 +9,17 @@ use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\QueueStatusController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\ValidationController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::post('/register', 'register');
@@ -26,7 +29,9 @@ Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::post('/reset-password', 'resetPassword');
 });
 
-
+Route::controller(ValidationController::class)->prefix('validations')->group(function (){
+    Route::get('/', 'getAllValidations')->middleware('admin_permission');;
+});
 
 Route::controller(CategoryController::class)->prefix('categories')->group(function (){
     Route::get('/', 'index');
@@ -47,6 +52,7 @@ Route::controller(VerifyController::class)->prefix('products')->group(function (
 Route::controller(ProductController::class)->prefix('products')->group(function (){
     Route::get('/', 'index');
     Route::get('/all-status', 'getAllStatusProduct');
+    Route::get('/general-status', 'getAdminGeneralStatus');
     Route::get('/all-transaction', 'getAllTransactionMethod');
     Route::get('/current', 'getProductByCurrentUser');
     Route::get('/search','searchByName');
@@ -60,10 +66,13 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::post('/draft', 'createDraft')->middleware('auth_jwt');
     Route::patch('/{id}/update','updateProduct')->middleware('auth_jwt');
     Route::patch('/status/{id}','updateStatus')->middleware('auth_jwt');
+    Route::patch('/admin/status/{id}','updateStatusProduct')->middleware('admin_permission');
+    
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
     Route::post('/{id}/upload-image', 'uploadImage')->middleware('auth_jwt');
     Route::get('/{id}/images', 'getImage');
     Route::delete('/{id}', 'delete')->middleware('auth_jwt');
+    
 });
 
 
@@ -163,11 +172,11 @@ Route::controller(MessageController::class)->prefix('chats')->group(function () 
     Route::post('/{id}', 'sendMessage');//->middleware('auth_jwt');
 });
 
+Route::controller(QueueStatusController::class)->prefix('queue')->group(function () {
+    Route::get('/status',  'checkQueueStatus');
+});
 
-
-
-
-
-
-
-
+Route::controller(ConfigurationController::class)->prefix('config')->group(function () {
+    Route::get('/status',  'getStatus');
+    Route::patch('/status',  'updateStatus');
+});

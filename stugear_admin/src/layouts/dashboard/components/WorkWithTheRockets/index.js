@@ -23,17 +23,9 @@ import SoftTypography from "components/SoftTypography";
 
 // Images
 import ivancik from "assets/images/ivancik.jpg";
-import { BASE_URL } from "utils/Constant";
+import { FRONTEND_URL } from "utils/Constant";
 
-function WorkWithTheRockets() {
-  const mostLikeThread = 
-  {
-    thread_id: 2,
-    criteria: "Nhiều lượt thích nhất",
-    name: "Nhiều lượt thích ghê ha",
-    description: "Cursus euismod quis viverra nibh cras. Vestibulum morbi blandit cursus risus at"
-  }
-
+function WorkWithTheRockets({ mostRecentThread }) {
   return (
     <Card sx={{ height: "100%" }}>
       <SoftBox position="relative" height="100%" p={2}>
@@ -53,22 +45,24 @@ function WorkWithTheRockets() {
             backgroundSize: "cover",
           }}
         >
+          <SoftBox pt={1} mb={0.5}>
+            <SoftTypography variant="body2" color="white" fontWeight="medium">
+              Nhiều lượt thích nhất
+            </SoftTypography>
+          </SoftBox>
           <SoftBox mb={3} pt={1}>
-         
-           
-            
             <SoftTypography variant="h5" color="white" fontWeight="bold">
-              {mostLikeThread?.name}
+              {mostRecentThread?.title}
             </SoftTypography>
           </SoftBox>
           <SoftBox mb={2}>
             <SoftTypography variant="body2" color="white">
-            {mostLikeThread?.description}
+              {mostRecentThread?.description}
             </SoftTypography>
           </SoftBox>
           <SoftTypography
             component="a"
-            href={BASE_URL + `/thread/${mostLikeThread.thread_id}`}
+            href={FRONTEND_URL + `/thread/${mostRecentThread.id}`}
             target="_blank"
             variant="button"
             color="white"

@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ThreadSeeder::class,
             TagSeeder::class,
             ReplySeeder::class,
+            ConfigurationSeeder::class,
         ]);
     }
 }
