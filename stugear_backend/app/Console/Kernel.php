@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('send:thread-notification-status')->everySixHours();
+        
     }
 
     /**
@@ -23,6 +24,11 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
+        $this->commands([
+            Commands\StartQueueWorkerCommand::class,
+            Commands\StopQueueWorkerCommand::class,
+            Commands\RestartQueueWorkerCommand::class,
+        ]);
 
         require base_path('routes/console.php');
     }

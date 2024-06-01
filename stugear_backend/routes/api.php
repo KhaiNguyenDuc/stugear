@@ -173,4 +173,8 @@ Route::controller(MessageController::class)->prefix('chats')->group(function () 
 
 Route::controller(QueueStatusController::class)->prefix('queue')->group(function () {
     Route::get('/status',  'checkQueueStatus');
+    Route::get('/start', 'start');
+    Route::get('/stop', 'stop');
+    Route::get('/restart', 'restart');
 });
+

@@ -8,10 +8,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/var/www/html
+      - .:/app
     environment:
       - APP_ENV=local
-    # command: php artisan queue:work --tries=3 # Add this line to run queue worker
+
   frontend:
     build:
       context: stugear_frontend
@@ -20,6 +20,7 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+
   admin:
     build:
       context: stugear_admin
@@ -28,17 +29,3 @@ services:
       - "3006:3006"
     depends_on:
       - backend
-  queue-worker:
-    build:
-      context: stugear_backend
-      dockerfile: Dockerfile
-    depends_on:
-      - backend
-    command: php artisan queue:work --tries=3
-  notification-worker:
-    build:
-      context: stugear_backend
-      dockerfile: Dockerfile
-    depends_on:
-      - backend
-    command: php artisan schedule:work
