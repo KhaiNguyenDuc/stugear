@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -54,7 +55,14 @@ class AuthController extends Controller
             ], 403);
         }
 
-        $token = Auth::attempt($credentials);
+        $remember = $request->remember_me ?? '';
+
+        if(!$remember) {
+            $token = Auth::attempt($credentials);
+        } else {
+            $token = Auth::attempt($credentials, true);
+        }
+
         if (!$token) {
             return response()->json([
                 'status' => 'error',
@@ -87,6 +95,105 @@ class AuthController extends Controller
                 ],
             ]);
 
+    }
+
+    public function loginUrl()
+    {
+        return response()->json([
+            'url' => Socialite::driver('google')->scopes(['email', 'profile'])->redirect()->getTargetUrl()
+        ]);
+    }
+
+    public function loginCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $user = DB::table('users')->where('email', $googleUser->getEmail())->first();
+
+        if (!$user) {
+            $data = [
+                'email' => $googleUser->getEmail(),
+                'name' => $googleUser->getName(),
+                'first_name' => $googleUser->getName(),
+                'last_name' => ''
+            ];
+            $data['password'] = Hash::make('password');
+            $user = $this->userRepository->save($data);
+
+            DB::table('user_roles')->insert([
+                'user_id' => $user->id,
+                'role_id' => 2
+            ]);
+
+            DB::table('contact_details')->insert([
+                'user_id' => $user->id,
+                'created_by' => $user->id,
+                'updated_by' => $user->id,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+
+            DB::table('users')->where('id', $user->id)
+                ->update([
+                    'is_enable' => 1,
+                    'is_verify_email' => 0,
+                    'created_by' => $user->id,
+                    'updated_by' => $user->id
+                ]);
+
+            DB::table('wishlists')->insert(['user_id' => $user->id]);
+        }
+
+        if ($user->is_enable == 0) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'banned user can not login'
+            ], 403);
+        }
+
+        $credentials = [
+            'email' => $user->email,
+            'password' => 'password'
+        ];
+        // dd($credentials);
+
+        $token = Auth::attempt($credentials, true);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $user = Auth::user();
+        $user->refresh_token = Uuid::uuid4();
+
+        $this->userRepository->save([
+            'refresh_token' => $user->refresh_token,
+            'token_expired' => Carbon::now()->addDays(4)
+        ], $user->id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'login sucessfully',
+            'data' => [
+                'access_token' => $token,
+                'refresh_token' => $user->refresh_token,
+                'roles' => DB::table('user_roles')
+                ->where('user_id', $user->id)
+                    ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+                    ->pluck('roles.role_name')
+                    ->toArray(),
+                'user_id' => $user->id,
+                'username' => $user->name,
+                'hasUnreadNotification' => $user->has_unread_notification
+            ],
+        ]);
+
+        // return response()->json([
+        //     'user' => 'new',
+        //     'google_user' => $googleUser
+        // ]);
     }
 
     public function register(Request $request){

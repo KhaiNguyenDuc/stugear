@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,3 +22,7 @@ Route::post('/login-ssr', [MessageController::class, 'loginSSR'])->name('login.s
 // Route::controller(MessageController::class)->prefix('chats')->group(function () {
 //     Route::post('/', 'sendMessage')->name('send.message'); //->middleware('auth_jwt');
 // });
+
+
+Route::get('/api/auth/google/url', [AuthController::class, 'loginUrl']);
+Route::get('/api/auth/google', [AuthController::class, 'loginCallback']);
