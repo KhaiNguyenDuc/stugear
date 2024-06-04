@@ -375,185 +375,102 @@
         <div class="inbox_people">
           <div class="headind_srch">
             <div class="recent_heading">
-              <h4>Recent</h4>
+              <h4>STUGEAR</h4>
             </div>
-            <div class="srch_bar">
+            {{-- <div class="srch_bar">
               <div class="stylish-input-group">
                 <input type="text" class="search-bar"  placeholder="Search" >
                 <span class="input-group-addon">
                 <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
                 </span> </div>
-            </div>
+            </div> --}}
           </div>
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
+            @foreach($listPeople as $people)
+                @if($people['room'] == $currentRoomId)
+                    <a href="{{'http://127.0.0.1:8000/chats/' . $people['room'] }}" id="{{$people['room']}}" >
+                        <div class="chat_list">
+                            <input type="hidden" name="room" value="{{$people['room']}}">
+                            <div class="chat_people">
+                                <div class="chat_img"> <img src="{{$people['image']}}" alt="sunil"> </div>
+                                <div class="chat_ib">
+                                    <h5>{{$people['username']}}<span class="chat_date">{{$people['time']}}</span></h5>
+                                    <p>{{$people['content']}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            @endforeach
+
+
+            @foreach($listPeople as $people)
+                @if($people['room'] != $currentRoomId)
+                    <a href="{{'http://127.0.0.1:8000/chats/' . $people['room'] }}" id="{{$people['room']}}" >
+                        <div class="chat_list">
+                            <input type="hidden" name="room" value="{{$people['room']}}">
+                            <div class="chat_people">
+                                <div class="chat_img"> <img src="{{$people['image']}}" alt="sunil"> </div>
+                                <div class="chat_ib">
+                                    <h5>{{$people['username']}}<span class="chat_date">{{$people['time']}}</span></h5>
+                                    <p>{{$people['content']}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            @endforeach
           </div>
         </div>
         <div class="mesgs" >
           <div class="msg_history">
-            {{-- <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test which is a new approach to have all
-                    solutions</p>
-                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
-              </div>
-            </div>
-            <div class="outgoing_msg">
-              <div class="sent_msg">
-                <p>Test which is a new approach to have all
-                  solutions</p>
-                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test, which is a new approach to have</p>
-                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
-              </div>
-            </div>
-            <div class="outgoing_msg">
-              <div class="sent_msg">
-                <p>Apollo University, Delhi, India Test</p>
-                <span class="time_date"> 11:01 AM    |    Today</span> </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>We work directly with our designers and suppliers,
-                    and sell direct to you, which means quality, exclusive
-                    products, at a price anyone can afford.</p>
-                  <span class="time_date"> 11:01 AM    |    Today</span></div>
-              </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>We work directly with our designers and suppliers,
-                    and sell direct to you, which means quality, exclusive
-                    products, at a price anyone can afford.</p>
-                  <span class="time_date"> 11:01 AM    |    Today</span></div>
-              </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>We work directly with our designers and suppliers,
-                    and sell direct to you, which means quality, exclusive
-                    products, at a price anyone can afford.</p>
-                  <span class="time_date"> 11:01 AM    |    Today</span></div>
-              </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>We work directly with our designers and suppliers,
-                    and sell direct to you, which means quality, exclusive
-                    products, at a price anyone can afford.</p>
-                  <span class="time_date"> 11:01 AM    |    Today</span></div>
-              </div>
-            </div> --}}
+            @foreach($messagePasts as $message)
+                <div>
+                        <input type="hidden" name="hid" value="message.sender_id">
+                        @if($message->sender_id == $id)
+                            <div>
+                                <div class="outgoing_msg">
+                                <div class="sent_msg">
+                                    <p>{{ $message->content }}</p>
+                                    <span class="time_date">{{ $message->created_at->format("H:i, d/m/Y") }}</span></div>
+                                </div>
+                            </div>
+                        @else
+                            <div>
+                                <div class="incoming_msg">
+                                <div class="incoming_msg_img"> <img src="{{$currentPeopleImage}}" alt="sunil"> </div>
+                                <div class="received_msg">
+                                    <div class="received_withd_msg">
+                                    <p>{{ $message->content }}</p>
+                                    <span class="time_date">{{ $message->created_at->format("H:i, d/m/Y") }}</span></div>
+                                </div>
+                                </div>
+                            </div>
+                        @endif
+                </div>
+            @endforeach
 
-            {{-- <ul>
-                <li v-for="message in messages" > --}}
             <div id="app">
-            <div v-for="message in messages">
-                    <input type="hidden" name="hid" value="message.sender_id">
-                    <div v-if="message.sender_id == authId">
-                        <div class="outgoing_msg">
-                        <div class="sent_msg">
-                            <p v-text="message.message"></p>
-                            <span class="time_date" v-text="message.time"></span></div>
+                <div v-for="message in messages">
+                        <input type="hidden" name="hid" value="message.sender_id">
+                        <div v-if="message.sender_id == authId">
+                            <div class="outgoing_msg">
+                            <div class="sent_msg">
+                                <p v-text="message.message"></p>
+                                <span class="time_date" v-text="message.time"></span></div>
+                            </div>
                         </div>
-                    </div>
-                    <div v-if="message.sender_id != authId">
-                        <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                            <p v-text="message.message"></p>
-                            <span class="time_date" v-text="message.time"></span></div>
+                        <div v-if="message.sender_id != authId">
+                            <div class="incoming_msg">
+                            <div class="incoming_msg_img"> <img src="{{$currentPeopleImage}}" alt="sunil"> </div>
+                            <div class="received_msg">
+                                <div class="received_withd_msg">
+                                <p v-text="message.message"></p>
+                                <span class="time_date" v-text="message.time"></span></div>
+                            </div>
+                            </div>
                         </div>
-                        </div>
-                    </div>
-                {{-- </li>
-            </ul> --}}
-            </div>
+                </div>
             </div>
 
 
@@ -589,6 +506,22 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
+        btnSubmit = document.getElementById('btnSubmit');
+        txtContent = document.getElementById('txtContent');
+        formSend = document.getElementById('formSend');
+        authId = document.getElementById('authId');
+
+        var currentUrl = window.location.href;
+        var match = currentUrl.match(/\/chats\/(\d+)/);
+        if (match) {
+            var roomId = match[1]; // Lấy giá trị của path parameter "roomId"
+            console.log('Giá trị của tham số "roomId" là:', roomId);
+        } else {
+            console.log('Không tìm thấy giá trị của tham số "roomId" trong URL.');
+        }
+
+        var receiver_id = roomId.replace(authId.value, "");
+
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
 
@@ -596,10 +529,12 @@
             cluster: 'ap1'
         });
 
-        var channel = pusher.subscribe('512');
+        var channel = pusher.subscribe(roomId);
         channel.bind('message', function(data) {
             app.messages.push(data);
             console.log(app.messages);
+            routeToNewChat(roomId);
+
         });
 
         // Vue application
@@ -611,6 +546,14 @@
             },
         });
 
+    function routeToNewChat(roomId) {
+        var chatLinks = document.querySelectorAll('.inbox_chat a');
+        hasId = false;
+        chatLinks.forEach(function(link) {
+            // Kiểm tra nếu thẻ a có id là 612
+            if (link.id === roomId) {
+                hasId = true;
+                return; // Thoát khỏi vòng lặp nếu đã tìm thấy thẻ a có id = 612
 
         btnSubmit = document.getElementById('btnSubmit');
         txtContent = document.getElementById('txtContent');
@@ -634,11 +577,42 @@
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
-            })
-            .then((response) => response.json())
-            .then((json) => console.log(json));
+        });
 
-            txtContent.value = "";
+        if (!hasId) {
+            window.location.href = 'http://127.0.0.1:8000/chats/' + roomId;
         }
+    }
+
+    formSend.addEventListener("submit", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        send();
+        // console.log(formSend);
+    });
+    function send() {
+        fetch("http://localhost:8000/api/chats/" +roomId, {
+        method: "POST",
+        body: JSON.stringify({
+            "sender_id": authId.value,
+            "receiver_id" : receiver_id,
+            "content" : txtContent.value
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+        })
+        .then((response) => response.json())
+        .then((json) => console.log(json));
+
+        txtContent.value = "";
+    }
+
+    // Lấy phần tử con của thẻ a
+    var chatList = document.getElementById(roomId).querySelector('.chat_list');
+
+    // Thêm lớp active_chat vào phần tử con
+    chatList.classList.add('active_chat');
+
     </script>
 </body>

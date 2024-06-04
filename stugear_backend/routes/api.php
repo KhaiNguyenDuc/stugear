@@ -9,6 +9,7 @@ use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ChartController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -28,6 +29,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function (){
     Route::get('/send-reset-password-email', 'sendResetPasswordEmail');
     Route::post('/reset-password', 'resetPassword');
 });
+
 
 Route::controller(ValidationController::class)->prefix('validations')->group(function (){
     Route::get('/', 'getAllValidations')->middleware('admin_permission');;
@@ -67,12 +69,12 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::patch('/{id}/update','updateProduct')->middleware('auth_jwt');
     Route::patch('/status/{id}','updateStatus')->middleware('auth_jwt');
     Route::patch('/admin/status/{id}','updateStatusProduct')->middleware('admin_permission');
-    
+
     Route::patch('/{id}/attach-tag','attachTag')->middleware('auth_jwt');
     Route::post('/{id}/upload-image', 'uploadImage')->middleware('auth_jwt');
     Route::get('/{id}/images', 'getImage');
     Route::delete('/{id}', 'delete')->middleware('auth_jwt');
-    
+
 });
 
 
@@ -169,7 +171,7 @@ Route::controller(NotificationController::class)->prefix('notifications')->group
 });
 
 Route::controller(MessageController::class)->prefix('chats')->group(function () {
-    Route::post('/', 'sendMessage');//->middleware('auth_jwt');
+    Route::post('/{id}', 'sendMessage');//->middleware('auth_jwt');
 });
 
 Route::controller(QueueStatusController::class)->prefix('queue')->group(function () {
@@ -179,4 +181,11 @@ Route::controller(QueueStatusController::class)->prefix('queue')->group(function
 Route::controller(ConfigurationController::class)->prefix('config')->group(function () {
     Route::get('/status',  'getStatus');
     Route::patch('/status',  'updateStatus');
+});
+
+
+Route::controller(ChartController::class)->prefix('charts')->group(function () {
+    Route::get('/report-bar', 'reportBarChart');
+    Route::get('/gradient-line', 'gradientLineChart');
+    Route::get('/recent-event', 'recentEvent');
 });
