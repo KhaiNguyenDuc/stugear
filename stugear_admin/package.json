@@ -31,7 +31,7 @@
     "prop-types": "15.8.1",
     "react": ">=16.8.0",
     "react-bootstrap": "^2.10.2",
-    "react-chartjs-2": "3.0.5",
+    "react-chartjs-2": "5.2.0",
     "react-countup": "6.4.2",
     "react-dom": ">=16.8.0",
     "react-flatpickr": "3.10.13",
