@@ -49,7 +49,7 @@ function SignIn() {
   }
   const handleLogin = async () => {
     setUnauthorize(false)
-    const response = await AuthService.login(loginData);
+    const response = await AuthService.login(loginData, rememberMe);
     
     if(response.status == 500 || response.status == 401){
       setUnauthorize(true)

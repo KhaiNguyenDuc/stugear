@@ -20,7 +20,18 @@ class AuthService {
   login (user) {
     return axios.post(AUTH_URL + '/login', {
       email: user.email,
-      password: user.password
+      password: user.password,
+      remember_me: user?.remember_me ? user?.remember_me : false
+    })
+      .then(response => response?.data?.data)
+      .catch(error => error?.response)
+  }
+
+  loginOauth (user) {
+    return axios.post(AUTH_URL + '/login-oauth', {
+      email: user.email,
+      password: user.password,
+      first_name: user.firstName,
     })
       .then(response => response?.data?.data)
       .catch(error => error?.response)

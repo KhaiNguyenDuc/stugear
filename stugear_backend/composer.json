@@ -9,6 +9,7 @@
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.8",
         "php-open-source-saver/jwt-auth": "^2.1",
         "pusher/pusher-php-server": "^7.2",

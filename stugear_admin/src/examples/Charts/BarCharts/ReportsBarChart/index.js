@@ -34,6 +34,9 @@ import BarReportsChartItem from "examples/Charts/BarCharts/ReportsBarChart/Repor
 
 // ReportsBarChart configurations
 import configs from "examples/Charts/BarCharts/ReportsBarChart/configs";
+import { Chart, registerables} from 'chart.js';
+
+Chart.register(...registerables);
 
 function ReportsBarChart({ color, title, description, chart, items }) {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
@@ -51,7 +54,11 @@ function ReportsBarChart({ color, title, description, chart, items }) {
 
   return (
     <Card sx={{ height: "100%" }}>
+      
       <SoftBox padding="1rem">
+      <SoftTypography variant="h6" fontWeight="medium" textTransform="capitalize" mb={2}>
+              {title}
+            </SoftTypography>
         {useMemo(
           () => (
             <SoftBox
@@ -68,21 +75,7 @@ function ReportsBarChart({ color, title, description, chart, items }) {
           ),
           [chart, color]
         )}
-        <SoftBox px={1}>
-          <SoftBox mb={2}>
-            <SoftTypography variant="h6" fontWeight="medium" textTransform="capitalize">
-              {title}
-            </SoftTypography>
-            <SoftTypography component="div" variant="button" color="text" fontWeight="regular">
-              {description}
-            </SoftTypography>
-          </SoftBox>
-          <SoftBox py={1} px={0.5}>
-            <Grid container spacing={5}>
-              {renderItems}
-            </Grid>
-          </SoftBox>
-        </SoftBox>
+
       </SoftBox>
     </Card>
   );

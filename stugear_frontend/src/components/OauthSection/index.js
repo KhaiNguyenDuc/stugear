@@ -23,8 +23,8 @@ const OauthSection = ({ text }) => {
       email: userInfo?.email,
       firstName: userInfo?.family_name,
       lastName: userInfo?.given_name,
-      password: "password",
-      confirmPassword: "password",
+      password: "jhskjfb#)(*SNQh",
+      confirmPassword: "jhskjfb#)(*SNQh",
     });
   };
 

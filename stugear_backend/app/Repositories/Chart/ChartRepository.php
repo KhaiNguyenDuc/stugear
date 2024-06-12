@@ -113,7 +113,7 @@ class ChartRepository extends BaseRepository implements ChartRepositoryInterface
         $labels = [];
         $data = [];
         foreach ($totalCounts as $month => $count) {
-            $labels[] = 'Tháng ' . $month;
+            $labels[] = 'Tháng ' . $month + 1;
             $data[] = $count;
         }
 
@@ -121,10 +121,8 @@ class ChartRepository extends BaseRepository implements ChartRepositoryInterface
             'chart' => [
                 'labels' => $labels,
                 'datasets' => [
-                    [
-                        'label' => 'Bài đăng',
-                        'data' => $data,
-                    ],
+                    'label' => 'Bài đăng',
+                    'data' => $data,
                 ],
             ],
             'items' => $result,

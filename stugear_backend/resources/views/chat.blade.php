@@ -591,7 +591,7 @@
         // console.log(formSend);
     });
     function send() {
-        fetch("http://localhost:8000/api/chats/" +roomId, {
+        fetch("https://stugear.website/api/chats/" +roomId, {
         method: "POST",
         body: JSON.stringify({
             "sender_id": authId.value,

@@ -26,7 +26,7 @@
     "@testing-library/user-event": "14.4.3",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
-    "chart.js": "4.1.1",
+    "chart.js": "3.9.1",
     "chroma-js": "2.4.2",
     "prop-types": "15.8.1",
     "react": ">=16.8.0",
@@ -69,5 +69,8 @@
   },
   "overrides": {
     "svgo": "3.0.2"
+  },
+  "devDependencies": {
+    "ajv": "^7.2.4"
   }
 }

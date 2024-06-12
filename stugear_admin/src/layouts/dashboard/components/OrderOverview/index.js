@@ -24,13 +24,13 @@ import SoftTypography from "components/SoftTypography";
 // Soft UI Dashboard React examples
 import TimelineItem from "examples/Timeline/TimelineItem";
 
-function OrdersOverview() {
+function OrdersOverview({overview}) {
   const recentEvent = {
-    new_user: "10",
-    new_product: "4",
-    new_transacstion: "10",
-    new_report: "3",
-    new_withdraw_request: "200"
+    new_user: overview[0].title,
+    new_product: overview[1].title,
+    new_withdraw_request: overview[3].title,
+    new_transacstion: overview[2].title,
+    new_report: overview[4].title,
   }
   return (
     <Card className="h-100">
@@ -38,20 +38,6 @@ function OrdersOverview() {
         <SoftTypography variant="h6" fontWeight="medium">
           Sự kiện gần đây
         </SoftTypography>
-        {/* <SoftBox mt={1} mb={2}>
-          <SoftTypography variant="button" color="text" fontWeight="regular">
-            <SoftTypography display="inline" variant="body2" verticalAlign="middle">
-              <Icon sx={{ fontWeight: "bold", color: ({ palette: { success } }) => success.main }}>
-                arrow_upward
-              </Icon>
-            </SoftTypography>
-            &nbsp;
-            <SoftTypography variant="button" color="text" fontWeight="medium">
-              24%
-            </SoftTypography>{" "}
-            this month
-          </SoftTypography>
-        </SoftBox> */}
       </SoftBox>
       <SoftBox p={2}>
         <TimelineItem

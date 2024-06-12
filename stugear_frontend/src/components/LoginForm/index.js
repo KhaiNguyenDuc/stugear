@@ -172,7 +172,8 @@ const LoginForm = () => {
               <input
                 className="form-check-input me-2"
                 type="checkbox"
-                defaultValue
+                onInput={() => setCredentials({...credentials, remember_me: !credentials.remember_me})}
+                value={credentials.remember_me}
                 id="form2Example3"
               />
               <label className="form-check-label" htmlFor="form2Example3">

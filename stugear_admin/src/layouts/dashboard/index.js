@@ -44,14 +44,21 @@ import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData"
 import { useEffect, useState } from "react";
 import ThreadService from "services/ThreadService/ThreadService";
 import ProductService from "services/ProductService/ProductService";
+import ChartService from "services/ChartService/ChartService";
+import { CircularProgress } from "@mui/material";
+
 
 function Dashboard() {
   const { size } = typography;
+  const [isLoading, setLoading] = useState(true);
   const [mostReplyThread, setMostReplyThread] = useState({});
   const [mostRecentThread, setMostRecentThread] = useState({});
   const [topRecentThread, setTopRecentThread] = useState();
+  const [reportData, setReportData] = useState();
+  const [linearData, setLinearData] = useState();
+  const [recentEvent, setRecentEvent] = useState();
   const [generalStatus, setGeneralStatus] = useState({});
-  const { chart, items } = reportsBarChartData;
+  
   const getMostReplyThread = async () => {
     const response = await ThreadService.getAllThreads(1, {
       status: "reply",
@@ -83,10 +90,85 @@ function Dashboard() {
     }
   };
   
+  const getChart = async () => {
+    setLoading(true);
+
+    // Get current month (1-indexed)
+    const currentMonth = new Date().getMonth() + 1;
+
+    const responseLinear = await ChartService.getLinearData();
+    const responseReport = await ChartService.getReportData();
+
+    if (responseLinear?.status !== 400 && responseReport?.status !== 400) {
+        const linearData = responseLinear.data;
+        const reportData = responseReport.data;
+
+        let filteredLinearData, filteredReportData;
+
+        if (currentMonth >= 6) {
+            // Filter linear data from month 6 to month 12
+            filteredLinearData = {
+                labels: linearData.labels.slice(5),
+                datasets: linearData.datasets.map(dataset => ({
+                    ...dataset,
+                    data: dataset.data.slice(5)
+                }))
+            };
+
+            // Filter report data from month 6 to month 12
+            filteredReportData = {
+                chart: {
+                    labels: reportData.chart.labels.slice(5),
+                    datasets: {
+                        label: reportData.chart.datasets.label,
+                        data: reportData.chart.datasets.data.slice(5)
+                    }
+                },
+                items: reportData.items
+            };
+        } else {
+            // Filter linear data from month 1 to current month
+            filteredLinearData = {
+                labels: linearData.labels.slice(0, currentMonth),
+                datasets: linearData.datasets.map(dataset => ({
+                    ...dataset,
+                    data: dataset.data.slice(0, currentMonth)
+                }))
+            };
+
+            // Filter report data from month 1 to current month
+            filteredReportData = {
+                chart: {
+                    labels: reportData.chart.labels.slice(0, currentMonth),
+                    datasets: {
+                        label: reportData.chart.datasets.label,
+                        data: reportData.chart.datasets.data.slice(0, currentMonth)
+                    }
+                },
+                items: reportData.items
+            };
+        }
+
+        setLinearData(filteredLinearData);
+        setReportData(filteredReportData);
+    }
+
+    setLoading(false);
+}
+
+
+  const getRecentEvent = async () => {
+    const response = await ChartService.getRecentEvent();
+    if(response?.status != 400){
+      setRecentEvent(response?.data);
+    }
+  }
   useEffect(() => {
     getMostRecentThread();
     getMostReplyThread();
     getGeneralStatus();
+    getChart();
+    getRecentEvent();
   }, []);
 
   return (
@@ -145,14 +227,32 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={5}>
-              <ReportsBarChart title="Thống kê bài đăng" chart={chart} items={items} />
+              {isLoading ? (
+                <>
+                              <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+                <CircularProgress />
+              </div>
+                </>
+              ): (
+                <ReportsBarChart title="Thống kê bài đăng" chart={reportData?.chart} items={reportData?.items} />
+              )}
+            
             </Grid>
             <Grid item xs={12} lg={7}>
-              <GradientLineChart
+            {isLoading ? (
+                <>
+                              <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+                <CircularProgress />
+              </div>
+                </>
+              ): (
+                <GradientLineChart
                 title="Số sản phẩm được đăng"
                 height="20.25rem"
-                chart={gradientLineChartData}
+                chart={linearData}
               />
+              )}
+            
             </Grid>
           </Grid>
         </SoftBox>
@@ -161,7 +261,17 @@ function Dashboard() {
             <Projects />
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
-            <OrderOverview />
+          {isLoading ? (
+                <>
+                              <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+                <CircularProgress />
+              </div>
+                </>
+              ): (
+                <OrderOverview overview={recentEvent}/>
+              )}
+            
+      
           </Grid>
         </Grid>
       </SoftBox>
