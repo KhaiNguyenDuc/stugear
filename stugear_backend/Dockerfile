@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # Set working directory inside the container
 WORKDIR /app
@@ -31,7 +31,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . .
 
 # Install Laravel dependencies
-RUN composer install
+RUN composer update
 
 # Set permissions
 RUN chown -R www-data:www-data /app \
