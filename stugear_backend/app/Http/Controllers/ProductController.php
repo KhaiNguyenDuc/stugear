@@ -116,7 +116,8 @@ class ProductController extends Controller
             $data = [];
             $data['id'] = $product->id;
             $data['title'] = $product->name;
-            $data['product_image'] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/images';
+            // $data['product_image'] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/images';
+            $data['product_image'] = $this->getListLinkImageOfProduct($id);
             $data['price'] = number_format($product->price) . ' VNĐ';
             $data['condition'] = $product->condition == 1 ? 'Cũ' : 'Mới';
             $data['origin_price'] =  number_format($product->origin_price) . ' VNĐ';
@@ -185,6 +186,60 @@ class ProductController extends Controller
                 ]);
             }
         }
+    }
+
+    public function getImageOfProductInList($productId, $imageId)
+    {
+        if ($imageId == null) {
+            $imageData = file_get_contents(AppConstant::$PRODUCT_THUMBNAIL);
+            header('Content-Type: image/jpeg');
+            echo $imageData;
+        } else {
+            $image = DB::table('images')->where('id', $imageId)->first();
+            $path = $image->path;
+            if (str_contains($path, 'uploads')) {
+                header('Content-Type: image/jpeg');
+                readfile($path);
+            } else {
+                return response()->json([
+                    'message' => $path
+                ]);
+            }
+        }
+    }
+
+    private function getListLinkImageOfProduct($productId)
+    {
+        $pattern = 'products_' . $productId . '_%';
+
+        $images = DB::table('images')
+        ->where('title', 'like', $pattern)
+        ->get();
+
+        $product = $this->productRepository->getById($productId);
+        $imageProductMap = DB::table('images')->where('id', '=', $product->image_id)->first();
+        $fromTimestamp = $this->handlerTitleImageToTimestamp($imageProductMap->title, $productId);
+        $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $imageProductMap->id . '/images';
+
+        foreach ($images as $image) {
+            $timestamp = $this->handlerTitleImageToTimestamp($image->title, $productId);
+            if ($timestamp > $fromTimestamp) {
+                $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $image->id . '/images';
+            }
+        }
+
+        return $listId;
+    }
+
+    private function handlerTitleImageToTimestamp($title, $productId)
+    {
+
+        $pattern = '/products_' . $productId . '_(\d+)\.jpg/';
+
+        if (preg_match($pattern, $title, $matches)) {
+            return (int)$matches[1];
+        }
+        return null;
     }
 
     public function searchByName(Request $request)
@@ -1074,7 +1129,7 @@ class ProductController extends Controller
 
     public function getAdminGeneralStatus()
     {
-  
+
         $status = $this->productRepository->getAdminGeneralStatus();
         return response()->json([
             'status' => 'success',
