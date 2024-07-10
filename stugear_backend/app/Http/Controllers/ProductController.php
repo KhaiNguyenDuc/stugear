@@ -91,6 +91,7 @@ class ProductController extends Controller
             $memberData['owner_image'] = AppConstant::$DOMAIN . 'api/users/' . $product->user->id . '/images';
             $memberData['owner_name'] = $product->owner_name;
             $memberData['owner_email'] = $product->owner_email;
+            $memberData['buy_date'] = $product->buy_date;
             $memberData['user_id'] = $product->user_id;
             array_push($data, $memberData);
         }
@@ -143,6 +144,8 @@ class ProductController extends Controller
             $data['owner_name'] = $product->user->name;
             $data['owner_id'] = $product->user->id;
             $data['quantity'] = $product->quantity;
+            $formattedDate = date('m/d/Y', strtotime($product->buy_date));
+            $data['buy_date'] = $formattedDate;
             $data['transaction_method'] = $product->transaction_id == 1 ? 'Trực tiếp' : 'Trên trang web';
             return response()->json([
                 'status' => 'success',
@@ -218,17 +221,20 @@ class ProductController extends Controller
 
         $product = $this->productRepository->getById($productId);
         $imageProductMap = DB::table('images')->where('id', '=', $product->image_id)->first();
-        $fromTimestamp = $this->handlerTitleImageToTimestamp($imageProductMap->title, $productId);
-        $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $imageProductMap->id . '/images';
-
-        foreach ($images as $image) {
-            $timestamp = $this->handlerTitleImageToTimestamp($image->title, $productId);
-            if ($timestamp > $fromTimestamp) {
-                $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $image->id . '/images';
+        if($imageProductMap){
+            $fromTimestamp = $this->handlerTitleImageToTimestamp($imageProductMap->title, $productId);
+            $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $imageProductMap->id . '/images';
+    
+            foreach ($images as $image) {
+                $timestamp = $this->handlerTitleImageToTimestamp($image->title, $productId);
+                if ($timestamp > $fromTimestamp) {
+                    $listId[] = AppConstant::$DOMAIN . 'api/products/' . $product->id . '/' . $image->id . '/images';
+                }
             }
+            return $listId;
         }
-
-        return $listId;
+        return [];
+       
     }
 
     private function handlerTitleImageToTimestamp($title, $productId)
@@ -542,6 +548,7 @@ class ProductController extends Controller
             'quantity' => 'required|integer|min:1',
             'category_id' => 'required|integer|min:1',
             'transaction_id' => 'required|integer|min:1',
+            'buy_date' => 'required|date_format:Y-m-d',
         ]);
 
         if ($validator->fails()) {
@@ -576,6 +583,7 @@ class ProductController extends Controller
         $data = [
             'name' => $request->name,
             'price' => $request->price,
+            'buy_date' => $request->buy_date,
             'condition' => strval($request->condition),
             'edition' => $request->edition,
             'status' => $request->status,
@@ -671,6 +679,7 @@ class ProductController extends Controller
         $data = [
             'name' => $request->name ?? '',
             'price' => $request->price ?? 0,
+            'buy_date' => $request->buy_date ?? Carbon::now(),
             'condition' => $request->condition != null ? strval($request->condition) : "0",
             'edition' => $request->edition ?? '',
             'status' => 1,
@@ -936,6 +945,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id ?? $product->category_id,
             'transaction_id' => $request->transaction_id ?? $product->transaction_id,
             'description' => $request->description ?? $product->description,
+            'buy_date' => $request->buy_date ?? $product->buy_date,
             'updated_at' => Carbon::now(),
             'updated_by' => $userId,
         ];

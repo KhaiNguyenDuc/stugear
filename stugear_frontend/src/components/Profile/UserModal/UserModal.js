@@ -175,8 +175,11 @@ const UserModal = ({ userId }) => {
                         <>
                           {" "}
                           <button
-                            className="btn"
+                            className="btn text-white"
                             onClick={() => setReportShow(!reportShow)}
+                            
+                      
+                        style={{ backgroundColor: "green" }}
                           >
                             {" "}
                             <FontAwesomeIcon icon="flag" /> Báo cáo
@@ -186,7 +189,7 @@ const UserModal = ({ userId }) => {
 
                       <button
                         onClick={closeModal}
-                        className="btn ms-auto"
+                        className="btn ms-auto text-white"
                         style={{ backgroundColor: "#ce0c23" }}
                       >
                         {" "}
@@ -226,6 +229,11 @@ const UserModal = ({ userId }) => {
                             <p className="small text-muted mb-1">Độ uy tín</p>
                             <p className="mb-0">{user?.reputation}</p>
                           </div>
+                          <div className="px-3">
+                            <p className="small text-muted mb-1">Đơn hàng</p>
+                            <p className="mb-0">{user?.ordersCount}</p>
+                          </div>
+                          
                         </div>
                       </div>
                     </div>

@@ -26,6 +26,7 @@ const UploadProduct = () => {
   const [isError, setError] = useState([]);
   const [isAdded, setAdded] = useState(false);
   const [isUpdated, setupdated] = useState(false);
+  
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -40,6 +41,7 @@ const UploadProduct = () => {
     description: "",
     product_image: "",
     tags: [],
+    buy_date: new Date().toISOString().slice(0, 10)
   });
 
   const handleChange = (e) => {
@@ -99,6 +101,14 @@ const UploadProduct = () => {
       value: tag.id, // Convert id to string if necessary
     }));
     setSelected(selected);
+    let parts = response?.buy_date.split('/');
+    
+let isoDate;
+    if(parts){
+
+      isoDate = `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+    }
+
     setProduct({
       id: response?.id,
       name: response?.title,
@@ -115,6 +125,7 @@ const UploadProduct = () => {
       product_image: response?.product_image,
       tags: response?.tags,
       owner_id: response?.owner_id,
+      buy_date: isoDate ? isoDate : ''
     });
   };
   const validate = async (categoryId) => {
@@ -127,7 +138,7 @@ const UploadProduct = () => {
   };
   useEffect(() => {
     setLoading(true);
-    
+
     if (slug !== undefined) {
       if (!isNaN(slug)) {
         // Check if slug is a number
@@ -145,10 +156,30 @@ const UploadProduct = () => {
     setLoading(false);
   }, []);
 
+  const MAX_COUNT = 5;
+  const [fileLimit, setFileLimit] = useState(false);
+
+  const handleUploadFiles = (files) => {
+    const uploaded = [...selectedFile];
+    let limitExceeded = false;
+    files.some((file) => {
+      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+        uploaded.push(file);
+        if (uploaded.length === MAX_COUNT) setFileLimit(true);
+        if (uploaded.length > MAX_COUNT) {
+          alert(`You can only add a maximum of ${MAX_COUNT} files`);
+          setFileLimit(false);
+          limitExceeded = true;
+          return true;
+        }
+      }
+    });
+    if (!limitExceeded) setSelectedFile(uploaded);
+  };
+
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    const imageUrl = URL.createObjectURL(e.target.files[0]);
-    setProduct({ ...product, product_image: imageUrl });
+    const chosenFiles = Array.prototype.slice.call(e.target.files);
+    handleUploadFiles(chosenFiles);
   };
   const handleDraft = async (e) => {
     e.preventDefault();
@@ -248,6 +279,7 @@ const UploadProduct = () => {
     "The origin price field must be at least 1.": "Giá gốc phải lớn hơn 1000",
     "The price field must be at least 1.": "Giá bán phải lớn hơn 1000",
     "The name field must be a string.": "Tên là bắt buộc",
+    "The buy date field is required.": "Ngày mua là bắt buộc",
   };
 
   const translateError = (englishError) => {
@@ -276,10 +308,15 @@ const UploadProduct = () => {
     let productId = 0;
     if (response?.id) {
       productId = response.id;
-      if (selectedFile) {
+      if (selectedFile.length > 0) {
         const formData = new FormData();
-        formData.append("image", selectedFile);
+        formData.append("image[]", selectedFile);
         await ProductService.uploadImage(productId, formData);
+        // for (const file of selectedFile) {
+        //     const formData = new FormData();
+        //     formData.append("image[]", file);
+        //     await ProductService.uploadImage(productId, formData);
+        // }
       } else {
         setError({ ...isError, image: ["Vui lòng chọn hình ảnh"] });
       }
@@ -318,7 +355,7 @@ const UploadProduct = () => {
   };
 
   const [selected, setSelected] = useState([]);
-  const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState([]);
   const handleDelete = async () => {
     const response = await ProductService.deleteProduct(product?.id);
     setProductCount({
@@ -501,6 +538,34 @@ const UploadProduct = () => {
                     </>
                   )}
                 </div>
+                <div className="col mt-4">
+                  <h5>
+                    Ngày mua (m/d/y)  <span className="require">*</span>
+                  </h5>
+                  <div className="my-3 input-group">
+                    <span className="input-group-text">
+                      {" "}
+                      <FontAwesomeIcon icon={faFileText} />
+                    </span>
+                    <input
+                      required
+                      type="date"
+                      className="form-control"
+                      placeholder="Ngày mua"
+                      name="buy_date"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setError({ ...isError, buy_date: [] });
+                      }}
+                      value={product.buy_date}
+                    />
+                  </div>
+                  {isError?.buy_date && (
+                    <>
+                      <p className="text-danger">{isError?.buy_date[0]}</p>
+                    </>
+                  )}
+                </div>
 
                 <div className="col-12 mt-4">
                   <h5 className="my-3">
@@ -513,10 +578,12 @@ const UploadProduct = () => {
                       id="formFile"
                       name="product_image"
                       required
+                      multiple
                       onChange={(e) => {
                         handleFileChange(e);
                         setError({ ...isError, image: [] });
                       }}
+                      disabled={fileLimit}
                     />
                   </div>
                   {isError?.image && (
@@ -524,15 +591,16 @@ const UploadProduct = () => {
                       <p className="text-danger">{isError?.image[0]}</p>
                     </>
                   )}
-                  {product?.product_image && (
-                    <div className="text-center">
+                  <div className="text-center">
+                    {selectedFile?.map((file, index) => (
                       <img
-                        src={product?.product_image}
+                        key={index}
+                        src={URL.createObjectURL(file)}
                         alt="Preview"
-                        style={{ maxWidth: "100px" }}
+                        style={{ maxWidth: "100px", marginRight: "10px" }}
                       />
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -558,7 +626,6 @@ const UploadProduct = () => {
                     className="custom-select w-50 "
                     id="inputGroupSelect01"
                     name="condition"
-                    
                     onChange={(e) => handleChange(e)}
                     value={product.condition}
                   >
@@ -660,69 +727,70 @@ const UploadProduct = () => {
             </div>
           </div>
           {isLoading ? (
-            <><Loading/></>
-          ): (
             <>
-               <div className="mt-5 d-flex" style={{ marginLeft: "78%" }}>
-            {slug == undefined ||
-              slug.includes("category-id=") ? (
-                <>
-                  <div className=" mb-3 me-2">
-                    <Link
-                      style={{ textDecoration: "None", color: "black" }}
-                      onClick={(e) => handleDraft(e)}
-                    >
-                      <button className="btn btn-primary">
-                        {" "}
-                        <FontAwesomeIcon
-                          icon="drafting-compass"
-                          className="me-2"
-                        />{" "}
-                        Lưu bản nháp
-                      </button>
-                    </Link>
-                  </div>
-                </>
-              ): (<></>)}
-            <div className="mb-3 me-2">
-              <Link
-                style={{ textDecoration: "None", color: "black" }}
-                onClick={(e) => {
-                  if (isUpdated === true) {
-                    handleUpdate(e);
-                  } else handleSubmit(e);
-                }}
-              > 
-           <button className="btn btn-dark">
-                {" "}
-                <FontAwesomeIcon icon="pencil" /> Đăng
-              </button>
-             
-              </Link>
-            </div>
-
-            {isUpdated === true ? (
-              <>
-                <div className="mb-3 ">
+              <Loading />
+            </>
+          ) : (
+            <>
+              <div className="mt-5 d-flex" style={{ marginLeft: "78%" }}>
+                {slug == undefined || slug.includes("category-id=") ? (
+                  <>
+                    <div className=" mb-3 me-2">
+                      <Link
+                        style={{ textDecoration: "None", color: "black" }}
+                        onClick={(e) => handleDraft(e)}
+                      >
+                        <button className="btn btn-primary">
+                          {" "}
+                          <FontAwesomeIcon
+                            icon="drafting-compass"
+                            className="me-2"
+                          />{" "}
+                          Lưu bản nháp
+                        </button>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+                <div className="mb-3 me-2">
                   <Link
                     style={{ textDecoration: "None", color: "black" }}
-                    onClick={() => setShow(true)}
+                    onClick={(e) => {
+                      if (isUpdated === true) {
+                        handleUpdate(e);
+                      } else handleSubmit(e);
+                    }}
                   >
-                    <button className="btn btn-danger">
-                      <FontAwesomeIcon icon="trash" className="me-2" />
-                      {""}
-                      Xóa sản phẩm
+                    <button className="btn btn-dark">
+                      {" "}
+                      <FontAwesomeIcon icon="pencil" /> Đăng
                     </button>
                   </Link>
                 </div>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+
+                {isUpdated === true ? (
+                  <>
+                    <div className="mb-3 ">
+                      <Link
+                        style={{ textDecoration: "None", color: "black" }}
+                        onClick={() => setShow(true)}
+                      >
+                        <button className="btn btn-danger">
+                          <FontAwesomeIcon icon="trash" className="me-2" />
+                          {""}
+                          Xóa sản phẩm
+                        </button>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
             </>
           )}
-       
         </form>
 
         {isAdded ? (

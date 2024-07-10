@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->integer('price')->nullable();
             $table->text('description')->nullable();
+            $table->dateTime('buy_date')->nullable();
             $table->integer('condition')->nullable();
             $table->string('edition')->nullable();
             $table->string('brand')->nullable();

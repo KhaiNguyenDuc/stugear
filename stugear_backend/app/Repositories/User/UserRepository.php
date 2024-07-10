@@ -60,6 +60,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function getUserWithContactDetailById($id)
     {
+        $ordersCount = DB::table('orders')
+        ->where('seller_id', $id)
+        ->where('status', 4)
+        ->count();
+
         $usersWithContactDetails = DB::table('users')
             ->join('contact_details', 'users.id', '=', 'contact_details.user_id')->where('users.id', '=', $id)
             ->select(
@@ -81,6 +86,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 'contact_details.social_link',
             )
             ->get();
+
+        $usersWithContactDetails = $usersWithContactDetails->map(function ($user) use ($ordersCount) {
+            $user->ordersCount = $ordersCount;
+            return $user;
+        });
         return $usersWithContactDetails;
     }
 

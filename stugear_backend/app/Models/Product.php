@@ -19,6 +19,7 @@ class Product extends Model
         'name',
         'price',
         'description',
+        'buy_date',
         'condition',
         'edition',
         'origin_price',

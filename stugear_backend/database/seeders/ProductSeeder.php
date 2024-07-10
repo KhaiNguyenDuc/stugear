@@ -648,12 +648,14 @@ class ProductSeeder extends Seeder
             ]
 
         ];
-
+       
         foreach ($products as $product) {
+            $randomDate = date('Y-m-d', mt_rand(strtotime('-1 year'), time()));
             $productId = DB::table('products')->insertGetId([
                 'name' => $product['name'],
                 'price' => $product['price'],
                 'description' => $product['description'],
+                'buy_date' => $randomDate,
                 'condition' => $product['condition'],
                 'edition' => $product['edition'],
                 'origin_price' => $product['origin_price'],

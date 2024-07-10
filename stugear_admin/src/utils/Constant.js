@@ -20,4 +20,4 @@ export const LOCALE_TEXT = {
     // Add more translations as needed
   };
 
-export const FRONTEND_URL = "https://stugear.website"
+export const FRONTEND_URL = "http://localhost:3000"

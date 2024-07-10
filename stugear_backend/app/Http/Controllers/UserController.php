@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Order\OrderRepositoryInterface;
 use App\Util\AuthService;
 use App\Util\ImageService;
 use App\Util\AppConstant;
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     protected $userRepository;
-    public function __construct(UserRepositoryInterface $userRepository)
+    protected $orderRepository;
+    public function __construct(UserRepositoryInterface $userRepository, OrderRepositoryInterface $orderRepository)
     {
         $this->userRepository = $userRepository;
+        $this->orderRepository = $orderRepository;
     }
 
 
@@ -37,6 +40,8 @@ class UserController extends Controller
     public function view($id)
     {
         $users = $this->userRepository->getUserWithContactDetailById($id);
+
+        
         return response()->json([
             'status' => 'success',
             'message' => 'get data sucesss',

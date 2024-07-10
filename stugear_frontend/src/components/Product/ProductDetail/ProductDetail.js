@@ -41,6 +41,12 @@ const ProductDetail = ({ product, isMember }) => {
     e.preventDefault()
     navigate(`/member/checkout/${productId}`)
   }
+  const formatDate = (dateString) => {
+    // Split the date parts and rearrange them in dd/mm/yyyy format
+    const parts = dateString.split('/');
+    const formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`; // dd/mm/yyyy
+    return formattedDate;
+  };
   return (
     <div>
       <div className="text-center mb-5">
@@ -63,8 +69,22 @@ const ProductDetail = ({ product, isMember }) => {
           <div className="info-key">Mô tả:</div>
           <div className="info-value">{product.description}</div>
         </div>
+        {product?.buy_date && (
         <div className="info-row  mb-3">
-          <div className="info-key">Giá:</div>
+        <div className="info-key">Ngày mua:</div>
+        <div className="info-value">{formatDate(product.buy_date)}</div>
+      </div>
+        )}
+
+        {product?.origin_price &&
+        
+        <div className="info-row  mb-3">
+          <div className="info-key">Giá gốc:</div>
+          <div className="info-value">{product.origin_price}</div>
+        </div>
+        }
+        <div className="info-row  mb-3">
+          <div className="info-key">Giá bán:</div>
           <div className="info-value">{product.price}</div>
         </div>
         <div className="info-row mb-3">
@@ -95,7 +115,7 @@ const ProductDetail = ({ product, isMember }) => {
           <div className="info-value">{product.condition}</div>
         </div>
         <div className="info-row  mb-3">
-          <div className="info-key">Ngày cập nhật:</div>
+          <div className="info-key">Cập nhật lần cuối:</div>
           <div className="info-value">{product.last_updated}</div>
         </div>
         <div className="info-row  mb-3">
