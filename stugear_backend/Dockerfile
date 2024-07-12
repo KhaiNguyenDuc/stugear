@@ -31,7 +31,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . .
 
 # Install Laravel dependencies
-RUN composer update
+RUN composer install
 
 # Set permissions
 RUN chown -R www-data:www-data /app \
