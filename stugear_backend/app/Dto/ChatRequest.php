@@ -43,6 +43,7 @@ class ChatRequest
                 'Authorization' => 'Bearer '. env('OPENAI_API_KEY')
             ])->post(PromptConstant::$PROMPT_URL, [
                 'model' => $this->model,
+                'response_format' => ['type' => 'json_object'],
                 'messages' =>  $this->getMessages(),
             ]);
             logger()->info("sendMessages: ", [$response->body()]);

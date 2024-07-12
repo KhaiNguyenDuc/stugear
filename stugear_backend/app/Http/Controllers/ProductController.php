@@ -240,7 +240,7 @@ class ProductController extends Controller
     private function handlerTitleImageToTimestamp($title, $productId)
     {
 
-        $pattern = '/products_' . $productId . '_(\d+)\.jpg/';
+        $pattern = '/products_' . $productId . '_(\d+)\./';
 
         if (preg_match($pattern, $title, $matches)) {
             return (int)$matches[1];

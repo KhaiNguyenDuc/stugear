@@ -7,6 +7,7 @@ import useProduct from "../../../hooks/useProduct";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { Carousel } from "react-bootstrap";
 const ProductDetail = ({ product, isMember }) => {
   const [isAdded, setAdded] = useState(false);
   const {productCount, setProductCount} = useProduct()
@@ -47,15 +48,41 @@ const ProductDetail = ({ product, isMember }) => {
     const formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`; // dd/mm/yyyy
     return formattedDate;
   };
+  const customCarouselStyles = {
+    controlPrevIcon: {
+      position: "absolute",
+      top: "30%",
+    
+      zIndex: 1,
+
+    },
+    controlNextIcon: {
+      position: "absolute",
+      top: "30%",
+      zIndex: 1,
+    },
+  };
   return (
     <div>
       <div className="text-center mb-5">
-        <img
-          src={product.product_image}
-          className="middle-image img-fluid"
-          alt=""
-        />
+      <Carousel prevIcon={<span style={customCarouselStyles.controlPrevIcon} className="carousel-control-prev-icon" />}
+     nextIcon={<span className="carousel-control-next-icon" style={customCarouselStyles.controlNextIcon}/>}>
+      {/* You can add multiple slides here */}
+      {product.product_image.map(image => {
+        return (
+          <Carousel.Item>
+          <img
+            src={image}
+            alt="Category Hero 0"
+            className="img-fluid"
+          />
+        </Carousel.Item>
+        )
+      })}
+     
+    </Carousel>
       </div>
+
       <div id="product-info">
         <div className="info-row mb-3">
           <div className="info-key">Tên tài liệu:</div>

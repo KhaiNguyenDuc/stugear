@@ -85,6 +85,7 @@ class ProductService {
         category_id: product.category_id,
         transaction_id: product.transaction_id,
         description: product.description,
+        buy_date: product.buy_date
       })
       .then((response) => response?.data?.data)
       .catch((error) => error?.response);

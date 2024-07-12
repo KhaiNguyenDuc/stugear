@@ -80,7 +80,7 @@ const UploadProduct = () => {
     }));
     setTags(options);
   };
-
+  const [initImages, setInitImages] = useState([]);
   const getProductById = async (id) => {
     const response = await ProductService.getProductById(id);
     if (response.status === 404) {
@@ -127,7 +127,10 @@ let isoDate;
       owner_id: response?.owner_id,
       buy_date: isoDate ? isoDate : ''
     });
+    setInitImages(response?.product_image);
   };
+
+
   const validate = async (categoryId) => {
     // Check if categoryId exists in the categories array
     const isExist = await CategoryService.getCategoriesById(categoryId);
@@ -156,25 +159,26 @@ let isoDate;
     setLoading(false);
   }, []);
 
-  const MAX_COUNT = 5;
-  const [fileLimit, setFileLimit] = useState(false);
+  const MAX_COUNT = 3;
 
   const handleUploadFiles = (files) => {
     const uploaded = [...selectedFile];
-    let limitExceeded = false;
+    let isExceeded = false;
     files.some((file) => {
       if (uploaded.findIndex((f) => f.name === file.name) === -1) {
         uploaded.push(file);
-        if (uploaded.length === MAX_COUNT) setFileLimit(true);
         if (uploaded.length > MAX_COUNT) {
-          alert(`You can only add a maximum of ${MAX_COUNT} files`);
-          setFileLimit(false);
-          limitExceeded = true;
-          return true;
+          setError({ ...isError, image: "Chỉ được phép chọn " + MAX_COUNT + " ảnh" });
+          console.log("Chỉ được phép chọn " + MAX_COUNT + " ảnh")
+          isExceeded = true;
+          return;
         }
       }
+      if(!isExceeded){
+        setSelectedFile(uploaded);
+      }
     });
-    if (!limitExceeded) setSelectedFile(uploaded);
+    
   };
 
   const handleFileChange = (e) => {
@@ -185,23 +189,29 @@ let isoDate;
     e.preventDefault();
     setLoading(true);
     setProduct({ ...product, status: 1 });
+    if (selectedFile.length > MAX_COUNT) {
+      setError({ ...isError, image: "Chỉ được phép chọn " + MAX_COUNT + " ảnh" });
+      console.log("Chỉ được phép chọn " + MAX_COUNT + " ảnh")
+      setLoading(false);
+      return;
+    }
     const response = await ProductService.createDraft(product);
     let productId = 0;
     if (response?.id) {
       productId = response.id;
     } else {
       console.log("Some thing went wrong");
+      setLoading(false);
       return;
     }
-    const formData = new FormData();
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-      const responseImg = await ProductService.uploadImage(productId, formData);
-
-      if (responseImg?.status === 400) {
-        console.log("something went wrong");
+    if (selectedFile.length > 0) {
+      const formData = new FormData();
+      for (const file of selectedFile) {
+        formData.append("image[]", file);
       }
-    }
+      await ProductService.uploadImage(productId, formData);
+    } 
+    
     const newItems = selected.filter((item) => item.__isNew__);
     const tag_ids = await TagService.createTags(
       newItems.map((item) => item.value)
@@ -234,17 +244,31 @@ let isoDate;
     e.preventDefault();
     setLoading(true);
     setProduct({ ...product, status: 2 });
-    if (product?.product_image === "") {
+    if (product?.product_image.length == 0) {
       setError({ ...isError, image: ["Vui lòng chọn hình ảnh"] });
       return;
     }
-
+    if (selectedFile.length > MAX_COUNT) {
+      setError({ ...isError, image: "Chỉ được phép chọn " + MAX_COUNT + " ảnh" });
+      console.log("Chỉ được phép chọn " + MAX_COUNT + " ảnh")
+      setLoading(false);
+      return;
+    }
     const response = await ProductService.updateProduct(product);
     if (response?.status === "success") {
-      const formData = new FormData();
-      if (selectedFile) {
-        formData.append("image", selectedFile);
+      if (selectedFile.length > 0) {
+        const formData = new FormData();
+        for (const file of selectedFile) {
+          formData.append("image[]", file);
+        }
         await ProductService.uploadImage(product?.id, formData);
+      } else if(initImages?.length > 0){
+        console.log("ok")
+      } 
+      else {
+        setError({ ...isError, image: ["Vui lòng chọn hình ảnh"] });
+        setLoading(false)
+        return;
       }
 
       const newItems = selected.filter((item) => item.__isNew__);
@@ -280,6 +304,8 @@ let isoDate;
     "The price field must be at least 1.": "Giá bán phải lớn hơn 1000",
     "The name field must be a string.": "Tên là bắt buộc",
     "The buy date field is required.": "Ngày mua là bắt buộc",
+    "The price field must be an integer.": "Giá bán phải là số",
+    "The origin price field must be an integer.": "Giá gốc phải là số"
   };
 
   const translateError = (englishError) => {
@@ -289,8 +315,15 @@ let isoDate;
     e.preventDefault();
     setLoading(true);
     setProduct({ ...product, status: 2 });
-    if (selectedFile === undefined) {
+    if (selectedFile.length == 0) {
       setError({ ...isError, image: ["Vui lòng chọn hình ảnh"] });
+      setLoading(false);
+      return;
+    }
+    if (selectedFile.length > MAX_COUNT) {
+      setError({ ...isError, image: "Chỉ được phép chọn " + MAX_COUNT + " ảnh" });
+      console.log("Chỉ được phép chọn " + MAX_COUNT + " ảnh")
+      setLoading(false);
       return;
     }
     const response = await ProductService.createProduct(product);
@@ -310,18 +343,16 @@ let isoDate;
       productId = response.id;
       if (selectedFile.length > 0) {
         const formData = new FormData();
-        formData.append("image[]", selectedFile);
+        for (const file of selectedFile) {
+          formData.append("image[]", file);
+        }
         await ProductService.uploadImage(productId, formData);
-        // for (const file of selectedFile) {
-        //     const formData = new FormData();
-        //     formData.append("image[]", file);
-        //     await ProductService.uploadImage(productId, formData);
-        // }
       } else {
         setError({ ...isError, image: ["Vui lòng chọn hình ảnh"] });
       }
     } else {
       console.log("Some thing went wrong");
+      setLoading(false);
       return;
     }
 
@@ -569,8 +600,21 @@ let isoDate;
 
                 <div className="col-12 mt-4">
                   <h5 className="my-3">
-                    Hình minh họa <span className="require">*</span>
+                    Hình minh họa <h6 className="d-inline text-danger">(Giới hạn {MAX_COUNT} hình)</h6> <span className="require">*</span>
+                  
                   </h5>
+                 
+                  <label for="formFile" className="btn btn-success">Chọn hình</label>
+                  {selectedFile.length > 0 && (
+                     <button className="btn btn-danger"
+                     style={{marginLeft: "3px"}}
+                      onClick={() => {
+                        setSelectedFile([]); 
+                        setError({ ...isError, image: [] });
+                      }}>
+                        Chọn lại
+                      </button>
+                  )}
                   <div className="mb-3">
                     <input
                       className="form-control"
@@ -578,17 +622,16 @@ let isoDate;
                       id="formFile"
                       name="product_image"
                       required
+                      hidden
                       multiple
                       onChange={(e) => {
                         handleFileChange(e);
-                        setError({ ...isError, image: [] });
                       }}
-                      disabled={fileLimit}
                     />
                   </div>
                   {isError?.image && (
                     <>
-                      <p className="text-danger">{isError?.image[0]}</p>
+                      <p className="text-danger">{isError?.image}</p>
                     </>
                   )}
                   <div className="text-center">
@@ -599,6 +642,13 @@ let isoDate;
                         alt="Preview"
                         style={{ maxWidth: "100px", marginRight: "10px" }}
                       />
+                    ))}
+                    {initImages?.map(image => (
+                       <img
+                       src={image}
+                       alt="Preview"
+                       style={{ maxWidth: "100px", marginRight: "10px" }}
+                     />
                     ))}
                   </div>
                 </div>

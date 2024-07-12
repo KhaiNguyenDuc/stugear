@@ -129,9 +129,10 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $query = Product::query();
 
         $query->join('users','users.id','=','products.user_id');
-        $query->join('product_tags', 'products.id', '=', 'product_tags.product_id');
+        $query->leftJoin('product_tags', 'products.id', '=', 'product_tags.product_id');
+ 
 
-        if ($request->q != null) {
+       if ($request->q != null) {
             $query->where(function($q) use ($request) {
                 $q->where('products.name', 'LIKE', '%' . $request->q . '%')
                     ->orWhere('users.name', 'LIKE', '%' . $request->q . '%')
@@ -236,6 +237,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 $dateFrom = Carbon::createFromFormat('d-m-Y', $request->date_from)->startOfDay();
             }
             $query->where('products.updated_at', '>=', $dateFrom);
+            logger()->error("from: ", [$dateFrom]);
         }
 
         if ($request->date_to != null) {
@@ -251,7 +253,10 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 $dateTo = Carbon::createFromFormat('d-m-Y', $request->date_to)->endOfDay();
             }
             $query->where('products.updated_at', '<=', $dateTo);
+            logger()->error("to: ", [$dateTo]); 
         }
+        
+      
 
 // ---------------- end handle date method --------------------
 
