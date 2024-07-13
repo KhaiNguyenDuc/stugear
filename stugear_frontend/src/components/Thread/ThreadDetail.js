@@ -449,16 +449,7 @@ const ThreadDetail = ({
           <div className="tt-info-box">
             <h4>Trạng thái bài đăng</h4>
             <div className="tt-row-icon mt-2">
-              <div className="tt-item">
-                <a
-                  
-                  className="tt-icon-btn tt-position-bottom"
-                  title="Số lượt phản hồi"
-                >
-                  <FontAwesomeIcon icon={faReply} />
-                  <span className="tt-text">{thread?.reply}</span>
-                </a>
-              </div>
+   
               <div className="tt-item">
                 <a
                   

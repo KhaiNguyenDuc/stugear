@@ -82,6 +82,12 @@ class UserController extends Controller
         $data['phone_number'] = $userInfo->phone_number ?? '';
         $data['birthdate'] = $userInfo->birthdate ?? '';
         $data['social_link'] = $userInfo->social_link ?? '';
+        if(!$user->created_at){
+            $data['created_at'] = "Tham gia vào tháng 7, 2021";
+        }else{
+            $formattedDate = 'Tham gia vào tháng ' . $user->created_at->format('n') . ', ' . $user->created_at->format('Y');
+            $data['created_at'] = $formattedDate;    
+        }
         return response()->json([
             'status' => 'Thành công',
             'message' => 'Lấy dữ liệu user thành công',

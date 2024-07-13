@@ -74,7 +74,7 @@ const ProductDetail = ({ product, isMember }) => {
           <img
             src={image}
             alt="Category Hero 0"
-            className="img-fluid"
+            className="img-fluid middle-image"
           />
         </Carousel.Item>
         )

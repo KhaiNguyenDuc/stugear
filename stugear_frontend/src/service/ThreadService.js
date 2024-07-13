@@ -61,6 +61,16 @@ class ThreadService {
     .catch((error) => error?.response);
   }
 
+  getGeneralInfo(){
+
+    let url = THREAD_URL + '/general-info';
+
+    return axiosPrivate
+    .get(url)
+    .then((response) => response?.data)
+    .catch((error) => error?.response);
+  }
+
 }
 
 export default new ThreadService()

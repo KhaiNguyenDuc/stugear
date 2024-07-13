@@ -62,7 +62,7 @@ const UserModal = ({ userId }) => {
       if(selectedImageUrl){
             const formData = new FormData();
   
-      formData.append("image", selectedImage);
+      formData.append("image[]", selectedImage);
   
         const imageResponse = await AskService.uploadReportImage(response?.ask_id, formData);
         if(imageResponse?.status === 400){
@@ -143,11 +143,11 @@ const UserModal = ({ userId }) => {
             </div>
 
             <div className="d-flex justify-content-between">
-              <button className="btn" onClick={(e) => handleReport(e)}>
+              <button className="btn btn-success text-white" onClick={(e) => handleReport(e)}>
                 Gửi
               </button>
               <button
-                className="btn"
+                className="btn text-white"
                 style={{ backgroundColor: "red" }}
                 onClick={() => setReportShow(false)}
               >

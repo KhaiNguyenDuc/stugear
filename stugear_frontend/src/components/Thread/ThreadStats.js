@@ -8,6 +8,7 @@ import { MultiSelect } from "react-multi-select-component";
 import TagService from "../../service/TagService";
 import UserModal from "../Profile/UserModal/UserModal";
 import UserService from "../../service/UserService";
+import ThreadService from "../../service/ThreadService";
 const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   <div className={`item-renderer ${disabled ? "disabled" : ""}`}>
     <input
@@ -25,11 +26,10 @@ const DefaultItemRenderer = ({ checked, option, onClick, disabled }) => (
   </div>
 );
 const ThreadStats = ({ setSelectedTag, selectedTag }) => {
-  const threadStats = {
-    category_id: 1,
-    total_thread: 20,
-    total_reply: 1200
-  }
+  const [generalInfo, setGeneralInfo] = useState({
+    total_thread: 0,
+    total_reply: 0
+  })
   const [contributors, setContributors] = useState();
   const [tags, setTags] = useState([]);
   const getAllTags = async () => {
@@ -42,7 +42,16 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
     setTags(options);
 
   };
-
+ 
+  const getGeneralInfo = async () => {
+    const response = await ThreadService.getGeneralInfo();
+    if(response?.status !== 400){
+      setGeneralInfo({
+        total_thread: response?.data?.threads,
+        total_reply: response?.data?.replies
+      })
+    }
+  } 
   const getTopContributors = async () => {
     const topContributorNumber = 4;
     const response = await UserService.getTopContributors(topContributorNumber);
@@ -53,6 +62,7 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
   useEffect(() => {
     getAllTags();
     getTopContributors();
+    getGeneralInfo();
   }, []);
   return (
     <>
@@ -60,10 +70,10 @@ const ThreadStats = ({ setSelectedTag, selectedTag }) => {
         <div className="status-part">
           <h4>Tổng quan</h4>
           <span className="i d-block">
-            <FontAwesomeIcon icon={faQuestionCircle} /> Bài đăng ({threadStats.total_thread})
+            <FontAwesomeIcon icon={faQuestionCircle} /> Bài đăng ({generalInfo.total_thread})
           </span>
           <span className="i d-block">
-            <FontAwesomeIcon icon={faComment} /> Phản hồi ({threadStats.total_reply})
+            <FontAwesomeIcon icon={faComment} /> Phản hồi ({generalInfo.total_reply})
           </span>
         </div>
 

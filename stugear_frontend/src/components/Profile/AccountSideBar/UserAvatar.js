@@ -61,7 +61,7 @@ function UserAvatar({userInfo}) {
           </div>
           <div className="user-data">
             <h4>{user.username}</h4>
-            <span>Tham gia vào tháng 6, 2017</span>
+            <span>{userInfo.created_at}</span>
           </div>
         </div>
       </aside>
