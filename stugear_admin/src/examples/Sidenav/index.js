@@ -163,7 +163,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         <SoftBox mt={2}>
           <SoftButton
             component="a"
-            href={BASE_URL}
+            href={"https://stugear.website"}
             target="_blank"
             rel="noreferrer"
             variant="gradient"

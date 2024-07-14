@@ -163,7 +163,7 @@ const ProductDetail = ({ product, isMember }) => {
             <div className="checkout-btn">
               {product?.transaction_method === "Trên trang web" ? (
                 <>
-                         <button className="btn" onClick={(e) => hanldeCheckout(e,product?.id)}>
+                         <button className="btn btn-success text-white" onClick={(e) => hanldeCheckout(e,product?.id)}>
                 <FontAwesomeIcon icon="cart-shopping" /> Mua ngay
               </button>
             

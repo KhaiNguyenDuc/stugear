@@ -1,4 +1,6 @@
-
+.middle-image {
+    max-width: 200px !important;
+}
 
 .checkout-page {
     margin: 20px 100px;

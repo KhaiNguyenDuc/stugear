@@ -123,7 +123,7 @@ function SignIn() {
            Không phải người quản lý?{" "}
             <SoftTypography
               component={Link}
-              to={BASE_URL+ "/register"}
+              to={"https://stugear.website/register"}
               variant="button"
               color="info"
               fontWeight="medium"

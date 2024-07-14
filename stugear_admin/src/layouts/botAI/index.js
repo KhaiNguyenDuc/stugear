@@ -92,7 +92,12 @@ function BotAI() {
   const updateConfig = async (data) => {
     const response = await ConfigService.updateConfigStatus(data)
     if(response?.status != 400){
-      setAutoReview(!autoReview);
+      if(data?.type === "review"){
+
+        setAutoReview(!autoReview);
+      }else{
+        setAutoReply(!autoReply);
+      }
     }
   }
   const columns = [

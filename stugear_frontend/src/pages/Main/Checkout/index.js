@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OrderService from "../../../service/OrderService";
 import UserModal from "../../../components/Profile/UserModal/UserModal";
+import { Carousel } from "react-bootstrap";
 const CheckoutPage = () => {
   const { user, setUser } = useAuth();
   const [owner, setOwner] = useState();
@@ -93,11 +94,24 @@ const CheckoutPage = () => {
         localStorage.setItem("balance", balanceResponse.balance);
         setUser({ ...user, balance: balanceResponse.balance });
       }
-      await UserService.updateUserProfile({full_address: address});
+      await UserService.updateUserProfile({ full_address: address });
       navigate(`/member/order-detail/${response?.order_id}`);
     } else {
       setError(response?.data?.message);
     }
+  };
+  const customCarouselStyles = {
+    controlPrevIcon: {
+      position: "absolute",
+      top: "30%",
+
+      zIndex: 1,
+    },
+    controlNextIcon: {
+      position: "absolute",
+      top: "30%",
+      zIndex: 1,
+    },
   };
 
   return (
@@ -107,15 +121,15 @@ const CheckoutPage = () => {
       ) : (
         <>
           <div className="checkout-page  d-lg-flex justify-content-between">
-            
-           
-         
             <div className="box-1 bg-light user">
-            <div class="d-flex align-items-center mb-3">
-            <UserModal userId={owner?.id} />
+              <div class="d-flex align-items-center mb-3">
+                <UserModal userId={owner?.id} />
                 <div className="mt-3">
                   <span className="ps-4 fw-bold info">Người bán:</span>
-                  <p className="ps-4 info" style={{fontSize: '12px'}}> {owner?.name}</p>
+                  <p className="ps-4 info" style={{ fontSize: "12px" }}>
+                    {" "}
+                    {owner?.name}
+                  </p>
                 </div>
               </div>
               <div className="box-inner-1 pb-3 mb-3 ">
@@ -125,14 +139,35 @@ const CheckoutPage = () => {
 
                 <div
                   className="carousel-item active my-4"
-                  style={{ marginLeft: "80px", marginRight: "20px" }}
+                  style={{ marginLeft: "170px", marginRight: "20px" }}
                 >
-                  <img
-                    src={product?.product_image}
-                    className="d-block "
-                    style={{ width: "230px", height: "230px" }}
-                    alt=""
-                  />
+                  <Carousel
+                    prevIcon={
+                      <span
+                        style={customCarouselStyles.controlPrevIcon}
+                        className="carousel-control-prev-icon"
+                      />
+                    }
+                    nextIcon={
+                      <span
+                        className="carousel-control-next-icon"
+                        style={customCarouselStyles.controlNextIcon}
+                      />
+                    }
+                  >
+                    {/* You can add multiple slides here */}
+                    {product?.product_image?.map((image) => {
+                      return (
+                        <Carousel.Item>
+                          <img
+                            src={image}
+                            alt="Category Hero 0"
+                            className="img-fluid middle-image"
+                          />
+                        </Carousel.Item>
+                      );
+                    })}
+                  </Carousel>
                 </div>
 
                 <p className="dis info my-3">{product?.description}</p>
@@ -155,18 +190,22 @@ const CheckoutPage = () => {
                   <span className="dis">{product?.quantity}</span>
                 </p>
 
-                <div className="input-group mb-3">
+                <div className="input-group" style={{width: "400px"}}>
+                  <label for="choose" className="form-control">Mua</label>
                   <input
                     type="number"
+                    id="choose"
                     value={quantity}
-                    onChange={(e) => {handleQuantity(e); setError("")}}
+                    onChange={(e) => {
+                      handleQuantity(e);
+                      setError("");
+                    }}
                     placeholder="Nhập số lượng"
                     min={1}
                     className="form-control"
                   />
                   <span className="input-group-text"> Sản phẩm</span>
                 </div>
-               
               </div>
             </div>
             <div className="box-2">

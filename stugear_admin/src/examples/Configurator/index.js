@@ -199,7 +199,7 @@ function Configurator() {
           <SoftBox mb={2}>
             <SoftButton
               component={Link}
-              href={BASE_URL}
+              href={"https://stugear.website"}
               target="_blank"
               rel="noreferrer"
               color="dark"

@@ -1,5 +1,3 @@
-import { paginationItemClasses } from "@mui/material";
-
 export const BASE_URL = "https://stugear.website/api"
 export const LOCALE_TEXT = {
     // Add all the text translations you need here
@@ -20,4 +18,4 @@ export const LOCALE_TEXT = {
     // Add more translations as needed
   };
 
-export const FRONTEND_URL = "http://localhost:3000"
+export const FRONTEND_URL = "https://stugear.website"
