@@ -41,5 +41,3 @@ jobs:
       with:
         name: HTML Coverage Report
         path: tests/reports/html/
-
-	
