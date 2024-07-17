@@ -17,7 +17,7 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2' # Specify the PHP version here
+        php-version: '8.1' # Specify the PHP version here
         coverage: xdebug
 
     - name: Change to stugear_backend directory
