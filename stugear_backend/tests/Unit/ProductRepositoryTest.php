@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Product;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Repositories\Product\ProductRepository;
 use Mockery as m;
 use Illuminate\Foundation\Testing\RefreshDatabase;

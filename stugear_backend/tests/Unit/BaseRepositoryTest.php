@@ -5,7 +5,7 @@ use App\Repositories\BaseRepository;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Mockery as m;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;

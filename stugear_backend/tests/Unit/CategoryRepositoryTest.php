@@ -5,7 +5,7 @@ use App\Repositories\Category\CategoryRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class CategoryRepositoryTest extends TestCase
 {

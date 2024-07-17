@@ -3,7 +3,7 @@
 use App\Repositories\Ask\AskRepository;
 use App\Models\Ask;
 use Illuminate\Pagination\LengthAwarePaginator;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery as m;
 use Illuminate\Database\Eloquent\Builder;

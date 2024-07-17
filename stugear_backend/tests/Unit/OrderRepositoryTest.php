@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class OrderRepositoryTest extends TestCase
 {
