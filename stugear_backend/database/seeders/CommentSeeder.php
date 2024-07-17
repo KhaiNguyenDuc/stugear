@@ -84,7 +84,7 @@ class CommentSeeder extends Seeder
         $parentIdEnd = 5;
         $contentIndex = 0;
 
-        for ($productId = 1; $productId<=20; $productId++) {
+        for ($productId = 1; $productId<=44; $productId++) {
 
 
 

@@ -13,7 +13,7 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        $productLimit = 35;
+        $productLimit = 44;
 
         for ($i = 0; $i < $productLimit; $i++) {
             DB::table('images')->insert([

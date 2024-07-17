@@ -551,21 +551,24 @@ class ProductController extends Controller
             'buy_date' => 'required|date_format:Y-m-d',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-
         $token = $request->header();
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
 
+
         $user = $this->userRepository->getById($userId);
         if ($user->reputation < 0) {
-            return response()->json([
-                'status' => 'Lỗi',
-                'message' => 'Không cho phép tạo sản phẩm vì uy tín thấp!'
-            ], 400);
+            $validator->after(function($validator) {
+                $validator->errors()->add('reputation', 'Không cho phép tạo sản phẩm vì uy tín thấp!');
+            });
         }
+    
+        
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+
 
         $role = DB::table('user_roles')
             ->where('user_id', $userId)
@@ -633,6 +636,19 @@ class ProductController extends Controller
         $token = $request->header();
         $bareToken = substr($token['authorization'][0], 7);
         $userId = AuthService::getUserId($bareToken);
+        $user = $this->userRepository->getById($userId);
+        $validator = Validator::make($request->all(), []);
+        
+        if ($user->reputation < 0) {
+            $validator->after(function($validator) {
+                $validator->errors()->add('reputation', 'Không cho phép tạo sản phẩm vì uy tín thấp!');
+            });
+        }
+    
+        
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
         $role = DB::table('user_roles')
             ->where('user_id', $userId)
@@ -899,7 +915,11 @@ class ProductController extends Controller
                 'message' => 'Không thể chỉnh sửa sản phẩm của người dùng khác',
             ]);
         }
-
+        $token = $request->header();
+        $bareToken = substr($token['authorization'][0], 7);
+        $userId = AuthService::getUserId($bareToken);
+        $user = $this->userRepository->getById($userId);
+       
         if ($product->status != 1) {
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
@@ -912,15 +932,20 @@ class ProductController extends Controller
                 'transaction_id' => 'integer|min:1',
             ]);
 
+        
+            if ($user->reputation < 0) {
+                $validator->after(function($validator) {
+                    $validator->errors()->add('reputation', 'Không cho phép tạo sản phẩm vì uy tín thấp!');
+                });
+            }
+            
+
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);
             }
         }
 
-        $token = $request->header();
-        $bareToken = substr($token['authorization'][0], 7);
-        $userId = AuthService::getUserId($bareToken);
-
+      
         $role = DB::table('user_roles')
             ->where('user_id', $userId)
             ->join('roles', 'user_roles.role_id', '=', 'roles.id')

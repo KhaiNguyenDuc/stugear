@@ -305,7 +305,8 @@ let isoDate;
     "The name field must be a string.": "Tên là bắt buộc",
     "The buy date field is required.": "Ngày mua là bắt buộc",
     "The price field must be an integer.": "Giá bán phải là số",
-    "The origin price field must be an integer.": "Giá gốc phải là số"
+    "The origin price field must be an integer.": "Giá gốc phải là số",
+    "Không cho phép tạo sản phẩm vì uy tín thấp!": "Không cho phép tạo sản phẩm vì uy tín thấp!"
   };
 
   const translateError = (englishError) => {
@@ -624,6 +625,7 @@ let isoDate;
                       required
                       hidden
                       multiple
+                      accept=".png, .jpg, .jpeg"
                       onChange={(e) => {
                         handleFileChange(e);
                       }}
@@ -839,6 +841,11 @@ let isoDate;
                   <></>
                 )}
               </div>
+              {isError?.reputation && (
+                <>
+                  <p className="text-danger">{isError?.reputation[0]}</p>
+                </>
+              )}
             </>
           )}
         </form>
