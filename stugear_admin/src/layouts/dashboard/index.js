@@ -148,7 +148,7 @@ function Dashboard() {
                 items: reportData.items
             };
         }
-
+        console.log(filteredReportData)
         setLinearData(filteredLinearData);
         setReportData(filteredReportData);
     }

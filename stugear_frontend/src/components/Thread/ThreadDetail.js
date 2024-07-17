@@ -414,12 +414,7 @@ const ThreadDetail = ({
                   
                   <div className="col-separator" />
 
-<Link
-  href="#"
-  className="tt-icon-btn tt-hover-02 tt-small-indent"
->
-  <FontAwesomeIcon icon={faBug} />
-</Link>
+
 {localStorage.getItem("user_id") ? (
   <>
     <Link
@@ -757,12 +752,7 @@ const ThreadDetail = ({
                           )}
 
                           <div className="col-separator" />
-                          <Link
-                            title="Báo cáo"
-                            className="tt-icon-btn tt-hover-02 tt-small-indent"
-                          >
-                            <FontAwesomeIcon icon={faBug} />
-                          </Link>
+ 
                           {localStorage.getItem("user_id") ? (
                             <>
                               <Link

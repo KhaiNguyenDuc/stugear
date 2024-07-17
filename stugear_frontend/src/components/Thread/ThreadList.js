@@ -62,13 +62,6 @@ const ThreadList = ({ threads }) => {
                       <span title="Ngày đăng">
                         <FontAwesomeIcon icon={faClock} /> {thread?.create_at}
                       </span>
-
-                      <a
-                        title="Báo cáo"
-                        style={{ textDecoration: "none", color: "black" }}
-                      >
-                        <FontAwesomeIcon icon={"bug"} /> Báo cáo
-                      </a>
                     </div>
                   </div>
                 </div>
