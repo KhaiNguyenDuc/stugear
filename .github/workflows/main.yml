@@ -20,20 +20,20 @@ jobs:
         php-version: '8.1' # Specify the PHP version here
         coverage: xdebug
 
-    - name: Change to src directory
-      run: cd ./src
+    - name: Change to stugear_backend directory
+      run: cd ./stugear_backend
 
     - name: Install Dependencies
       run: composer install
-      working-directory: ./src
+      working-directory: ./stugear_backend
 
     - name: Create Report Directory
       run: mkdir -p tests/reports
-      working-directory: ./src
+      working-directory: ./stugear_backend
 
     - name: Run PHPUnit tests and generate reports
       run: vendor/bin/phpunit --log-junit tests/reports/junit.xml --coverage-html tests/reports/html tests/Unit/
-      working-directory: ./src
+      working-directory: ./stugear_backend
 
     - name: Upload HTML Coverage Report
       uses: actions/upload-artifact@v2
