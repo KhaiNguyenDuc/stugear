@@ -9,7 +9,7 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-
+    id: run_tests_job
     steps:
     - name: Checkout code
       uses: actions/checkout@v2

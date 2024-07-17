@@ -8,6 +8,7 @@ jobs:
   config:
     name: Config project
     runs-on: ubuntu-latest
+    needs: main.run-tests.outputs.run_tests_job # Specify dependency on main.yml job
     steps:
       - uses: actions/checkout@v2 
       - name: Pull repository
